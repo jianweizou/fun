@@ -2,9 +2,9 @@
 #define LED_WHITE	1
 #define LED_RGB		2
 
-#define LEDR	1
-#define LEDG	2
-#define LEDB	4
+#define LEDR	4
+#define LEDG	3
+#define LEDB	1
 
 #define LED1	1
 #define LED2	2

@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   KEY                                                                   02/16/2019 15:04:22 PAGE 1   
+C51 COMPILER V9.54   KEY                                                                   02/16/2019 16:02:38 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE KEY
@@ -52,82 +52,89 @@ line level    source
   42   2                      curKey = Fun_KEY_P17;
   43   2                      if (curKey != preKey)
   44   2                      {
-  45   3                              preKey = curKey;
-  46   3                              if (debounce>=600)
+  45   3                              preKey = curKey;/*
+  46   3                              if (debounce>=400)
   47   3                              {
-  48   4                                      keystatus = 0x08;
-  49   4                              }
-  50   3                              else if (debounce > 10)
+  48   3                                      keystatus = 0x08;
+  49   3                              }
+  50   3                              else*/ if (debounce > 10)
   51   3                              {
   52   4                                      keystatus = 1;
   53   4                              }       
   54   3                              debounce = 0;
-C51 COMPILER V9.54   KEY                                                                   02/16/2019 15:04:22 PAGE 2   
+C51 COMPILER V9.54   KEY                                                                   02/16/2019 16:02:38 PAGE 2   
 
   55   3                      }
   56   2                      else if(curKey == 0)
   57   2                      {
   58   3                              debounce++;
-  59   3                              if (debounce >= 600)
-  60   3                                      debounce = 600;
-  61   3                      }
-  62   2                      
-  63   2                      if (Safety_KEY)
-  64   2                      {
-  65   3                              Safety_key_debounce = 0;
-  66   3                      }
-  67   2                      else
-  68   2                      {
-  69   3                              Safety_key_debounce++;
-  70   3                              if (Safety_key_debounce > 20)
-  71   3                              {
-  72   4                                      Safety_key_debounce = 20;
-  73   4                                      keystatus |= 0x02;
-  74   4                              }
-  75   3                      }
-  76   2                      
-  77   2                      if (Charging_KEY)
-  78   2                      {
-  79   3                              Charging_key_debounce = 0;
-  80   3                      }
-  81   2                      else
-  82   2                      {
-  83   3                              Charging_key_debounce++;
-  84   3                              if (Charging_key_debounce > 20)
-  85   3                              {
-  86   4                                      Charging_key_debounce = 20;
-  87   4                                      keystatus |= 0x04;
-  88   4                              }
-  89   3                      }
-  90   2              }
-  91   1              return keystatus;
-  92   1      }
-  93          
-  94          void EnterDPD(void)
-  95          {
-  96   1              //…Ë÷√P17∞¥º¸ªΩ–—
-  97   1          P17_Input_Mode;
-  98   1              set_P0S_7;
-  99   1              Enable_INT_Port1;
- 100   1              Enable_BIT7_FallEdge_Trig;
- 101   1          set_EPI;                                                    // Enable pin interrupt
- 102   1          set_EA;                     
- 103   1              //dpd
- 104   1              set_PD;
- 105   1              
- 106   1              PICON  = PICON & 0xFE;
- 107   1      }
+  59   3                              if (debounce >= 500)
+  60   3                              {
+  61   4                                      debounce = 500;
+  62   4                              }
+  63   3                              else if (debounce >= 400)
+  64   3                              {
+  65   4                                      debounce = 500;
+  66   4                                      keystatus = 0x08;
+  67   4                              }
+  68   3                      }
+  69   2                      
+  70   2                      if (Safety_KEY)
+  71   2                      {
+  72   3                              Safety_key_debounce = 0;
+  73   3                      }
+  74   2                      else
+  75   2                      {
+  76   3                              Safety_key_debounce++;
+  77   3                              if (Safety_key_debounce > 20)
+  78   3                              {
+  79   4                                      Safety_key_debounce = 20;
+  80   4                                      keystatus |= 0x02;
+  81   4                              }
+  82   3                      }
+  83   2                      
+  84   2                      if (Charging_KEY)
+  85   2                      {
+  86   3                              Charging_key_debounce = 0;
+  87   3                      }
+  88   2                      else
+  89   2                      {
+  90   3                              Charging_key_debounce++;
+  91   3                              if (Charging_key_debounce > 20)
+  92   3                              {
+  93   4                                      Charging_key_debounce = 20;
+  94   4                                      keystatus |= 0x04;
+  95   4                              }
+  96   3                      }
+  97   2              }
+  98   1              return keystatus;
+  99   1      }
+ 100          
+ 101          void EnterDPD(void)
+ 102          {
+ 103   1              //…Ë÷√P17∞¥º¸ªΩ–—
+ 104   1          P17_Input_Mode;
+ 105   1              set_P0S_7;
+ 106   1              Enable_INT_Port1;
+ 107   1              Enable_BIT7_FallEdge_Trig;
+ 108   1          set_EPI;                                                    // Enable pin interrupt
+ 109   1          set_EA;                     
+ 110   1              //dpd
+ 111   1              set_PD;
+ 112   1              
+ 113   1              PICON  = PICON & 0xFE;
+ 114   1      }
 
+
+C51 COMPILER V9.54   KEY                                                                   02/16/2019 16:02:38 PAGE 3   
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    221    ----
+   CODE SIZE        =    228    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
    DATA SIZE        =      6    ----
    IDATA SIZE       =   ----    ----
-C51 COMPILER V9.54   KEY                                                                   02/16/2019 15:04:22 PAGE 3   
-
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
 

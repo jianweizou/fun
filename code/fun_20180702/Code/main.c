@@ -128,7 +128,7 @@ unsigned char getbatlevel(void)
 			adccnt = 0;
 			adcvalue = getadcvalue();
 			i = get_motor_level();
-			if (i == 1)
+			if (i == 4)
 			{
 				adcvalue = adcvalue + 0x20;
 			}
@@ -136,7 +136,7 @@ unsigned char getbatlevel(void)
 			{
 				adcvalue = adcvalue + 0x10;
 			}
-			else if (i == 4)
+			else if (i == 1)
 			{
 				adcvalue = adcvalue + 0x08;
 			}

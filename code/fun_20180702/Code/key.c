@@ -42,12 +42,12 @@ char KeyScan(void)
 		curKey = Fun_KEY_P17;
 		if (curKey != preKey)
 		{
-			preKey = curKey;
-			if (debounce>=600)
+			preKey = curKey;/*
+			if (debounce>=400)
 			{
 				keystatus = 0x08;
 			}
-			else if (debounce > 10)
+			else*/ if (debounce > 10)
 			{
 				keystatus = 1;
 			}	
@@ -56,8 +56,15 @@ char KeyScan(void)
 		else if(curKey == 0)
 		{
 			debounce++;
-			if (debounce >= 600)
-				debounce = 600;
+			if (debounce >= 500)
+			{
+				debounce = 500;
+			}
+			else if (debounce >= 400)
+			{
+				debounce = 500;
+				keystatus = 0x08;
+			}
 		}
 		
 		if (Safety_KEY)

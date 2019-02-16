@@ -52,7 +52,7 @@ void TurnOffMotor(void)
 	
 		P04 = 0;
 }
-
+/*
 unsigned Change_Motor_PWM(void)
 {
 	if (Motor_Level == 0)
@@ -111,6 +111,72 @@ unsigned Change_Motor_PWM(void)
 		set_PWMRUN;		
 	}
 
+	return Motor_Level;
+}*/
+
+unsigned Change_Motor_PWM(void)
+{
+	if (Motor_Level == 0)
+	{
+		isStartMotor = 1;
+		PICON = 0x05;	//port1
+		PINEN  = 0x00;
+		PIPEN = 0x10;	//IO 4
+		set_EPI;							// Enable pin interrupt		
+		
+		Motor_Level = 1;
+		P04 = 1;
+		
+		//enable PWM0
+		PWM0_P12_OUTPUT_ENABLE;
+		
+		PWM_IMDEPENDENT_MODE;
+		PWM_CLOCK_FSYS;
+		PWMPH = 0x03;
+		PWMPL = 0xE7;						//0x3E7 = 16KHZ,	0x290=24.46khz
+		set_SFRPAGE;						//PWM4 and PWM5 duty seting is in SFP page 1
+		PWM0H = 0x01;						
+		PWM0L = 0xF3;
+		clr_SFRPAGE;				
+		set_LOAD;
+
+		//pwm low		
+		set_SFRPAGE;
+		PWM0H = 0x01;						
+		PWM0L = 0x80;	
+		clr_SFRPAGE;
+		set_LOAD;
+		set_PWMRUN;	
+	}
+	else if (Motor_Level == 1)
+	{
+		Motor_Level = 2;
+		//pwm mid
+		set_SFRPAGE;
+		PWM0H = 0x00;						
+		PWM0L = 0xF0;	
+		clr_SFRPAGE;
+		set_LOAD;
+		set_PWMRUN;		
+	}
+	else if (Motor_Level == 2)
+	{
+		Motor_Level = 4;
+		PWM0_P12_OUTPUT_DISABLE;
+		set_SFRPAGE;
+		PWM0H = 0x00;
+		PWM0L = 0x00;	
+		clr_SFRPAGE;
+		set_LOAD;
+		clr_CLRPWM;
+		
+		//High
+		P12 = 0;
+	}
+	else if (Motor_Level == 4)
+	{
+		TurnOffMotor();
+	}
 	return Motor_Level;
 }
 

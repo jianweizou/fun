@@ -78,18 +78,25 @@ void LED_WHITE_Setting(unsigned char led_value,unsigned char led_mode)
 void LED_RGB_Set_value(unsigned char led_value)
 {
 //	LED_R_SETTING(led_value&LEDR);
-	if (led_value&LEDR)
-	{
-		LED_G_SETTING(1);
-		LED_B_SETTING(1);
-	}
-	else
-	{
+//	#warning "need update RGB-LED "
+//	if (led_value&LEDR)
+//	{
+//		LED_G_SETTING(1);
+//		LED_B_SETTING(1);
+//	}
+//	else
+//	{
+//		led_value = led_value >> 1;
+//		LED_B_SETTING(led_value&LEDR);
+//		led_value = led_value >> 1;
+//		LED_G_SETTING(led_value&LEDR);	
+//	}
+		
+		LED_B_SETTING(led_value&LEDB);
 		led_value = led_value >> 1;
-		LED_B_SETTING(led_value&LEDR);
-		led_value = led_value >> 1;
-		LED_G_SETTING(led_value&LEDR);	
-	}
+		LED_G_SETTING(led_value&LEDB);	
+		led_value = led_value >> 1;	
+		LED_R_SETTING(led_value&LEDB);
 }
 void LED_RGB_Setting(unsigned char led_value,unsigned char led_mode)
 {

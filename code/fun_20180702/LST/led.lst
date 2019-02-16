@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   LED                                                                   02/16/2019 15:04:22 PAGE 1   
+C51 COMPILER V9.54   LED                                                                   02/16/2019 16:02:37 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE LED
@@ -62,7 +62,7 @@ line level    source
   52   1              led_rgb_mode = 0;
   53   1      }
   54          
-C51 COMPILER V9.54   LED                                                                   02/16/2019 15:04:22 PAGE 2   
+C51 COMPILER V9.54   LED                                                                   02/16/2019 16:02:37 PAGE 2   
 
   55          /*
   56          led_type:       LED Or RGB(0:1)
@@ -90,77 +90,84 @@ line level    source
   78          void LED_RGB_Set_value(unsigned char led_value)
   79          {
   80   1      //      LED_R_SETTING(led_value&LEDR);
-  81   1              if (led_value&LEDR)
-  82   1              {
-  83   2                      LED_G_SETTING(1);
-  84   2                      LED_B_SETTING(1);
-  85   2              }
-  86   1              else
-  87   1              {
-  88   2                      led_value = led_value >> 1;
-  89   2                      LED_B_SETTING(led_value&LEDR);
-  90   2                      led_value = led_value >> 1;
-  91   2                      LED_G_SETTING(led_value&LEDR);  
-  92   2              }
-  93   1      }
-  94          void LED_RGB_Setting(unsigned char led_value,unsigned char led_mode)
-  95          {
-  96   1              led_rgb_mode = led_mode;
-  97   1              LED_RGB_Set_value(led_value);
-  98   1      }
-  99          
- 100          void LED_Process(unsigned char led_value)
- 101          {
- 102   1              if (led_white_mode == 1)
- 103   1              {
- 104   2                      if (led_display_time == 600)
- 105   2                      {
- 106   3                              led_display_time = 0;
- 107   3                              if (led_white_tog == 0)
- 108   3                              {
- 109   4                                      led_white_tog = 1;
- 110   4                                      led_display_time = 1;
- 111   4                                      LED_WHITE_Set_value(0);
- 112   4                              }
- 113   3                              else
- 114   3                              {
- 115   4                                      led_white_tog = 0;
- 116   4                                      led_display_time = 0;
-C51 COMPILER V9.54   LED                                                                   02/16/2019 15:04:22 PAGE 3   
+  81   1      //      #warning "need update RGB-LED "
+  82   1      //      if (led_value&LEDR)
+  83   1      //      {
+  84   1      //              LED_G_SETTING(1);
+  85   1      //              LED_B_SETTING(1);
+  86   1      //      }
+  87   1      //      else
+  88   1      //      {
+  89   1      //              led_value = led_value >> 1;
+  90   1      //              LED_B_SETTING(led_value&LEDR);
+  91   1      //              led_value = led_value >> 1;
+  92   1      //              LED_G_SETTING(led_value&LEDR);  
+  93   1      //      }
+  94   1                      
+  95   1                      LED_B_SETTING(led_value&LEDB);
+  96   1                      led_value = led_value >> 1;
+  97   1                      LED_G_SETTING(led_value&LEDB);  
+  98   1                      led_value = led_value >> 1;     
+  99   1                      LED_R_SETTING(led_value&LEDB);
+ 100   1      }
+ 101          void LED_RGB_Setting(unsigned char led_value,unsigned char led_mode)
+ 102          {
+ 103   1              led_rgb_mode = led_mode;
+ 104   1              LED_RGB_Set_value(led_value);
+ 105   1      }
+ 106          
+ 107          void LED_Process(unsigned char led_value)
+ 108          {
+ 109   1              if (led_white_mode == 1)
+ 110   1              {
+ 111   2                      if (led_display_time == 600)
+ 112   2                      {
+ 113   3                              led_display_time = 0;
+ 114   3                              if (led_white_tog == 0)
+ 115   3                              {
+ 116   4                                      led_white_tog = 1;
+C51 COMPILER V9.54   LED                                                                   02/16/2019 16:02:37 PAGE 3   
 
- 117   4                                      LED_WHITE_Set_value(led_value);
- 118   4                              }
- 119   3                      }
- 120   2              }
- 121   1              else if (led_white_mode == 2)
- 122   1              {
- 123   2                      if (led_display_time == 200)
- 124   2                      {
- 125   3                              led_display_time = 0;
- 126   3                              if (led_white_tog == 0)
- 127   3                              {
- 128   4                                      led_white_tog = 1;
- 129   4                                      led_display_time = 1;
- 130   4                                      led_value = (led_value<<1) + 1;
- 131   4                                      LED_WHITE_Set_value(led_value);
- 132   4                              }
- 133   3                              else
+ 117   4                                      led_display_time = 1;
+ 118   4                                      LED_WHITE_Set_value(0);
+ 119   4                              }
+ 120   3                              else
+ 121   3                              {
+ 122   4                                      led_white_tog = 0;
+ 123   4                                      led_display_time = 0;
+ 124   4                                      LED_WHITE_Set_value(led_value);
+ 125   4                              }
+ 126   3                      }
+ 127   2              }
+ 128   1              else if (led_white_mode == 2)
+ 129   1              {
+ 130   2                      if (led_display_time == 200)
+ 131   2                      {
+ 132   3                              led_display_time = 0;
+ 133   3                              if (led_white_tog == 0)
  134   3                              {
- 135   4                                      led_white_tog = 0;
- 136   4                                      led_display_time = 0;
- 137   4                                      LED_WHITE_Set_value(led_value);
- 138   4                              }
- 139   3                      }               
- 140   2              }
- 141   1              
- 142   1              if (led_rgb_mode)
- 143   1              {
- 144   2              }
- 145   1      }
+ 135   4                                      led_white_tog = 1;
+ 136   4                                      led_display_time = 1;
+ 137   4                                      led_value = (led_value<<1) + 1;
+ 138   4                                      LED_WHITE_Set_value(led_value);
+ 139   4                              }
+ 140   3                              else
+ 141   3                              {
+ 142   4                                      led_white_tog = 0;
+ 143   4                                      led_display_time = 0;
+ 144   4                                      LED_WHITE_Set_value(led_value);
+ 145   4                              }
+ 146   3                      }               
+ 147   2              }
+ 148   1              
+ 149   1              if (led_rgb_mode)
+ 150   1              {
+ 151   2              }
+ 152   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    211    ----
+   CODE SIZE        =    206    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
