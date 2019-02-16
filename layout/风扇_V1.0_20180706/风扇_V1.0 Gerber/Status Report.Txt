@@ -1,0 +1,14 @@
+Output: NC Drill Files
+Type  : NC Drill
+From  : Project [风扇.PRJPCB]
+   Generated File[风扇-RoundHoles.TXT]
+   Generated File[风扇-SlotHoles.TXT]
+   Generated File[风扇.DRL]
+   Generated File[风扇.LDP]
+   Generated File[风扇.DRR]
+
+
+Files Generated   : 5
+Documents Printed : 0
+
+Finished Output Generation At 16:36:38 On 2018/7/6

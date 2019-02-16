@@ -1,0 +1,2034 @@
+(PCB 风扇_V1.1
+ (description
+  (timeStamp "2018 07 14 08 00 54")
+  (program "CAPTURE.EXE" (Version "16.6.0.d001"))
+  (source "Original data from OrCAD/CAPTURE schematic")
+  (title "风扇")
+  (date "Saturday, July 14, 2018")
+  (document "F:\\WORKPLACE\\风扇\\LAYOUT\\风扇_V1.0_2018071401\\风扇_V1.1.DSN")
+  (revision "V1.1")
+  (organization "")
+  (address1 "")
+  (address2 "")
+  (address3 "")
+  (address4 "")
+  (partvaluecombine "{Value}")
+  (pcbfootprintcombine "{PCB Footprint}"))
+ (structure )
+ (placement
+  (component "USB JACK-B_0"
+   (place CN1
+    (property 
+     (Q151457093 Herry)
+     ("PCB Footprint" "USB-MICRO1")
+     (timestamp 016528AE)
+     ("Source Package" "USB JACK-B_0")
+     (Value "Micro USB"))))
+  (component FSP3301_0
+   (place U6
+    (property 
+     ("PCB Footprint" SOIC8)
+     (timestamp 01649D6B)
+     ("Source Package" FSP3301_0)
+     (Value "ACS712ELCTR-05B-T"))))
+  (component "SA8191 LQFP 48L_3"
+   (place U5
+    (property 
+     ("PCB Footprint" "TSSOP-20")
+     (timestamp 01649529)
+     ("Source Package" "SA8191 LQFP 48L_3")
+     (Value "N76E003 TSSOP20"))))
+  (component "C 10uF/10V"
+   (place C16
+    (property 
+     ("PCB Footprint" "C-0805")
+     (timestamp 016495F3)
+     ("Source Package" "C 10uF/10V")
+     (element_no C0004)
+     (element "嗪筿10u/10V   \"A type\"")
+     (Value 10uF))))
+  (component DIODE_11
+   (place D5
+    (property 
+     ("PCB Footprint" DIODE)
+     (timestamp 01649B54)
+     ("Source Package" DIODE_11)
+     (Value 5V))))
+  (component "CAP NP"
+   (place C1
+    (property 
+     ("PCB Footprint" "C-0603")
+     (timestamp 015FFEBB)
+     ("Source Package" "CAP NP")
+     (Value 0.1uF)))
+   (place C14
+    (property 
+     ("PCB Footprint" "C-0603")
+     (timestamp 01649644)
+     ("Source Package" "CAP NP")
+     (Value 0.1uF)))
+   (place C15
+    (property 
+     ("PCB Footprint" "C-0603")
+     (timestamp 0164964C)
+     ("Source Package" "CAP NP")
+     (Value 1uF))))
+  (component LED_15
+   (place D3
+    (property 
+     ("PCB Footprint" "0603*2-LED")
+     (timestamp 0164F792)
+     ("Source Package" LED_15)
+     (Value LED)))
+   (place D4
+    (property 
+     ("PCB Footprint" "0603*2-LED")
+     (timestamp 0164F83F)
+     ("Source Package" LED_15)
+     (Value LED)))
+   (place D6
+    (property 
+     ("PCB Footprint" "0603*2-LED")
+     (timestamp 0164F884)
+     ("Source Package" LED_15)
+     (Value LED))))
+  (component "R 10K"
+   (place R19
+    (property 
+     ("PCB Footprint" "R-0603")
+     (timestamp 016495CF)
+     ("Source Package" "R 10K")
+     (element_no A0038)
+     (element "10K 5%")
+     (Value 47K)))
+   (place R20
+    (property 
+     ("PCB Footprint" "R-0603")
+     (timestamp 016495EB)
+     ("Source Package" "R 10K")
+     (element_no A0038)
+     (element "10K 5%")
+     (Value 10K))))
+  (component BAT17_0
+   (place D1
+    (property 
+     ("PCB Footprint" DIODE)
+     (PSpiceTemplate "D^@REFDES %1 %2 @MODEL ?AREA/@AREA/")
+     (timestamp 016166D6)
+     ("Source Package" BAT17_0)
+     (Implementation BAT17)
+     (Value 1N5817))))
+  (component LED_16
+   (place D2
+    (property 
+     ("PCB Footprint" "0603*2-LED")
+     (timestamp 01649940)
+     ("Source Package" LED_16)
+     (Value LED))))
+  (component INDUCTOR
+   (place L2
+    (property 
+     ("PCB Footprint" "L-SMD")
+     (timestamp 016166CE)
+     ("Source Package" INDUCTOR)
+     (Value 4.7uH)))
+   (place L3
+    (property 
+     ("PCB Footprint" "L-SMD")
+     (timestamp 01653A32)
+     ("Source Package" INDUCTOR)
+     (Value 4.7uH))))
+  (component TP_Dot
+   (place RST
+    (property 
+     ("PCB Footprint" "TP-1.2")
+     (timestamp 016496BD)
+     ("Source Package" TP_Dot)
+     (Value TP)))
+   (place DAT
+    (property 
+     ("PCB Footprint" "TP-1.2")
+     (timestamp 016496B7)
+     ("Source Package" TP_Dot)
+     (Value TP)))
+   (place GND
+    (property 
+     ("PCB Footprint" "TP-1.2")
+     (timestamp 016496DA)
+     ("Source Package" TP_Dot)
+     (Value TP)))
+   (place VCC
+    (property 
+     ("PCB Footprint" "TP-1.2")
+     (timestamp 016496D4)
+     ("Source Package" TP_Dot)
+     (Value TP)))
+   (place CLK
+    (property 
+     ("PCB Footprint" "TP-1.2")
+     (timestamp 016496C8)
+     ("Source Package" TP_Dot)
+     (Value TP))))
+  (component "PUSH BOTTOM (B)"
+   (place SW1
+    (property 
+     ("PCB Footprint" "K-2P")
+     (timestamp 016495D7)
+     ("Source Package" "PUSH BOTTOM (B)")
+     (element "DIP龄秨闽6X6X5H(堵)")
+     (element_no G0002)
+     (Value "PUSH BOTTOM (B)"))))
+  (component "HEADER 2"
+   (place J1
+    (property 
+     ("PCB Footprint" HED1X2)
+     (timestamp 0163A636)
+     ("Source Package" "HEADER 2")
+     (Value "HEADER 2"))))
+  (component LP28300BSPF1
+   (place U4
+    (property 
+     ("PCB Footprint" ESOP8)
+     (timestamp 016531A7)
+     ("Source Package" LP28300BSPF1)
+     (Value LP28300BSPF))))
+  (component SY8008_2
+   (place U2
+    (property 
+     ("PCB Footprint" "SOT-23-6L")
+     (timestamp 01649074)
+     ("Source Package" SY8008_2)
+     (Value LP6460A))))
+  (component "HEADER 5"
+   (place J2
+    (property 
+     ("PCB Footprint" HED1X5)
+     (timestamp 01649AD1)
+     ("Source Package" "HEADER 5")
+     (Value MOTOR))))
+  (component RESISTOR
+   (place R5
+    (property 
+     ("PCB Footprint" "R-0603")
+     (timestamp 016166C6)
+     ("Source Package" RESISTOR)
+     (Value 750K)))
+   (place R8
+    (property 
+     ("PCB Footprint" "R-0603")
+     (timestamp 016166B2)
+     ("Source Package" RESISTOR)
+     (Value 30K))))
+  (component INDUCTOR_0
+   (place L1
+    (property 
+     ("PCB Footprint" "L-SMD")
+     (timestamp 0164916E)
+     ("Source Package" INDUCTOR_0)
+     (Value 2.2uH))))
+  (component SDB628
+   (place U3
+    (property 
+     ("PCB Footprint" "SOT-23-6L")
+     (timestamp 01653CE4)
+     ("Source Package" SDB628)
+     (Value SDB628))))
+  (component SY8008_3
+   (place U1
+    (property 
+     ("PCB Footprint" "D-PAK")
+     (timestamp 01649301)
+     ("Source Package" SY8008_3)
+     (Value LM7805))))
+  (component "C 0.1u"
+   (place C9
+    (property 
+     ("PCB Footprint" "C-0805")
+     (timestamp 01649286)
+     ("Source Package" "C 0.1u")
+     (element_no D0001)
+     (element "0603 X7R 0.1uF 10% 50V")
+     (Value 10uF)))
+   (place C10
+    (property 
+     ("PCB Footprint" "C-0805")
+     (timestamp 0164926F)
+     ("Source Package" "C 0.1u")
+     (element_no D0001)
+     (element "0603 X7R 0.1uF 10% 50V")
+     (Value 22uF)))
+   (place C11
+    (property 
+     ("PCB Footprint" "C-0603")
+     (timestamp 01649FBF)
+     ("Source Package" "C 0.1u")
+     (element_no D0001)
+     (element "0603 X7R 0.1uF 10% 50V")
+     (Value 0.1uF)))
+   (place C12
+    (property 
+     ("PCB Footprint" "C-0603")
+     (timestamp 01649ED1)
+     ("Source Package" "C 0.1u")
+     (element_no D0001)
+     (element "0603 X7R 0.1uF 10% 50V")
+     (Value 0.01uF)))
+   (place C13
+    (property 
+     ("PCB Footprint" "C-0603")
+     (timestamp 0164A573)
+     ("Source Package" "C 0.1u")
+     (element_no D0001)
+     (element "0603 X7R 0.1uF 10% 50V")
+     (Value 1nF)))
+   (place C17
+    (property 
+     ("PCB Footprint" "C-0805")
+     (timestamp 01653B19)
+     ("Source Package" "C 0.1u")
+     (element_no D0001)
+     (element "0603 X7R 0.1uF 10% 50V")
+     (Value 47nF))))
+  (component CAP
+   (place C2
+    (property 
+     ("PCB Footprint" "C-0603")
+     (timestamp 01649121)
+     ("Source Package" CAP)
+     (Value 10nF)))
+   (place C3
+    (property 
+     ("PCB Footprint" "C-0805")
+     (timestamp 016493B8)
+     ("Source Package" CAP)
+     (Value 10uF)))
+   (place C6
+    (property 
+     ("PCB Footprint" "C-0805")
+     (timestamp 016490C2)
+     ("Source Package" CAP)
+     (Value 22uF)))
+   (place C8
+    (property 
+     ("PCB Footprint" "C-0603")
+     (timestamp 0164942D)
+     ("Source Package" CAP)
+     (Value 0.1uF))))
+  (component SY8008_4
+   (place U7
+    (property 
+     ("PCB Footprint" "SOT-23-5")
+     (timestamp 01649BA4)
+     ("Source Package" SY8008_4)
+     (Value "LM321 SOT23-5"))))
+  (component R
+   (place R25
+    (property 
+     (VOLTAGE RVMAX)
+     ("PCB Footprint" "R-0603")
+     (PSpiceTemplate "R^@REFDES %1 %2 ?TOLERANCE|R^@REFDES| @VALUE  ?TOLERANCE|\\n.model R^@REFDES RES R=1 DEV=@TOLERANCE%|")
+     (timestamp 01649A5F)
+     (DIST FLAT)
+     (SLOPE RSMAX)
+     ("Source Package" R)
+     (Value 330)
+     (MAX_TEMP RTMAX)
+     (POWER RMAX)))
+   (place R26
+    (property 
+     (VOLTAGE RVMAX)
+     ("PCB Footprint" "R-0603")
+     (PSpiceTemplate "R^@REFDES %1 %2 ?TOLERANCE|R^@REFDES| @VALUE  ?TOLERANCE|\\n.model R^@REFDES RES R=1 DEV=@TOLERANCE%|")
+     (timestamp 016532FE)
+     (DIST FLAT)
+     (SLOPE RSMAX)
+     ("Source Package" R)
+     (Value 1k)
+     (MAX_TEMP RTMAX)
+     (POWER RMAX)))
+   (place R27
+    (property 
+     (VOLTAGE RVMAX)
+     ("PCB Footprint" "R-0603")
+     (PSpiceTemplate "R^@REFDES %1 %2 ?TOLERANCE|R^@REFDES| @VALUE  ?TOLERANCE|\\n.model R^@REFDES RES R=1 DEV=@TOLERANCE%|")
+     (timestamp 016534DE)
+     (DIST FLAT)
+     (SLOPE RSMAX)
+     ("Source Package" R)
+     (Value 3.9k)
+     (MAX_TEMP RTMAX)
+     (POWER RMAX)))
+   (place R28
+    (property 
+     (VOLTAGE RVMAX)
+     ("PCB Footprint" "R-0603")
+     (PSpiceTemplate "R^@REFDES %1 %2 ?TOLERANCE|R^@REFDES| @VALUE  ?TOLERANCE|\\n.model R^@REFDES RES R=1 DEV=@TOLERANCE%|")
+     (timestamp 016534E6)
+     (DIST FLAT)
+     (SLOPE RSMAX)
+     ("Source Package" R)
+     (Value 1.1k)
+     (MAX_TEMP RTMAX)
+     (POWER RMAX)))
+   (place R29
+    (property 
+     (VOLTAGE RVMAX)
+     ("PCB Footprint" "R-0603")
+     (PSpiceTemplate "R^@REFDES %1 %2 ?TOLERANCE|R^@REFDES| @VALUE  ?TOLERANCE|\\n.model R^@REFDES RES R=1 DEV=@TOLERANCE%|")
+     (timestamp 016536BF)
+     (DIST FLAT)
+     (SLOPE RSMAX)
+     ("Source Package" R)
+     (Value 100k)
+     (MAX_TEMP RTMAX)
+     (POWER RMAX)))
+   (place R30
+    (property 
+     (VOLTAGE RVMAX)
+     ("PCB Footprint" "R-0603")
+     (PSpiceTemplate "R^@REFDES %1 %2 ?TOLERANCE|R^@REFDES| @VALUE  ?TOLERANCE|\\n.model R^@REFDES RES R=1 DEV=@TOLERANCE%|")
+     (timestamp 016536CC)
+     (DIST FLAT)
+     (SLOPE RSMAX)
+     ("Source Package" R)
+     (Value 100k)
+     (MAX_TEMP RTMAX)
+     (POWER RMAX)))
+   (place R1
+    (property 
+     ("PCB Footprint" "R-0603")
+     (timestamp 015FFEAB)
+     ("Source Package" R)
+     (Value 1M)))
+   (place R31
+    (property 
+     (VOLTAGE RVMAX)
+     ("PCB Footprint" "R-0603")
+     (PSpiceTemplate "R^@REFDES %1 %2 ?TOLERANCE|R^@REFDES| @VALUE  ?TOLERANCE|\\n.model R^@REFDES RES R=1 DEV=@TOLERANCE%|")
+     (timestamp 01653AF8)
+     (DIST FLAT)
+     (SLOPE RSMAX)
+     ("Source Package" R)
+     (Value 50mR)
+     (MAX_TEMP RTMAX)
+     (POWER RMAX)))
+   (place R2
+    (property 
+     ("PCB Footprint" "R-0603")
+     (timestamp 015FFEB3)
+     ("Source Package" R)
+     (Value 1M)))
+   (place R3
+    (property 
+     (VOLTAGE RVMAX)
+     ("PCB Footprint" "R-0603")
+     (PSpiceTemplate "R^@REFDES %1 %2 ?TOLERANCE|R^@REFDES| @VALUE  ?TOLERANCE|\\n.model R^@REFDES RES R=1 DEV=@TOLERANCE%|")
+     (timestamp 01649196)
+     (DIST FLAT)
+     (SLOPE RSMAX)
+     ("Source Package" R)
+     (Value 190k)
+     (MAX_TEMP RTMAX)
+     (POWER RMAX)))
+   (place R4
+    (property 
+     (VOLTAGE RVMAX)
+     ("PCB Footprint" "R-0603")
+     (PSpiceTemplate "R^@REFDES %1 %2 ?TOLERANCE|R^@REFDES| @VALUE  ?TOLERANCE|\\n.model R^@REFDES RES R=1 DEV=@TOLERANCE%|")
+     (timestamp 016490DB)
+     (DIST FLAT)
+     (SLOPE RSMAX)
+     ("Source Package" R)
+     (Value 1k)
+     (MAX_TEMP RTMAX)
+     (POWER RMAX)))
+   (place R6
+    (property 
+     (VOLTAGE RVMAX)
+     ("PCB Footprint" "R-0603")
+     (PSpiceTemplate "R^@REFDES %1 %2 ?TOLERANCE|R^@REFDES| @VALUE  ?TOLERANCE|\\n.model R^@REFDES RES R=1 DEV=@TOLERANCE%|")
+     (timestamp 016491A0)
+     (DIST FLAT)
+     (SLOPE RSMAX)
+     ("Source Package" R)
+     (Value 10k)
+     (MAX_TEMP RTMAX)
+     (POWER RMAX)))
+   (place R7
+    (property 
+     (VOLTAGE RVMAX)
+     ("PCB Footprint" "R-0603")
+     (PSpiceTemplate "R^@REFDES %1 %2 ?TOLERANCE|R^@REFDES| @VALUE  ?TOLERANCE|\\n.model R^@REFDES RES R=1 DEV=@TOLERANCE%|")
+     (timestamp 0164924C)
+     (DIST FLAT)
+     (SLOPE RSMAX)
+     ("Source Package" R)
+     (Value 2k)
+     (MAX_TEMP RTMAX)
+     (POWER RMAX)))
+   (place R9
+    (property 
+     (VOLTAGE RVMAX)
+     ("PCB Footprint" "R-0603")
+     (PSpiceTemplate "R^@REFDES %1 %2 ?TOLERANCE|R^@REFDES| @VALUE  ?TOLERANCE|\\n.model R^@REFDES RES R=1 DEV=@TOLERANCE%|")
+     (timestamp 016499AE)
+     (DIST FLAT)
+     (SLOPE RSMAX)
+     ("Source Package" R)
+     (Value 330)
+     (MAX_TEMP RTMAX)
+     (POWER RMAX)))
+   (place R10
+    (property 
+     (VOLTAGE RVMAX)
+     ("PCB Footprint" "R-0603")
+     (PSpiceTemplate "R^@REFDES %1 %2 ?TOLERANCE|R^@REFDES| @VALUE  ?TOLERANCE|\\n.model R^@REFDES RES R=1 DEV=@TOLERANCE%|")
+     (timestamp 01649A0A)
+     (DIST FLAT)
+     (SLOPE RSMAX)
+     ("Source Package" R)
+     (Value 330)
+     (MAX_TEMP RTMAX)
+     (POWER RMAX)))
+   (place R11
+    (property 
+     (VOLTAGE RVMAX)
+     ("PCB Footprint" "R-0603")
+     (PSpiceTemplate "R^@REFDES %1 %2 ?TOLERANCE|R^@REFDES| @VALUE  ?TOLERANCE|\\n.model R^@REFDES RES R=1 DEV=@TOLERANCE%|")
+     (timestamp 016499C9)
+     (DIST FLAT)
+     (SLOPE RSMAX)
+     ("Source Package" R)
+     (Value 330)
+     (MAX_TEMP RTMAX)
+     (POWER RMAX)))
+   (place R12
+    (property 
+     (VOLTAGE RVMAX)
+     ("PCB Footprint" "R-0603")
+     (PSpiceTemplate "R^@REFDES %1 %2 ?TOLERANCE|R^@REFDES| @VALUE  ?TOLERANCE|\\n.model R^@REFDES RES R=1 DEV=@TOLERANCE%|")
+     (timestamp 0164A600)
+     (DIST FLAT)
+     (SLOPE RSMAX)
+     ("Source Package" R)
+     (Value 100k)
+     (MAX_TEMP RTMAX)
+     (POWER RMAX)))
+   (place R13
+    (property 
+     (VOLTAGE RVMAX)
+     ("PCB Footprint" "R-0603")
+     (PSpiceTemplate "R^@REFDES %1 %2 ?TOLERANCE|R^@REFDES| @VALUE  ?TOLERANCE|\\n.model R^@REFDES RES R=1 DEV=@TOLERANCE%|")
+     (timestamp 0164A608)
+     (DIST FLAT)
+     (SLOPE RSMAX)
+     ("Source Package" R)
+     (Value 100k)
+     (MAX_TEMP RTMAX)
+     (POWER RMAX)))
+   (place R14
+    (property 
+     (VOLTAGE RVMAX)
+     ("PCB Footprint" "R-0603")
+     (PSpiceTemplate "R^@REFDES %1 %2 ?TOLERANCE|R^@REFDES| @VALUE  ?TOLERANCE|\\n.model R^@REFDES RES R=1 DEV=@TOLERANCE%|")
+     (timestamp 01649A27)
+     (DIST FLAT)
+     (SLOPE RSMAX)
+     ("Source Package" R)
+     (Value 330)
+     (MAX_TEMP RTMAX)
+     (POWER RMAX)))
+   (place R15
+    (property 
+     (VOLTAGE RVMAX)
+     ("PCB Footprint" "R-0603")
+     (PSpiceTemplate "R^@REFDES %1 %2 ?TOLERANCE|R^@REFDES| @VALUE  ?TOLERANCE|\\n.model R^@REFDES RES R=1 DEV=@TOLERANCE%|")
+     (timestamp 01649B17)
+     (DIST FLAT)
+     (SLOPE RSMAX)
+     ("Source Package" R)
+     (Value 4.7k)
+     (MAX_TEMP RTMAX)
+     (POWER RMAX)))
+   (place R16
+    (property 
+     (VOLTAGE RVMAX)
+     ("PCB Footprint" "R-0603")
+     (PSpiceTemplate "R^@REFDES %1 %2 ?TOLERANCE|R^@REFDES| @VALUE  ?TOLERANCE|\\n.model R^@REFDES RES R=1 DEV=@TOLERANCE%|")
+     (timestamp 0164A5A8)
+     (DIST FLAT)
+     (SLOPE RSMAX)
+     ("Source Package" R)
+     (Value 1k)
+     (MAX_TEMP RTMAX)
+     (POWER RMAX)))
+   (place R17
+    (property 
+     (VOLTAGE RVMAX)
+     ("PCB Footprint" "R-0603")
+     (PSpiceTemplate "R^@REFDES %1 %2 ?TOLERANCE|R^@REFDES| @VALUE  ?TOLERANCE|\\n.model R^@REFDES RES R=1 DEV=@TOLERANCE%|")
+     (timestamp 016499DB)
+     (DIST FLAT)
+     (SLOPE RSMAX)
+     ("Source Package" R)
+     (Value 330)
+     (MAX_TEMP RTMAX)
+     (POWER RMAX)))
+   (place R18
+    (property 
+     (VOLTAGE RVMAX)
+     ("PCB Footprint" "R-0603")
+     (PSpiceTemplate "R^@REFDES %1 %2 ?TOLERANCE|R^@REFDES| @VALUE  ?TOLERANCE|\\n.model R^@REFDES RES R=1 DEV=@TOLERANCE%|")
+     (timestamp 0164A553)
+     (DIST FLAT)
+     (SLOPE RSMAX)
+     ("Source Package" R)
+     (Value 3.1k)
+     (MAX_TEMP RTMAX)
+     (POWER RMAX)))
+   (place R21
+    (property 
+     (VOLTAGE RVMAX)
+     ("PCB Footprint" "R-0603")
+     (PSpiceTemplate "R^@REFDES %1 %2 ?TOLERANCE|R^@REFDES| @VALUE  ?TOLERANCE|\\n.model R^@REFDES RES R=1 DEV=@TOLERANCE%|")
+     (timestamp 01649A36)
+     (DIST FLAT)
+     (SLOPE RSMAX)
+     ("Source Package" R)
+     (Value 330)
+     (MAX_TEMP RTMAX)
+     (POWER RMAX)))
+   (place R22
+    (property 
+     (VOLTAGE RVMAX)
+     ("PCB Footprint" "R-0603")
+     (PSpiceTemplate "R^@REFDES %1 %2 ?TOLERANCE|R^@REFDES| @VALUE  ?TOLERANCE|\\n.model R^@REFDES RES R=1 DEV=@TOLERANCE%|")
+     (timestamp 016499ED)
+     (DIST FLAT)
+     (SLOPE RSMAX)
+     ("Source Package" R)
+     (Value 330)
+     (MAX_TEMP RTMAX)
+     (POWER RMAX)))
+   (place R23
+    (property 
+     (VOLTAGE RVMAX)
+     ("PCB Footprint" "R-0603")
+     (PSpiceTemplate "R^@REFDES %1 %2 ?TOLERANCE|R^@REFDES| @VALUE  ?TOLERANCE|\\n.model R^@REFDES RES R=1 DEV=@TOLERANCE%|")
+     (timestamp 01649BD6)
+     (DIST FLAT)
+     (SLOPE RSMAX)
+     ("Source Package" R)
+     (Value NC/4.7k)
+     (MAX_TEMP RTMAX)
+     (POWER RMAX)))
+   (place R24
+    (property 
+     (VOLTAGE RVMAX)
+     ("PCB Footprint" "R-0603")
+     (PSpiceTemplate "R^@REFDES %1 %2 ?TOLERANCE|R^@REFDES| @VALUE  ?TOLERANCE|\\n.model R^@REFDES RES R=1 DEV=@TOLERANCE%|")
+     (timestamp 01649BF0)
+     (DIST FLAT)
+     (SLOPE RSMAX)
+     ("Source Package" R)
+     (Value 4.7k/NC)
+     (MAX_TEMP RTMAX)
+     (POWER RMAX))))
+  (component C
+   (place C4
+    (property 
+     ("PCB Footprint" "C-0805")
+     (timestamp 01616702)
+     ("Source Package" C)
+     (Value 22uF)))
+   (place C5
+    (property 
+     ("PCB Footprint" "C-0805")
+     (timestamp 016166AA)
+     ("Source Package" C)
+     (Value 22uF)))
+   (place C7
+    (property 
+     ("PCB Footprint" "C-1206")
+     (timestamp 01649114)
+     ("Source Package" C)
+     (Value 47uF)))))
+ (library
+  (image R
+   (property 
+    (sourcelib C:\\ORCAD\\ORCAD_15.7\\TOOLS\\CAPTURE\\LIBRARY\\PSPICE\\ANALOG.OLB)
+    (POWER RMAX)
+    (MAX_TEMP RTMAX)
+    (SLOPE RSMAX)
+    (VOLTAGE RVMAX)
+    (PSpiceTemplate "R^@REFDES %1 %2 ?TOLERANCE|R^@REFDES| @VALUE  ?TOLERANCE|\\n.model R^@REFDES RES R=1 DEV=@TOLERANCE%|")
+    (DIST FLAT))
+   (pin 999 2
+    (property 
+     (pinname 2)
+     (pintype 4)
+     (Name 2)
+     (Number 2)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" N23370360)
+     (Order 0)
+     ("Is No Connect" False)))
+   (pin 999 1
+    (property 
+     (pinname 1)
+     (pintype 4)
+     (Name 1)
+     (Number 1)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" R4)
+     (Order 1)
+     ("Is No Connect" False))))
+  (image TP_Dot
+   (property 
+    (sourcelib "D:\\ORCAD LIBRARY_SKYVIIA\\SKYVIIA_R240_LIB.OLB")
+    ("PCB Footprint" "DIP D1.0"))
+   (pin 999 1
+    (property 
+     (pinname 1)
+     (pintype 4)
+     (Name 1)
+     (Number 1)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" TICERST)
+     (Order 0)
+     ("Is No Connect" False))))
+  (image SY8008_3
+   (property 
+    (sourcelib F:\\WORKPLACE\\风扇\\LAYOUT\\风扇.DSN))
+   (pin 999 1
+    (property 
+     (pinname INPUT)
+     (pintype 4)
+     (Name INPUT)
+     (Number 1)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" VDD_15_6V)
+     (Order 0)
+     ("Is No Connect" False)))
+   (pin 999 2
+    (property 
+     (pinname GND)
+     (pintype 4)
+     (Name GND)
+     (Number 2)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" GND)
+     (Order 1)
+     ("Is No Connect" False)))
+   (pin 999 3
+    (property 
+     (pinname OUTPUT)
+     (pintype 4)
+     (Name OUTPUT)
+     (Number 3)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" VDD_5V)
+     (Order 2)
+     ("Is No Connect" False))))
+  (image SY8008_2
+   (property 
+    (sourcelib F:\\WORKPLACE\\风扇\\LAYOUT\\风扇.DSN))
+   (pin 999 1
+    (property 
+     (pinname BS)
+     (pintype 4)
+     (Name BS)
+     (Number 1)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" N23367985)
+     (Order 0)
+     ("Is No Connect" False)))
+   (pin 999 2
+    (property 
+     (pinname GND)
+     (pintype 4)
+     (Name GND)
+     (Number 2)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" GND)
+     (Order 1)
+     ("Is No Connect" False)))
+   (pin 999 3
+    (property 
+     (pinname FB)
+     (pintype 4)
+     (Name FB)
+     (Number 3)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" N23368069)
+     (Order 2)
+     ("Is No Connect" False)))
+   (pin 999 4
+    (property 
+     (pinname EN)
+     (pintype 4)
+     (Name EN)
+     (Number 4)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" N23367902)
+     (Order 3)
+     ("Is No Connect" False)))
+   (pin 999 5
+    (property 
+     (pinname VIN)
+     (pintype 4)
+     (Name VIN)
+     (Number 5)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" VDD_15_6V)
+     (Order 4)
+     ("Is No Connect" False)))
+   (pin 999 6
+    (property 
+     (pinname SW)
+     (pintype 4)
+     (Name SW)
+     (Number 6)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" N23367939)
+     (Order 5)
+     ("Is No Connect" False))))
+  (image SDB628
+   (property 
+    (sourcelib C:\\CADENCE\\SPB_16.6\\TOOLS\\CAPTURE\\LIBRARY\\MYLIB.OLB))
+   (pin 999 1
+    (property 
+     (pinname SW)
+     (pintype 4)
+     (Name SW)
+     (Number 1)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" N23160568)
+     (Order 0)
+     ("Is No Connect" False)))
+   (pin 999 2
+    (property 
+     (pinname GND)
+     (pintype 4)
+     (Name GND)
+     (Number 2)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" GND)
+     (Order 1)
+     ("Is No Connect" False)))
+   (pin 999 3
+    (property 
+     (pinname FB)
+     (pintype 4)
+     (Name FB)
+     (Number 3)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" N23160559)
+     (Order 2)
+     ("Is No Connect" False)))
+   (pin 999 4
+    (property 
+     (pinname EN)
+     (pintype 4)
+     (Name EN)
+     (Number 4)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" 7.4V)
+     (Order 3)
+     ("Is No Connect" False)))
+   (pin 999 5
+    (property 
+     (pinname IN)
+     (pintype 4)
+     (Name IN)
+     (Number 5)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" 7.4V)
+     (Order 4)
+     ("Is No Connect" False)))
+   (pin 999 6
+    (property 
+     (pinname NC)
+     (pintype 4)
+     (Name NC)
+     (Number 6)
+     ("Swap Id" "-1")
+     (Type Passive)
+     (Order 5)
+     ("Is No Connect" False))))
+  (image LP28300BSPF1
+   (property 
+    (sourcelib C:\\CADENCE\\SPB_16.6\\TOOLS\\CAPTURE\\LIBRARY\\MYLIB.OLB))
+   (pin 999 1
+    (property 
+     (pinname SW)
+     (pintype 4)
+     (Name SW)
+     (Number 1)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" N23411253)
+     (Order 0)
+     ("Is No Connect" False)))
+   (pin 999 2
+    (property 
+     (pinname BST)
+     (pintype 4)
+     (Name BST)
+     (Number 2)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" N23411484)
+     (Order 1)
+     ("Is No Connect" False)))
+   (pin 999 3
+    (property 
+     (pinname STAT)
+     (pintype 4)
+     (Name STAT)
+     (Number 3)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" N23368260)
+     (Order 2)
+     ("Is No Connect" False)))
+   (pin 999 4
+    (property 
+     (pinname NTC)
+     (pintype 4)
+     (Name NTC)
+     (Number 4)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" N23410401)
+     (Order 3)
+     ("Is No Connect" False)))
+   (pin 999 5
+    (property 
+     (pinname BAT)
+     (pintype 4)
+     (Name BAT)
+     (Number 5)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" 7.4V)
+     (Order 4)
+     ("Is No Connect" False)))
+   (pin 999 6
+    (property 
+     (pinname RS)
+     (pintype 4)
+     (Name RS)
+     (Number 6)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" RS)
+     (Order 5)
+     ("Is No Connect" False)))
+   (pin 999 7
+    (property 
+     (pinname REG)
+     (pintype 4)
+     (Name REG)
+     (Number 7)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" N23409971)
+     (Order 6)
+     ("Is No Connect" False)))
+   (pin 999 8
+    (property 
+     (pinname VIN)
+     (pintype 4)
+     (Name VIN)
+     (Number 8)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" 5V)
+     (Order 7)
+     ("Is No Connect" False))))
+  (image "SA8191 LQFP 48L_3"
+   (property 
+    (sourcelib C:\\USERS\\JINGWEN_WANG\\DESKTOP\\工作资料\\N76E003_V1.0\\N76E003_V1.0.DSN))
+   (pin 999 2
+    (property 
+     (pinname P0.6/AIN3/TXD)
+     (pintype 4)
+     (Name P0.6/AIN3/TXD)
+     (Number 2)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" EN_12V)
+     (Order 0)
+     ("Is No Connect" False)))
+   (pin 999 3
+    (property 
+     (pinname P0.7/AIN2/RXD)
+     (pintype 4)
+     (Name P0.7/AIN2/RXD)
+     (Number 3)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" DET_BAT)
+     (Order 1)
+     ("Is No Connect" True)))
+   (pin 999 4
+    (property 
+     (pinname P2.0/R\\S\\T\\)
+     (pintype 4)
+     (Name P2.0/R\\S\\T\\)
+     (Number 4)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" TICERST)
+     (Order 2)
+     ("Is No Connect" False)))
+   (pin 999 5
+    (property 
+     (pinname P3.0/AIN1/OSCIN/I\\N\\T\\0\\)
+     (pintype 4)
+     (Name P3.0/AIN1/OSCIN/I\\N\\T\\0\\)
+     (Number 5)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" V_MOTOR)
+     (Order 3)
+     ("Is No Connect" True)))
+   (pin 999 6
+    (property 
+     (pinname P1.7/AIN0/I\\N\\T\\1\\)
+     (pintype 4)
+     (Name P1.7/AIN0/I\\N\\T\\1\\)
+     (Number 6)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" KEY)
+     (Order 4)
+     ("Is No Connect" False)))
+   (pin 999 7
+    (property 
+     (pinname GND)
+     (pintype 4)
+     (Name GND)
+     (Number 7)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" GND)
+     (Order 5)
+     ("Is No Connect" False)))
+   (pin 999 8
+    (property 
+     (pinname P1.6/OCDDA/ICPDA/TXD_1/[SDA])
+     (pintype 4)
+     (Name P1.6/OCDDA/ICPDA/TXD_1/[SDA])
+     (Number 8)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" TICEDAT)
+     (Order 6)
+     ("Is No Connect" False)))
+   (pin 999 9
+    (property 
+     (pinname VDD)
+     (pintype 4)
+     (Name VDD)
+     (Number 9)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" VDD_5V)
+     (Order 7)
+     ("Is No Connect" False)))
+   (pin 999 10
+    (property 
+     (pinname P1.5/S\\S\\/IC7/PWM5)
+     (pintype 4)
+     (Name P1.5/S\\S\\/IC7/PWM5)
+     (Number 10)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" PWM)
+     (Order 8)
+     ("Is No Connect" True)))
+   (pin 999 11
+    (property 
+     (pinname PWM1/FB/SDA/P1.4)
+     (pintype 4)
+     (Name PWM1/FB/SDA/P1.4)
+     (Number 11)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" R1)
+     (Order 9)
+     ("Is No Connect" False)))
+   (pin 999 19
+    (property 
+     (pinname AIN6/IC5/PWM5/P0.3)
+     (pintype 4)
+     (Name AIN6/IC5/PWM5/P0.3)
+     (Number 19)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" B2)
+     (Order 10)
+     ("Is No Connect" True)))
+   (pin 999 12
+    (property 
+     (pinname [STADC]/SCL/P1.3)
+     (pintype 4)
+     (Name [STADC]/SCL/P1.3)
+     (Number 12)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" R2)
+     (Order 11)
+     ("Is No Connect" False)))
+   (pin 999 13
+    (property 
+     (pinname IC0/PWM0/P1.2)
+     (pintype 4)
+     (Name IC0/PWM0/P1.2)
+     (Number 13)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" R3)
+     (Order 12)
+     ("Is No Connect" False)))
+   (pin 999 14
+    (property 
+     (pinname CLO/AIN7/IC1/PWM1/P1.1)
+     (pintype 4)
+     (Name CLO/AIN7/IC1/PWM1/P1.1)
+     (Number 14)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" R4)
+     (Order 13)
+     ("Is No Connect" True)))
+   (pin 999 15
+    (property 
+     (pinname SPCLK/IC2/PWM2/P1.0)
+     (pintype 4)
+     (Name SPCLK/IC2/PWM2/P1.0)
+     (Number 15)
+     ("Swap Id" "-1")
+     (Type Passive)
+     (Order 14)
+     ("Is No Connect" True)))
+   (pin 999 16
+    (property 
+     (pinname T1/MOSI/IC3/PWM3/P0.0)
+     (pintype 4)
+     (Name T1/MOSI/IC3/PWM3/P0.0)
+     (Number 16)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" B4)
+     (Order 15)
+     ("Is No Connect" True)))
+   (pin 999 17
+    (property 
+     (pinname MISO/IC4/PWM4/P0.1)
+     (pintype 4)
+     (Name MISO/IC4/PWM4/P0.1)
+     (Number 17)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" B3)
+     (Order 16)
+     ("Is No Connect" True)))
+   (pin 999 18
+    (property 
+     (pinname [SCL]/RXD_1/OCDCK/ICPCK/P0.2)
+     (pintype 4)
+     (Name [SCL]/RXD_1/OCDCK/ICPCK/P0.2)
+     (Number 18)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" P18)
+     (Order 17)
+     ("Is No Connect" False)))
+   (pin 999 20
+    (property 
+     (pinname IC3/PWM3/STADC/AIN5/P0.4)
+     (pintype 4)
+     (Name IC3/PWM3/STADC/AIN5/P0.4)
+     (Number 20)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" B1)
+     (Order 18)
+     ("Is No Connect" True)))
+   (pin 999 1
+    (property 
+     (pinname P0.5/AIN4/T0/IC6/PWM2)
+     (pintype 4)
+     (Name P0.5/AIN4/T0/IC6/PWM2)
+     (Number 1)
+     ("Swap Id" "-1")
+     (Type Passive)
+     (Order 19)
+     ("Is No Connect" True))))
+  (image FSP3301_0
+   (property 
+    (sourcelib F:\\WORKPLACE\\风扇\\LAYOUT\\风扇.DSN))
+   (pin 999 1
+    (property 
+     (pinname IP+)
+     (pintype 4)
+     (Name IP+)
+     (Number 1)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" VDD_12V)
+     (Order 0)
+     ("Is No Connect" False)))
+   (pin 999 8
+    (property 
+     (pinname VCC)
+     (pintype 4)
+     (Name VCC)
+     (Number 8)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" VDD_5V)
+     (Order 1)
+     ("Is No Connect" False)))
+   (pin 999 2
+    (property 
+     (pinname IP+)
+     (pintype 4)
+     (Name IP+)
+     (Number 2)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" VDD_12V)
+     (Order 2)
+     ("Is No Connect" False)))
+   (pin 999 7
+    (property 
+     (pinname VIOUT)
+     (pintype 4)
+     (Name VIOUT)
+     (Number 7)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" VIOUT)
+     (Order 3)
+     ("Is No Connect" False)))
+   (pin 999 3
+    (property 
+     (pinname "IP-")
+     (pintype 4)
+     (Name "IP-")
+     (Number 3)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" "IP-")
+     (Order 4)
+     ("Is No Connect" False)))
+   (pin 999 6
+    (property 
+     (pinname FITLTER)
+     (pintype 4)
+     (Name FITLTER)
+     (Number 6)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" N23371476)
+     (Order 5)
+     ("Is No Connect" False)))
+   (pin 999 4
+    (property 
+     (pinname "IP-")
+     (pintype 4)
+     (Name "IP-")
+     (Number 4)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" "IP-")
+     (Order 6)
+     ("Is No Connect" False)))
+   (pin 999 5
+    (property 
+     (pinname GND)
+     (pintype 4)
+     (Name GND)
+     (Number 5)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" GND)
+     (Order 7)
+     ("Is No Connect" False))))
+  (image SY8008_4
+   (property 
+    (sourcelib F:\\WORKPLACE\\风扇\\LAYOUT\\风扇.DSN))
+   (pin 999 1
+    (property 
+     (pinname +IN)
+     (pintype 4)
+     (Name +IN)
+     (Number 1)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" N23373354)
+     (Order 0)
+     ("Is No Connect" False)))
+   (pin 999 2
+    (property 
+     (pinname "V-")
+     (pintype 4)
+     (Name "V-")
+     (Number 2)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" GND)
+     (Order 1)
+     ("Is No Connect" False)))
+   (pin 999 3
+    (property 
+     (pinname "-IN")
+     (pintype 4)
+     (Name "-IN")
+     (Number 3)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" N23373152)
+     (Order 2)
+     ("Is No Connect" False)))
+   (pin 999 4
+    (property 
+     (pinname OUTPUT)
+     (pintype 4)
+     (Name OUTPUT)
+     (Number 4)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" V_MOTOR)
+     (Order 3)
+     ("Is No Connect" False)))
+   (pin 999 5
+    (property 
+     (pinname VDD)
+     (pintype 4)
+     (Name VDD)
+     (Number 5)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" VDD_5V)
+     (Order 4)
+     ("Is No Connect" False))))
+  (image INDUCTOR_0
+   (property 
+    (sourcelib F:\\工作资料\\风扇\\风扇.DSN))
+   (pin 999 1
+    (property 
+     (pinname 1)
+     (pintype 4)
+     (Name 1)
+     (Number 1)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" N23367939)
+     (Order 0)
+     ("Is No Connect" False)))
+   (pin 999 2
+    (property 
+     (pinname 2)
+     (pintype 4)
+     (Name 2)
+     (Number 2)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" VDD_12V)
+     (Order 1)
+     ("Is No Connect" False))))
+  (image RESISTOR
+   (property 
+    (sourcelib C:\\CADENCE\\ORCAD_9.2.3\\TOOLS\\CAPTURE\\LIBRARY\\DISCRETE.OLB))
+   (pin 999 1
+    (property 
+     (pinname 1)
+     (pintype 4)
+     (Name 1)
+     (Number 1)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" N23160559)
+     (Order 0)
+     ("Is No Connect" False)))
+   (pin 999 2
+    (property 
+     (pinname 2)
+     (pintype 4)
+     (Name 2)
+     (Number 2)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" VDD_15_6V)
+     (Order 1)
+     ("Is No Connect" False))))
+  (image INDUCTOR
+   (property 
+    (sourcelib "C:\\PROGRAM FILES\\ORCAD\\CAPTURE\\LIBRARY\\DISCRETE.OLB"))
+   (pin 999 1
+    (property 
+     (pinname 1)
+     (pintype 4)
+     (Name 1)
+     (Number 1)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" 7.4V)
+     (Order 0)
+     ("Is No Connect" False)))
+   (pin 999 2
+    (property 
+     (pinname 2)
+     (pintype 4)
+     (Name 2)
+     (Number 2)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" N23160568)
+     (Order 1)
+     ("Is No Connect" False))))
+  (image "USB JACK-B_0"
+   (property 
+    (sourcelib G:\\工作资料\\智能水杯\\智能水杯.DSN)
+    (Q151457093 Herry))
+   (pin 999 1
+    (property 
+     (pinname VBUS)
+     (pintype 4)
+     (Name VBUS)
+     (Number 1)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" 5V)
+     (Order 0)
+     ("Is No Connect" False)))
+   (pin 999 2
+    (property 
+     (pinname "D-")
+     (pintype 4)
+     (Name "D-")
+     (Number 2)
+     ("Swap Id" "-1")
+     (Type Passive)
+     (Order 1)
+     ("Is No Connect" True)))
+   (pin 999 3
+    (property 
+     (pinname D+)
+     (pintype 4)
+     (Name D+)
+     (Number 3)
+     ("Swap Id" "-1")
+     (Type Passive)
+     (Order 2)
+     ("Is No Connect" True)))
+   (pin 999 4
+    (property 
+     (pinname ID)
+     (pintype 4)
+     (Name ID)
+     (Number 4)
+     ("Swap Id" "-1")
+     (Type Passive)
+     (Order 3)
+     ("Is No Connect" True)))
+   (pin 999 5
+    (property 
+     (pinname GND)
+     (pintype 4)
+     (Name GND)
+     (Number 5)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" GND)
+     (Order 4)
+     ("Is No Connect" False))))
+  (image "CAP NP"
+   (property 
+    (sourcelib C:\\CADENCE\\SPB_16.3\\TOOLS\\CAPTURE\\LIBRARY\\DISCRETE.OLB))
+   (pin 999 1
+    (property 
+     (pinname 1)
+     (pintype 4)
+     (Name 1)
+     (Number 1)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" GND)
+     (Order 0)
+     ("Is No Connect" False)))
+   (pin 999 2
+    (property 
+     (pinname 2)
+     (pintype 4)
+     (Name 2)
+     (Number 2)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" DET_BAT)
+     (Order 1)
+     ("Is No Connect" False))))
+  (image CAP
+   (property 
+    (sourcelib E:\\GEMTEK\\GEMTEK_DISCRETE.OLB))
+   (pin 999 1
+    (property 
+     (pinname 1)
+     (pintype 4)
+     (Name 1)
+     (Number 1)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" N23367985)
+     (Order 0)
+     ("Is No Connect" False)))
+   (pin 999 2
+    (property 
+     (pinname 2)
+     (pintype 4)
+     (Name 2)
+     (Number 2)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" N23367939)
+     (Order 1)
+     ("Is No Connect" False))))
+  (image C
+   (property 
+    (sourcelib "C:\\PROGRAM FILES\\ORCAD\\CAPTURE\\LIBRARY\\DISCRETE.OLB"))
+   (pin 999 1
+    (property 
+     (pinname 1)
+     (pintype 4)
+     (Name 1)
+     (Number 1)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" VDD_15_6V)
+     (Order 0)
+     ("Is No Connect" False)))
+   (pin 999 2
+    (property 
+     (pinname 2)
+     (pintype 4)
+     (Name 2)
+     (Number 2)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" GND)
+     (Order 1)
+     ("Is No Connect" False))))
+  (image "C 0.1u"
+   (property 
+    (sourcelib "C:\\USERS\\CTWU\\DESKTOP\\NEW FOLDER (8)\\NEW FOLDER\\NEW FOLDER\\NUTINY-1008\\NEW FOLDER\\NUTINY-1011\\NUVOTON MU30.OLB")
+    (element "0603 X7R 0.1uF 10% 50V")
+    (element_no D0001))
+   (pin 999 1
+    (property 
+     (pinname 1)
+     (pintype 4)
+     (Name 1)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" 5V)
+     (Order 0)
+     ("Is No Connect" False)))
+   (pin 999 2
+    (property 
+     (pinname 2)
+     (pintype 4)
+     (Name 2)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" GND)
+     (Order 1)
+     ("Is No Connect" False))))
+  (image "HEADER 2"
+   (property 
+    (sourcelib C:\\CADENCE\\PSD_14.1\\CAPTURE\\LIBRARY\\CONNECTOR.OLB))
+   (pin 999 1
+    (property 
+     (pinname 1)
+     (pintype 4)
+     (Name 1)
+     (Number 1)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" 7.4V)
+     (Order 0)
+     ("Is No Connect" False)))
+   (pin 999 2
+    (property 
+     (pinname 2)
+     (pintype 4)
+     (Name 2)
+     (Number 2)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" GND)
+     (Order 1)
+     ("Is No Connect" False))))
+  (image "HEADER 5"
+   (property 
+    (sourcelib C:\\CADENCE\\PSD_14.1\\CAPTURE\\LIBRARY\\CONNECTOR.OLB))
+   (pin 999 1
+    (property 
+     (pinname 1)
+     (pintype 4)
+     (Name 1)
+     (Number 1)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" GND)
+     (Order 0)
+     ("Is No Connect" False)))
+   (pin 999 2
+    (property 
+     (pinname 2)
+     (pintype 4)
+     (Name 2)
+     (Number 2)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" "IP-")
+     (Order 1)
+     ("Is No Connect" False)))
+   (pin 999 3
+    (property 
+     (pinname 3)
+     (pintype 4)
+     (Name 3)
+     (Number 3)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" FG)
+     (Order 2)
+     ("Is No Connect" False)))
+   (pin 999 4
+    (property 
+     (pinname 4)
+     (pintype 4)
+     (Name 4)
+     (Number 4)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" PWM)
+     (Order 3)
+     ("Is No Connect" False)))
+   (pin 999 5
+    (property 
+     (pinname 5)
+     (pintype 4)
+     (Name 5)
+     (Number 5)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" N23370702)
+     (Order 4)
+     ("Is No Connect" False))))
+  (image BAT17_0
+   (property 
+    (sourcelib F:\\工作资料\\风扇\\风扇.DSN)
+    (PSpiceTemplate "D^@REFDES %1 %2 @MODEL ?AREA/@AREA/"))
+   (pin 999 1
+    (property 
+     (pinname 1)
+     (pintype 4)
+     (Name 1)
+     (Number 1)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" N23160568)
+     (Order 0)
+     ("Is No Connect" False)))
+   (pin 999 2
+    (property 
+     (pinname 2)
+     (pintype 4)
+     (Name 2)
+     (Number 2)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" VDD_15_6V)
+     (Order 1)
+     ("Is No Connect" False))))
+  (image LED_16
+   (property 
+    (sourcelib F:\\工作资料\\风扇\\风扇.DSN))
+   (pin 999 4
+    (property 
+     (pinname GND)
+     (pintype 4)
+     (Name GND)
+     (Number 4)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" GND)
+     (Order 0)
+     ("Is No Connect" False)))
+   (pin 999 2
+    (property 
+     (pinname GREEN)
+     (pintype 4)
+     (Name GREEN)
+     (Number 2)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" N23370161)
+     (Order 1)
+     ("Is No Connect" False)))
+   (pin 999 1
+    (property 
+     (pinname BLUE)
+     (pintype 4)
+     (Name BLUE)
+     (Number 1)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" N23370257)
+     (Order 2)
+     ("Is No Connect" False)))
+   (pin 999 3
+    (property 
+     (pinname GND)
+     (pintype 4)
+     (Name GND)
+     (Number 3)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" GND)
+     (Order 3)
+     ("Is No Connect" False))))
+  (image "R 10K"
+   (property 
+    (sourcelib "C:\\USERS\\CTWU\\DESKTOP\\NEW FOLDER (8)\\NEW FOLDER\\NEW FOLDER\\NUTINY-1008\\NEW FOLDER\\NUTINY-1011\\NUVOTON MU30.OLB")
+    (SDTSourceLibName C:\\WINDOWS\\TEMP\\DEVICE.LIB)
+    (element "10K 5%")
+    (element_no A0038))
+   (pin 999 1
+    (property 
+     (pinname 1)
+     (pintype 4)
+     (Name 1)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" VDD_5V)
+     (Order 0)
+     ("Is No Connect" False)))
+   (pin 999 2
+    (property 
+     (pinname 2)
+     (pintype 4)
+     (Name 2)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" KEY)
+     (Order 1)
+     ("Is No Connect" False))))
+  (image LED_15
+   (property 
+    (sourcelib F:\\工作资料\\风扇\\风扇.DSN))
+   (pin 999 4
+    (property 
+     (pinname GND)
+     (pintype 4)
+     (Name GND)
+     (Number 4)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" GND)
+     (Order 0)
+     ("Is No Connect" False)))
+   (pin 999 2
+    (property 
+     (pinname GREEN)
+     (pintype 4)
+     (Name GREEN)
+     (Number 2)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" N23370189)
+     (Order 1)
+     ("Is No Connect" False)))
+   (pin 999 1
+    (property 
+     (pinname BLUE)
+     (pintype 4)
+     (Name BLUE)
+     (Number 1)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" N23370283)
+     (Order 2)
+     ("Is No Connect" False)))
+   (pin 999 3
+    (property 
+     (pinname GND)
+     (pintype 4)
+     (Name GND)
+     (Number 3)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" GND)
+     (Order 3)
+     ("Is No Connect" False))))
+  (image DIODE_11
+   (property 
+    (sourcelib F:\\工作资料\\风扇\\风扇.DSN))
+   (pin 999 1
+    (property 
+     (pinname 1)
+     (pintype 4)
+     (Name 1)
+     (Number 1)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" GND)
+     (Order 0)
+     ("Is No Connect" False)))
+   (pin 999 2
+    (property 
+     (pinname 2)
+     (pintype 4)
+     (Name 2)
+     (Number 2)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" PWM)
+     (Order 1)
+     ("Is No Connect" False))))
+  (image "PUSH BOTTOM (B)"
+   (property 
+    (sourcelib "C:\\USERS\\CTWU\\DESKTOP\\NEW FOLDER (8)\\NEW FOLDER\\NEW FOLDER\\NUTINY-1008\\NEW FOLDER\\NUTINY-1011\\NUVOTON MU30.OLB")
+    (element_no G0002)
+    (element "DIP龄秨闽6X6X5H(堵)"))
+   (pin 999 1
+    (property 
+     (pinname 1)
+     (pintype 4)
+     (Name 1)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" GND)
+     (Order 0)
+     ("Is No Connect" False)))
+   (pin 999 2
+    (property 
+     (pinname 2)
+     (pintype 4)
+     (Name 2)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" KEY)
+     (Order 1)
+     ("Is No Connect" False))))
+  (image "C 10uF/10V"
+   (property 
+    (sourcelib "C:\\USERS\\CTWU\\DESKTOP\\NEW FOLDER (8)\\NEW FOLDER\\NEW FOLDER\\NUTINY-1008\\NEW FOLDER\\NUTINY-1011\\NUVOTON MU30.OLB")
+    (SDTSourceLibName C:\\WINDOWS\\TEMP\\DEVICE.LIB)
+    (element "嗪筿10u/10V   \"A type\"")
+    (element_no C0004))
+   (pin 999 1
+    (property 
+     (pinname 1)
+     (pintype 4)
+     (Name 1)
+     (Number 1)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" TICERST)
+     (Order 0)
+     ("Is No Connect" False)))
+   (pin 999 2
+    (property 
+     (pinname 2)
+     (pintype 4)
+     (Name 2)
+     (Number 2)
+     ("Swap Id" "-1")
+     (Type Passive)
+     ("Net Name" GND)
+     (Order 1)
+     ("Is No Connect" False)))))
+ (network
+  (net 5V
+   (pins
+     C9-1 R7-1 CN1-1 U4-8 R26-1 R27-1 R29-1))
+  (net 7.4V
+   (pins
+     R1-1 C5-1 L2-1 J1-1 C10-1 U4-5 R31-2 U3-4 U3-5))
+  (net B1
+   (pins
+     U5-20 R9-1))
+  (net B2
+   (pins
+     U5-19 R11-1))
+  (net B3
+   (pins
+     U5-17 R17-1))
+  (net B4
+   (pins
+     U5-16 R22-1))
+  (net DET_BAT
+   (pins
+     R1-2 C1-2 R2-2 U5-3))
+  (net EN_12V
+   (pins
+     R4-1 U5-2))
+  (net FG
+   (pins
+     J2-3 R15-2))
+  (net GND
+    (property 
+     (nettype S))
+   (pins
+     C1-1 R2-1 C5-2 C4-2 R8-1 J1-2 U2-2 C6-2 C7-2
+     R6-1 C10-2 C9-2 U1-2 C3-1 C8-2 U5-7 SW1-1 C16-2
+     C14-1 C15-1 GND-1 J2-1 R23-1 U7-2 U6-5 C12-2 C11-2
+     R12-1 D3-4 D3-3 D4-4 D4-3 D6-4 D6-3 D2-4 D2-3
+     D5-1 CN1-5 R26-2 R28-2 R30-2 U3-2))
+  (net "IP-"
+   (pins
+     J2-2 U6-3 U6-4))
+  (net KEY
+   (pins
+     U5-6 SW1-2 R19-2))
+  (net N23160559
+   (pins
+     R5-1 R8-2 U3-3))
+  (net N23160568
+   (pins
+     L2-2 D1-1 U3-1))
+  (net N23367902
+   (pins
+     U2-4 R4-2))
+  (net N23367939
+   (pins
+     U2-6 C2-2 L1-1))
+  (net N23367985
+   (pins
+     U2-1 C2-1))
+  (net N23368069
+   (pins
+     U2-3 R3-1 R6-2))
+  (net N23368260
+   (pins
+     R7-2 U4-3))
+  (net N23370161
+   (pins
+     R9-2 D2-2))
+  (net N23370189
+   (pins
+     R11-2 D3-2))
+  (net N23370207
+   (pins
+     R17-2 D4-2))
+  (net N23370225
+   (pins
+     R22-2 D6-2))
+  (net N23370257
+   (pins
+     R10-2 D2-1))
+  (net N23370283
+   (pins
+     R14-2 D3-1))
+  (net N23370301
+   (pins
+     R21-2 D4-1))
+  (net N23370360
+   (pins
+     R25-2 D6-1))
+  (net N23370702
+   (pins
+     J2-5 R23-2 R24-1))
+  (net N23371476
+   (pins
+     U6-6 C12-1))
+  (net N23373152
+   (pins
+     U7-3 R18-1 C13-1 R16-2))
+  (net N23373354
+   (pins
+     U7-1 R12-2 R13-1))
+  (net N23409971
+   (pins
+     U4-7 R27-2 R28-1))
+  (net N23410401
+   (pins
+     U4-4 R29-2 R30-1))
+  (net N23411253
+   (pins
+     U4-1 L3-2 C17-1))
+  (net N23411484
+   (pins
+     U4-2 C17-2))
+  (net P18
+   (pins
+     U5-18 CLK-1))
+  (net PWM
+   (pins
+     U5-10 J2-4 D5-2))
+  (net R1
+   (pins
+     U5-11 R10-1))
+  (net R2
+   (pins
+     U5-12 R14-1))
+  (net R3
+   (pins
+     U5-13 R21-1))
+  (net R4
+   (pins
+     U5-14 R25-1))
+  (net RS
+   (pins
+     U4-6 L3-1 R31-1))
+  (net TICEDAT
+   (pins
+     U5-8 DAT-1))
+  (net TICERST
+   (pins
+     U5-4 R20-2 C16-1 RST-1))
+  (net VDD_12V
+   (pins
+     C7-1 R3-2 U6-1 U6-2 L1-2))
+  (net VDD_15_6V
+    (property 
+     (nettype S))
+   (pins
+     C4-1 R5-2 U2-5 C6-1 U1-1 C3-2 D1-2))
+  (net VDD_5V
+    (property 
+     (nettype S))
+   (pins
+     U1-3 C8-1 U5-9 R20-1 R19-1 C14-2 C15-2 VCC-1 R15-1
+     R24-2 U7-5 U6-8 C11-1 R13-2))
+  (net VIOUT
+   (pins
+     U6-7 R16-1))
+  (net V_MOTOR
+   (pins
+     U5-5 U7-4 R18-2 C13-2)))
+)

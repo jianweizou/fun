@@ -1,0 +1,21 @@
+---------------------------------------------------------------------------
+NCDrill File Report For: 风扇.PcbDoc   2018/7/6  16:36:38
+---------------------------------------------------------------------------
+
+Layer Pair : Top Layer to Bottom Layer
+ASCII RoundHoles File : 风扇-RoundHoles.TXT
+ASCII SlotHoles File : 风扇-SlotHoles.TXT
+EIA File   : 风扇.DRL
+
+Tool         Hole Size           Hole Type     Hole Count Plated       Tool Travel
+---------------------------------------------------------------------------
+T1        11.81mil (0.29997mm)     Round          136              22.21 Inch (564.22 mm)
+T2        23.62mil (0.59995mm)     Slot           2                0.37 Inch (9.32 mm)
+T3        25.59mil (0.64999mm)     Round          2                0.35 Inch (8.92 mm)
+T4        35.43mil (0.89992mm)     Round          5                4.27 Inch (108.41 mm)
+T5        39.37mil (1mm)           Round          2                0.69 Inch (17.52 mm)
+T6        51.18mil (1.29997mm)     Round          2                2.04 Inch (51.91 mm)
+---------------------------------------------------------------------------
+Totals                                            149              29.93 Inch (760.31 mm)
+
+Total Processing Time (hh:mm:ss) : 00:00:00
