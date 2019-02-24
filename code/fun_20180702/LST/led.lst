@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   LED                                                                   02/16/2019 16:02:37 PAGE 1   
+C51 COMPILER V9.54   LED                                                                   02/23/2019 14:14:38 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE LED
@@ -20,17 +20,17 @@ line level    source
   10          #define LED2_OUTPUT             P00_PushPull_Mode
   11          #define LED3_OUTPUT             P01_PushPull_Mode
   12          #define LED4_OUTPUT             P03_PushPull_Mode
-  13          #define LED_R_OUTPUT    P11_PushPull_Mode
-  14          #define LED_G_OUTPUT    P15_PushPull_Mode
-  15          #define LED_B_OUTPUT    P10_PushPull_Mode
+  13          #define LED_R_OUTPUT    P10_PushPull_Mode
+  14          #define LED_G_OUTPUT    P11_PushPull_Mode
+  15          #define LED_B_OUTPUT    P15_PushPull_Mode
   16          
   17          #define LED1_SETTING(x)         P13 = x
   18          #define LED2_SETTING(x)         P00 = x
   19          #define LED3_SETTING(x)         P01 = x
   20          #define LED4_SETTING(x)         P03 = x
-  21          #define LED_R_SETTING(x)        P11 = x
-  22          #define LED_G_SETTING(x)        P15 = x
-  23          #define LED_B_SETTING(x)        P10 = x
+  21          #define LED_R_SETTING(x)        P10 = x
+  22          #define LED_G_SETTING(x)        P11 = x
+  23          #define LED_B_SETTING(x)        P15 = x
   24          
   25          extern unsigned char is_5ms_Flag;
   26          
@@ -62,7 +62,7 @@ line level    source
   52   1              led_rgb_mode = 0;
   53   1      }
   54          
-C51 COMPILER V9.54   LED                                                                   02/16/2019 16:02:37 PAGE 2   
+C51 COMPILER V9.54   LED                                                                   02/23/2019 14:14:38 PAGE 2   
 
   55          /*
   56          led_type:       LED Or RGB(0:1)
@@ -126,7 +126,7 @@ line level    source
  114   3                              if (led_white_tog == 0)
  115   3                              {
  116   4                                      led_white_tog = 1;
-C51 COMPILER V9.54   LED                                                                   02/16/2019 16:02:37 PAGE 3   
+C51 COMPILER V9.54   LED                                                                   02/23/2019 14:14:38 PAGE 3   
 
  117   4                                      led_display_time = 1;
  118   4                                      LED_WHITE_Set_value(0);

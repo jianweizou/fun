@@ -10,17 +10,17 @@
 #define LED2_OUTPUT		P00_PushPull_Mode
 #define LED3_OUTPUT		P01_PushPull_Mode
 #define LED4_OUTPUT		P03_PushPull_Mode
-#define LED_R_OUTPUT	P11_PushPull_Mode
-#define LED_G_OUTPUT	P15_PushPull_Mode
-#define LED_B_OUTPUT	P10_PushPull_Mode
+#define LED_R_OUTPUT	P10_PushPull_Mode
+#define LED_G_OUTPUT	P11_PushPull_Mode
+#define LED_B_OUTPUT	P15_PushPull_Mode
 
 #define LED1_SETTING(x)		P13 = x
 #define LED2_SETTING(x)		P00 = x
 #define LED3_SETTING(x)		P01 = x
 #define LED4_SETTING(x)		P03 = x
-#define LED_R_SETTING(x)	P11 = x
-#define LED_G_SETTING(x)	P15 = x
-#define LED_B_SETTING(x)	P10 = x
+#define LED_R_SETTING(x)	P10 = x
+#define LED_G_SETTING(x)	P11 = x
+#define LED_B_SETTING(x)	P15 = x
 
 extern unsigned char is_5ms_Flag;
 

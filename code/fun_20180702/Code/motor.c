@@ -21,14 +21,12 @@ void InitPWM(void)
 	Motor_Level = 0;
 //    set_PWMRUN;	
 	P12_OpenDrain_Mode;
-	set_P0SR_0;
-	P10_Input_Mode;
 	P12 = 1;
 	isStartMotor = 0;
 	Motor_done_cnt = 0;
 	
 	P06_PushPull_Mode;
-	P06 = 1;			//CW
+	P06 = 0;			//CW
 	P04_PushPull_Mode;	//motor power
 	P04 = 0;
 }
@@ -46,7 +44,7 @@ void TurnOffMotor(void)
 		set_LOAD;
 		clr_CLRPWM;
 		//dispower
-		P12 = 1;	
+		P12 = 0;	
 		isStartMotor = 0;
 		Motor_done_cnt = 0;
 	

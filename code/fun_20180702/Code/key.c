@@ -18,13 +18,14 @@ unsigned char Charging_key_debounce;
 extern char is_5ms_Flag;
 
 extern bit BIT_TMP;
-
+bit iswaitrelease;
 
 void KeyInit(void)
 {
 	curKey = 0;
 	preKey = 0;
 	debounce = 0;
+	iswaitrelease = 0;
 	Safety_key_debounce = 0;
 	Charging_key_debounce = 0;
 	Fun_KEY_INPUT;
@@ -39,7 +40,17 @@ char KeyScan(void)
 	if (is_5ms_Flag)
 	{
 		is_5ms_Flag = 0;
-		curKey = Fun_KEY_P17;
+		if (iswaitrelease == 0)
+			curKey = Fun_KEY_P17;
+		else
+		{
+			if (Fun_KEY_P17 == 1)
+			{
+				iswaitrelease = 0;
+				debounce = 0;
+			}
+			curKey = preKey;
+		}
 		if (curKey != preKey)
 		{
 			preKey = curKey;/*
@@ -63,7 +74,8 @@ char KeyScan(void)
 			else if (debounce >= 400)
 			{
 				debounce = 500;
-				keystatus = 0x08;
+				keystatus = 0x08;				
+				iswaitrelease = 1;
 			}
 		}
 		

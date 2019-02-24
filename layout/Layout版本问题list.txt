@@ -1,7 +1,0 @@
-V1.3：
-1、VCC_5V与BAT连接到一起了；
-2、N76E003 Pin5 VDD 接成RST了
-3、Pin20 需与VCC_5V断开
-4、CLK接错，接到KEY_TOP
-5、RST接到LED_G
-6、LP28300BSPF pin8 到5V

@@ -38,6 +38,7 @@ bit ischarging;
 unsigned char startADC_cnt;
 unsigned char batlevel_led_value;
 unsigned char led_type;
+unsigned char adc_pre_cnt;
 /*******************************/
 
 
@@ -111,8 +112,9 @@ unsigned char batlevel_to_led_value(void)
 unsigned char getbatlevel(void)
 {
 	unsigned int adcvalue;
+	unsigned char templevel;
 	unsigned char i;
-	if (startADC_cnt > 1)
+	if (startADC_cnt > 0)
 	{
 		startADC_cnt = 0;
 		clr_ADCF;
@@ -146,20 +148,37 @@ unsigned char getbatlevel(void)
 			}
 			if (adcvalue > 0xCD0)	//>75%	8v		
 			{
-				batlevel = 4;
+				templevel = 4;
 			}
 			else if (adcvalue > 0xC70)	//>50%	7.7v
 			{
-				batlevel = 3;
+				templevel = 3;
 			}
 			else if (adcvalue > 0xC00)	//>25%	7.4
 			{
-				batlevel = 2;
+				templevel = 2;
 			}
 			else if (adcvalue < 0xB80)	//<25%	7v
 			{
-				batlevel = 1;
+				templevel = 1;
 			}
+//			if (adc_pre_cnt > 4)
+//			{
+//				adc_pre_cnt = 10;
+//				if (ischarging)
+//				{
+//					if (templevel >= batlevel)
+//						batlevel = templevel;
+//				}
+//				else
+//				{
+//					if (templevel <= batlevel)
+//						batlevel = templevel;
+//				}
+//			}
+//			else
+				batlevel = templevel;
+			adc_pre_cnt++;
 			batlevel_led_value = batlevel_to_led_value();
 			return 1;
 		}
@@ -179,11 +198,12 @@ void SysInit(void)
 	InitPWM();
 	system_stage = Stage_A;
 	isneedinitstage = 1;
-	led_type = 0;
+	led_type = 0; 
 	isneedinitbatled = 0;
 	batlevelledtimeout = 0;	
 	batlevel_led_value = 0;
 	ischarging = 0;
+	adc_pre_cnt = 0;
 //	while(1)
 //	{
 //		if (getbatlevel() == 1)
