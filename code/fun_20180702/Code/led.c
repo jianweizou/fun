@@ -52,6 +52,16 @@ void Init_LED(void)
 	led_rgb_mode = 0;
 }
 
+void DeInit_LED(void)
+{
+	P13_OpenDrain_Mode;
+	P00_OpenDrain_Mode;
+	P01_OpenDrain_Mode;
+	P03_OpenDrain_Mode;
+	P10_OpenDrain_Mode;
+	P11_OpenDrain_Mode;
+	P15_OpenDrain_Mode;
+}
 /*
 led_type:	LED Or RGB(0:1)
 led_value: led value

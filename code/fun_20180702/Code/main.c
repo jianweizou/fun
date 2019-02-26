@@ -35,6 +35,7 @@ bit isneedinitstage;
 bit isneedinitbatled;
 bit isneedinitsys;
 bit ischarging;
+bit isstartsystem;
 unsigned char startADC_cnt;
 unsigned char batlevel_led_value;
 unsigned char led_type;
@@ -102,9 +103,13 @@ unsigned char batlevel_to_led_value(void)
 	{
 		val = 0x03;
 	}
-	else //if (batlevel == 1)
+	else if (batlevel == 1)
 	{
 		val = 0x01;
+	}
+	else
+	{
+		val = 0;
 	}
 	return val;
 }
@@ -144,23 +149,27 @@ unsigned char getbatlevel(void)
 			}
 			if (ischarging)
 			{
-				adcvalue = adcvalue - 0xA0;	//0x90 -> 0.3v
+				adcvalue = adcvalue - 0x80;	//0x90 -> 0.3v
 			}
-			if (adcvalue > 0xCD0)	//>75%	8v		
+			if (adcvalue > 0xCA0)	//>75%	8v		
 			{
 				templevel = 4;
 			}
-			else if (adcvalue > 0xC70)	//>50%	7.7v
+			else if (adcvalue > 0xC40)	//>50%	7.7v
 			{
 				templevel = 3;
 			}
-			else if (adcvalue > 0xC00)	//>25%	7.4
+			else if (adcvalue > 0xBD0)	//>25%	7.4
 			{
 				templevel = 2;
 			}
-			else if (adcvalue < 0xB80)	//<25%	7v
+			else if (adcvalue > 0xB60)	//<25%	7v
 			{
 				templevel = 1;
+			}
+			else if (adcvalue < 0xA00)
+			{
+				templevel = 0;
 			}
 //			if (adc_pre_cnt > 4)
 //			{
@@ -204,6 +213,16 @@ void SysInit(void)
 	batlevel_led_value = 0;
 	ischarging = 0;
 	adc_pre_cnt = 0;
+	if (isstartsystem == 0)
+	{
+		while(dpdtime<200)
+		{
+			getbatlevel();
+			startADC_cnt++;
+		}
+		isstartsystem = 1;
+	}
+	dpdtime = 0;
 //	while(1)
 //	{
 //		if (getbatlevel() == 1)
@@ -216,6 +235,7 @@ void main(void)
 	unsigned char keystatus,i;
 	Set_All_GPIO_Quasi_Mode;
 	isneedinitsys = 1;
+	isstartsystem = 0;
 	while(1)
 	{
 		if (isneedinitsys)
@@ -287,6 +307,7 @@ void main(void)
 					isneedinitstage = 1;
 					//turn off pwm
 					TurnOffMotor();
+					LED_RGB_Setting(0,0);
 				}
 				
 				if (keystatus & 0x04)//charging
@@ -298,6 +319,7 @@ void main(void)
 					else
 						system_stage = Stage_D;
 					TurnOffMotor();
+					LED_RGB_Setting(0,0);
 					isneedinitstage = 1;
 				}
 				
@@ -320,6 +342,8 @@ void main(void)
 					dpdtime = 0;
 					ischarging = 1;
 					//turn off pwm
+					TurnOffMotor();
+					LED_RGB_Setting(0,0);
 				}
 				if (keystatus & 0x01)//key
 				{
@@ -372,6 +396,7 @@ void main(void)
 					system_stage = Stage_C;
 					isneedinitstage = 1;
 					TurnOffMotor();
+					LED_RGB_Setting(0,0);
 				}
 				
 				if (keystatus & 0x04)//charging
@@ -387,7 +412,8 @@ void main(void)
 					else
 						system_stage = Stage_B;
 					isneedinitstage = 1;	
-					TurnOffMotor();				
+					TurnOffMotor();	
+					LED_RGB_Setting(0,0);
 				}
 				
 				if (keystatus & 0x08)
@@ -439,23 +465,20 @@ void main(void)
 				dpdtime = 0;
 				//enter dpd
 				//
+				Set_All_GPIO_Quasi_Mode;
+				clr_ADCEN;
+				
 				TurnOffMotor();
 				LED_WHITE_Setting(0,0);
 				LED_RGB_Setting(0,0);
+				DeInit_LED();
 				
 				P17_Input_Mode;
 				set_P1S_7;
 				set_EX1;
-				
-//				set_P0SR_5;
-//				PICON = 0x00;	//port0
-//				PINEN  = 0x20;
-//				PIPEN = 0x00;
-				
+								
 				set_PD;
-				
-//				clr_EA;
-//				for(i=0;i<0xA0;i++);
+
 				PICON  = 0;
 							
 				clr_EX0;

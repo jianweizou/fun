@@ -49,6 +49,7 @@ void TurnOffMotor(void)
 		Motor_done_cnt = 0;
 	
 		P04 = 0;
+		P06 = 0;
 }
 /*
 unsigned Change_Motor_PWM(void)
@@ -116,6 +117,7 @@ unsigned Change_Motor_PWM(void)
 {
 	if (Motor_Level == 0)
 	{
+		P06 = 1;
 		isStartMotor = 1;
 		PICON = 0x05;	//port1
 		PINEN  = 0x00;

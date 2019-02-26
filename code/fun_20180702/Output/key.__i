@@ -1,1 +1,0 @@
-"Code\key.c" ROM(COMPACT) OPTIMIZE (8,SIZE) BROWSE INCDIR(..\..\Include;..\Include) DEFINE (FOSC_160000) DEBUG OBJECTEXTEND PRINT(.\LST\key.lst) OBJECT(.\Output\key.obj)
