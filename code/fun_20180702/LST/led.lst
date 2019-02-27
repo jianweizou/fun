@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   LED                                                                   02/26/2019 21:31:07 PAGE 1   
+C51 COMPILER V9.54   LED                                                                   02/27/2019 21:15:39 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE LED
@@ -62,7 +62,7 @@ line level    source
   52   1              led_rgb_mode = 0;
   53   1      }
   54          
-C51 COMPILER V9.54   LED                                                                   02/26/2019 21:31:07 PAGE 2   
+C51 COMPILER V9.54   LED                                                                   02/27/2019 21:15:39 PAGE 2   
 
   55          void DeInit_LED(void)
   56          {
@@ -114,11 +114,11 @@ line level    source
  102   1      //              LED_G_SETTING(led_value&LEDR);  
  103   1      //      }
  104   1                      
- 105   1                      LED_B_SETTING(led_value&LEDB);
+ 105   1                      LED_R_SETTING(led_value&LEDR);
  106   1                      led_value = led_value >> 1;
- 107   1                      LED_G_SETTING(led_value&LEDB);  
+ 107   1                      LED_B_SETTING(led_value&LEDR);  
  108   1                      led_value = led_value >> 1;     
- 109   1                      LED_R_SETTING(led_value&LEDB);
+ 109   1                      LED_G_SETTING(led_value&LEDR);
  110   1      }
  111          void LED_RGB_Setting(unsigned char led_value,unsigned char led_mode)
  112          {
@@ -126,7 +126,7 @@ line level    source
  114   1              LED_RGB_Set_value(led_value);
  115   1      }
  116          
-C51 COMPILER V9.54   LED                                                                   02/26/2019 21:31:07 PAGE 3   
+C51 COMPILER V9.54   LED                                                                   02/27/2019 21:15:39 PAGE 3   
 
  117          void LED_Process(unsigned char led_value)
  118          {

@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   MAIN                                                                  02/26/2019 22:53:34 PAGE 1   
+C51 COMPILER V9.54   MAIN                                                                  02/27/2019 22:16:11 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
@@ -26,519 +26,522 @@ line level    source
   16          
   17          unsigned char is_5ms_Flag;
   18          unsigned int dpdtime;
-  19          unsigned char getbattery_time;
-  20          #define ADC_CNT 12
-  21          unsigned char adccnt;
-  22          unsigned int adc[ADC_CNT];
-  23          unsigned char batlevel;
-  24          unsigned char batlevelledtimeout;
-  25          extern unsigned char Motor_Level;
-  26          extern unsigned int led_display_time;
-  27          /********************************/
-  28          #define Stage_A         1
-  29          #define Stage_B         2
-  30          #define Stage_C         4
-  31          #define Stage_D         8
-  32          
-  33          unsigned char system_stage;
-  34          bit isneedinitstage;
-  35          bit isneedinitbatled;
-  36          bit isneedinitsys;
-  37          bit ischarging;
-  38          bit isstartsystem;
-  39          unsigned char startADC_cnt;
-  40          unsigned char batlevel_led_value;
-  41          unsigned char led_type;
-  42          unsigned char adc_pre_cnt;
-  43          /*******************************/
+  19          #define ADC_CNT 8
+  20          unsigned char adccnt;
+  21          unsigned int adc[ADC_CNT];
+  22          unsigned char batlevel;
+  23          unsigned char batlevelledtimeout;
+  24          extern unsigned char Motor_Level;
+  25          extern unsigned int led_display_time;
+  26          /********************************/
+  27          #define Stage_A         1
+  28          #define Stage_B         2
+  29          #define Stage_C         4
+  30          #define Stage_D         8
+  31          
+  32          unsigned char system_stage;
+  33          bit isneedinitstage;
+  34          bit isneedinitbatled;
+  35          bit isneedinitsys;
+  36          bit ischarging;
+  37          bit isstartsystem;
+  38          unsigned char startADC_cnt;
+  39          unsigned char batlevel_led_value;
+  40          unsigned char led_type;
+  41          unsigned char adc_pre_cnt;
+  42          /*******************************/
+  43          
   44          
-  45          
-  46          /*********************************************************************************************************
+  45          /*********************************************************************************************************
              -***
-  47          *    TIMER 0 interrupt subroutine
-  48          **********************************************************************************************************
+  46          *    TIMER 0 interrupt subroutine
+  47          **********************************************************************************************************
              -**/
-  49          void Timer0_ISR (void) interrupt 1          //interrupt address is 0x000B
-  50          {
-  51   1          TH0 = TH0_INIT;
-  52   1          TL0 = TL0_INIT;
-C51 COMPILER V9.54   MAIN                                                                  02/26/2019 22:53:34 PAGE 2   
+  48          void Timer0_ISR (void) interrupt 1          //interrupt address is 0x000B
+  49          {
+  50   1          TH0 = TH0_INIT;
+  51   1          TL0 = TL0_INIT;
+  52   1              is_5ms_Flag = 1;
+C51 COMPILER V9.54   MAIN                                                                  02/27/2019 22:16:11 PAGE 2   
 
-  53   1              is_5ms_Flag = 1;
-  54   1              dpdtime++;
-  55   1              getbattery_time++;
-  56   1              startADC_cnt ++;
-  57   1              led_display_time++;
-  58   1              if (isStartMotor)
-  59   1                      Motor_done_cnt++;
-  60   1      }
-  61          
-  62          void Timer0_Init(void)
-  63          {
-  64   1              TMOD = 0XFF;
-  65   1              TIMER0_MODE1_ENABLE;                        //Timer 0  mode configuration
+  53   1              dpdtime++;
+  54   1              startADC_cnt ++;
+  55   1              led_display_time++;
+  56   1              if (isStartMotor)
+  57   1                      Motor_done_cnt++;
+  58   1      }
+  59          
+  60          void Timer0_Init(void)
+  61          {
+  62   1              TMOD = 0XFF;
+  63   1              TIMER0_MODE1_ENABLE;                        //Timer 0  mode configuration
+  64   1          
+  65   1              clr_T0M;
   66   1          
-  67   1              clr_T0M;
-  68   1          
-  69   1              TH0 = TH0_INIT;
-  70   1              TL0 = TL0_INIT;
-  71   1          
-  72   1              set_ET0;                                    //enable Timer0 interrupt
-  73   1              set_EA;                                     //enable interrupts
-  74   1              
-  75   1              set_TR0;                                    //Timer0 run
-  76   1      }
-  77          
-  78          unsigned int getadcvalue(void)
-  79          {
-  80   1              unsigned char i;
-  81   1              unsigned int adcvalue;
-  82   1              adcvalue = 0;
-  83   1              for(i=4;i<ADC_CNT;i++)
-  84   1              {
-  85   2                      adcvalue += adc[i];
-  86   2              }
-  87   1              adcvalue >>=3;
-  88   1              return adcvalue;
-  89   1      }
-  90          
-  91          unsigned char batlevel_to_led_value(void)
-  92          {
-  93   1              unsigned char val;
-  94   1              if (batlevel == 4)
-  95   1              {
-  96   2                      val = 0x0F;
-  97   2              }
-  98   1              else if (batlevel == 3)
-  99   1              {
- 100   2                      val = 0x07;
- 101   2              }
- 102   1              else if (batlevel == 2)
- 103   1              {
- 104   2                      val = 0x03;
- 105   2              }
- 106   1              else if (batlevel == 1)
- 107   1              {
- 108   2                      val = 0x01;
- 109   2              }
- 110   1              else
- 111   1              {
- 112   2                      val = 0;
- 113   2              }
- 114   1              return val;
-C51 COMPILER V9.54   MAIN                                                                  02/26/2019 22:53:34 PAGE 3   
+  67   1              TH0 = TH0_INIT;
+  68   1              TL0 = TL0_INIT;
+  69   1          
+  70   1              set_ET0;                                    //enable Timer0 interrupt
+  71   1              set_EA;                                     //enable interrupts
+  72   1              
+  73   1              set_TR0;                                    //Timer0 run
+  74   1      }
+  75          
+  76          unsigned int getadcvalue(void)
+  77          {
+  78   1              unsigned char i;
+  79   1              unsigned int adcvalue;
+  80   1              adcvalue = 0;
+  81   1              for(i=0;i<ADC_CNT;i++)
+  82   1              {
+  83   2                      adcvalue += adc[i];
+  84   2              }
+  85   1              adcvalue >>=3;
+  86   1              return adcvalue;
+  87   1      }
+  88          
+  89          unsigned char batlevel_to_led_value(void)
+  90          {
+  91   1              unsigned char val;
+  92   1              if (batlevel == 4)
+  93   1              {
+  94   2                      val = 0x0F;
+  95   2              }
+  96   1              else if (batlevel == 3)
+  97   1              {
+  98   2                      val = 0x07;
+  99   2              }
+ 100   1              else if (batlevel == 2)
+ 101   1              {
+ 102   2                      val = 0x03;
+ 103   2              }
+ 104   1              else if (batlevel == 1)
+ 105   1              {
+ 106   2                      val = 0x01;
+ 107   2              }
+ 108   1              else
+ 109   1              {
+ 110   2                      val = 0;
+ 111   2              }
+ 112   1              return val;
+ 113   1      }
+ 114          
+C51 COMPILER V9.54   MAIN                                                                  02/27/2019 22:16:11 PAGE 3   
 
- 115   1      }
- 116          
- 117          unsigned char getbatlevel(void)
- 118          {
- 119   1              unsigned int adcvalue;
- 120   1              unsigned char templevel;
- 121   1              unsigned char i;
- 122   1              if (startADC_cnt > 0)
- 123   1              {
- 124   2                      startADC_cnt = 0;
- 125   2                      clr_ADCF;
- 126   2                      set_ADCS;                                                                       // ADC start trig signal
- 127   2                      while(ADCF == 0);
- 128   2                      adcvalue = ADCRH;
- 129   2                      adcvalue <<= 4;
- 130   2                      adcvalue |= ADCRL&0x0F;
- 131   2                      adc[adccnt] = adcvalue;
- 132   2                      adccnt++;
- 133   2                      if (adccnt >= ADC_CNT)
- 134   2                      {
- 135   3                              adccnt = 0;
- 136   3                              adcvalue = getadcvalue();
- 137   3                              i = get_motor_level();
- 138   3                              if (i == 4)
- 139   3                              {
- 140   4                                      adcvalue = adcvalue + 0x20;
- 141   4                              }
- 142   3                              else if (i == 2)
- 143   3                              {
- 144   4                                      adcvalue = adcvalue + 0x10;
- 145   4                              }
- 146   3                              else if (i == 1)
- 147   3                              {
- 148   4                                      adcvalue = adcvalue + 0x08;
- 149   4                              }
- 150   3                              if (ischarging)
- 151   3                              {
- 152   4                                      adcvalue = adcvalue - 0x80;     //0x90 -> 0.3v
- 153   4                              }
- 154   3                              if (adcvalue > 0xCA0)   //>75%  8v              
- 155   3                              {
- 156   4                                      templevel = 4;
- 157   4                              }
- 158   3                              else if (adcvalue > 0xC40)      //>50%  7.7v
- 159   3                              {
- 160   4                                      templevel = 3;
- 161   4                              }
- 162   3                              else if (adcvalue > 0xBD0)      //>25%  7.4
- 163   3                              {
- 164   4                                      templevel = 2;
- 165   4                              }
- 166   3                              else if (adcvalue > 0xB60)      //<25%  7v
- 167   3                              {
- 168   4                                      templevel = 1;
- 169   4                              }
- 170   3                              else if (adcvalue < 0xA00)
- 171   3                              {
- 172   4                                      templevel = 0;
- 173   4                              }
- 174   3      //                      if (adc_pre_cnt > 4)
- 175   3      //                      {
- 176   3      //                              adc_pre_cnt = 10;
-C51 COMPILER V9.54   MAIN                                                                  02/26/2019 22:53:34 PAGE 4   
+ 115          unsigned char getbatlevel(void)
+ 116          {
+ 117   1              unsigned int adcvalue;
+ 118   1              unsigned char templevel;
+ 119   1              unsigned char i;
+ 120   1              if (startADC_cnt > 0)
+ 121   1              {
+ 122   2                      startADC_cnt = 0;
+ 123   2                      clr_ADCF;
+ 124   2                      set_ADCS;                                                                       // ADC start trig signal
+ 125   2                      while(ADCF == 0);
+ 126   2                      adcvalue = ADCRH;
+ 127   2                      adcvalue <<= 4;
+ 128   2                      adcvalue |= ADCRL&0x0F;
+ 129   2                      adc[adccnt] = adcvalue;
+ 130   2                      adccnt++;
+ 131   2                      if (adccnt >= ADC_CNT)
+ 132   2                      {
+ 133   3                              adccnt = 0;
+ 134   3                              adcvalue = getadcvalue();
+ 135   3                              i = get_motor_level();
+ 136   3                              if (i == 4)
+ 137   3                              {
+ 138   4                                      adcvalue = adcvalue + 0x20;
+ 139   4                              }
+ 140   3                              else if (i == 2)
+ 141   3                              {
+ 142   4                                      adcvalue = adcvalue + 0x10;
+ 143   4                              }
+ 144   3                              else if (i == 1)
+ 145   3                              {
+ 146   4                                      adcvalue = adcvalue + 0x08;
+ 147   4                              }
+ 148   3                              if (ischarging)
+ 149   3                              {
+ 150   4                                      adcvalue = adcvalue - 0x80;     //0x90 -> 0.3v
+ 151   4                              }
+ 152   3                              if (adcvalue > 0xCA0)   //>75%  8v              
+ 153   3                              {
+ 154   4                                      templevel = 4;
+ 155   4                              }
+ 156   3                              else if (adcvalue > 0xC40)      //>50%  7.7v
+ 157   3                              {
+ 158   4                                      templevel = 3;
+ 159   4                              }
+ 160   3                              else if (adcvalue > 0xBD0)      //>25%  7.4
+ 161   3                              {
+ 162   4                                      templevel = 2;
+ 163   4                              }
+ 164   3                              else if (adcvalue > 0xB60)      //<25%  7v
+ 165   3                              {
+ 166   4                                      templevel = 1;
+ 167   4                              }
+ 168   3                              else if (adcvalue < 0xA00)
+ 169   3                              {
+ 170   4                                      templevel = 0;
+ 171   4                              }
+ 172   3      //                      if (adc_pre_cnt > 4)
+ 173   3      //                      {
+ 174   3      //                              adc_pre_cnt = 10;
+ 175   3      //                              if (ischarging)
+ 176   3      //                              {
+C51 COMPILER V9.54   MAIN                                                                  02/27/2019 22:16:11 PAGE 4   
 
- 177   3      //                              if (ischarging)
- 178   3      //                              {
- 179   3      //                                      if (templevel >= batlevel)
- 180   3      //                                              batlevel = templevel;
- 181   3      //                              }
- 182   3      //                              else
- 183   3      //                              {
- 184   3      //                                      if (templevel <= batlevel)
- 185   3      //                                              batlevel = templevel;
- 186   3      //                              }
- 187   3      //                      }
- 188   3      //                      else
- 189   3                                      batlevel = templevel;
- 190   3                              adc_pre_cnt++;
- 191   3                              batlevel_led_value = batlevel_to_led_value();
- 192   3                              return 1;
- 193   3                      }
- 194   2              }       
- 195   1              return 0;
- 196   1      }
- 197          
- 198          
- 199          void SysInit(void)
- 200          {
- 201   1              Init_LED();
- 202   1              Timer0_Init();
- 203   1              Enable_ADC_AIN2;
- 204   1              startADC_cnt = 0;
- 205   1              adccnt = 0;
- 206   1              KeyInit();      
- 207   1              InitPWM();
- 208   1              system_stage = Stage_A;
- 209   1              isneedinitstage = 1;
- 210   1              led_type = 0; 
- 211   1              isneedinitbatled = 0;
- 212   1              batlevelledtimeout = 0; 
- 213   1              batlevel_led_value = 0;
- 214   1              ischarging = 0;
- 215   1              adc_pre_cnt = 0;
- 216   1              if (isstartsystem == 0)
- 217   1              {
- 218   2                      while(dpdtime<200)
- 219   2                      {
- 220   3                              getbatlevel();
- 221   3                              startADC_cnt++;
- 222   3                      }
- 223   2                      isstartsystem = 1;
- 224   2              }
- 225   1              dpdtime = 0;
- 226   1      //      while(1)
- 227   1      //      {
- 228   1      //              if (getbatlevel() == 1)
- 229   1      //                      break;
- 230   1      //      }
- 231   1      }
- 232          
- 233          void main(void)
- 234          {
- 235   1              unsigned char keystatus,i;
- 236   1              Set_All_GPIO_Quasi_Mode;
- 237   1              isneedinitsys = 1;
- 238   1              isstartsystem = 0;
-C51 COMPILER V9.54   MAIN                                                                  02/26/2019 22:53:34 PAGE 5   
+ 177   3      //                                      if (templevel >= batlevel)
+ 178   3      //                                              batlevel = templevel;
+ 179   3      //                              }
+ 180   3      //                              else
+ 181   3      //                              {
+ 182   3      //                                      if (templevel <= batlevel)
+ 183   3      //                                              batlevel = templevel;
+ 184   3      //                              }
+ 185   3      //                      }
+ 186   3      //                      else
+ 187   3                                      batlevel = templevel;
+ 188   3                              adc_pre_cnt++;
+ 189   3                              batlevel_led_value = batlevel_to_led_value();
+ 190   3                              return 1;
+ 191   3                      }
+ 192   2              }       
+ 193   1              return 0;
+ 194   1      }
+ 195          
+ 196          
+ 197          void SysInit(void)
+ 198          {
+ 199   1              Init_LED();
+ 200   1              Timer0_Init();  
+ 201   1              startADC_cnt = 0;
+ 202   1              adccnt = 0;
+ 203   1              KeyInit();      
+ 204   1              InitPWM();
+ 205   1              system_stage = Stage_A;
+ 206   1              isneedinitstage = 1;
+ 207   1              led_type = 0; 
+ 208   1              isneedinitbatled = 0;
+ 209   1              batlevelledtimeout = 0; 
+ 210   1              batlevel_led_value = 0;
+ 211   1              ischarging = 0;
+ 212   1              adc_pre_cnt = 0;
+ 213   1              P07_PushPull_Mode;
+ 214   1              P07 = 1;
+ 215   1              P07_Input_Mode;
+ 216   1              Enable_ADC_AIN2;
+ 217   1              if (isstartsystem == 0)
+ 218   1              {
+ 219   2                      while(dpdtime<300)
+ 220   2                      {
+ 221   3                              getbatlevel();
+ 222   3      //                      startADC_cnt++;
+ 223   3                      }
+ 224   2                      isstartsystem = 1;
+ 225   2              }
+ 226   1              dpdtime = 0;
+ 227   1              led_display_time = 0;
+ 228   1              startADC_cnt = 0;
+ 229   1      //      while(1)
+ 230   1      //      {
+ 231   1      //              if (getbatlevel() == 1)
+ 232   1      //                      break;
+ 233   1      //      }
+ 234   1      }
+ 235          
+ 236          void main(void)
+ 237          {
+ 238   1              unsigned char keystatus,i;
+C51 COMPILER V9.54   MAIN                                                                  02/27/2019 22:16:11 PAGE 5   
 
- 239   1              while(1)
- 240   1              {
- 241   2                      if (isneedinitsys)
- 242   2                      {
- 243   3                              SysInit();
- 244   3                              isneedinitsys = 0;
- 245   3                      }
- 246   2                      if (is_5ms_Flag)
- 247   2                      {
- 248   3                              if (batlevelledtimeout)
- 249   3                                      batlevelledtimeout--;
- 250   3                              keystatus = KeyScan();
- 251   3                              if (system_stage == Stage_A)
- 252   3                              {
- 253   4                                      if (isneedinitstage == 1)
- 254   4                                      {
- 255   5                                              isneedinitstage = 0;
- 256   5                                              //init stage A
- 257   5                                              LED_WHITE_Setting(0,0);
- 258   5                                              LED_RGB_Setting(0,0);
- 259   5                                              led_type = 0;
- 260   5                                              dpdtime = 0;
- 261   5                                              ischarging = 0;
- 262   5                                      }
- 263   4                                      if (keystatus & 0x01)//key
- 264   4                                      {
- 265   5                                              //display power as LED
- 266   5                                              led_type = 1;
- 267   5                                              isneedinitbatled = 1;
- 268   5                                              batlevelledtimeout = 200;
- 269   5                                      }
- 270   4                                      if (keystatus & 0x02)
- 271   4                                      {
- 272   5                                              system_stage = Stage_B;
- 273   5                                              isneedinitstage = 1;
- 274   5                                      }
- 275   4                                      if (keystatus & 0x04)
- 276   4                                      {
- 277   5                                              if (system_stage == Stage_B)
- 278   5                                                      system_stage = Stage_D;
- 279   5                                              else
- 280   5                                                      system_stage = Stage_C;
- 281   5                                              isneedinitstage = 1;
- 282   5                                      }                       
- 283   4                              }
- 284   3                              else if (system_stage == Stage_B)
- 285   3                              {
- 286   4                                      if (isneedinitstage == 1)
- 287   4                                      {
- 288   5                                              isneedinitstage = 0;
- 289   5                                              //init stage B
- 290   5                                              led_type = 2;   
- 291   5                                              isneedinitbatled = 1;
- 292   5                                              dpdtime = 0;
- 293   5                                              ischarging = 0;
- 294   5                                      }
- 295   4                                      if (keystatus & 0x01)//key
- 296   4                                      {
- 297   5                                              //change pwm
- 298   5                                              i  = Change_Motor_PWM();
- 299   5                                              LED_RGB_Setting(i,0);
- 300   5                                      }
-C51 COMPILER V9.54   MAIN                                                                  02/26/2019 22:53:34 PAGE 6   
+ 239   1              Set_All_GPIO_Quasi_Mode;
+ 240   1              isneedinitsys = 1;
+ 241   1              isstartsystem = 0;
+ 242   1              while(1)
+ 243   1              {
+ 244   2                      if (isneedinitsys)
+ 245   2                      {
+ 246   3                              SysInit();
+ 247   3                              isneedinitsys = 0;
+ 248   3                      }
+ 249   2                      if (is_5ms_Flag)
+ 250   2                      {
+ 251   3                              if (batlevelledtimeout)
+ 252   3                                      batlevelledtimeout--;
+ 253   3                              keystatus = KeyScan();
+ 254   3                              if (system_stage == Stage_A)
+ 255   3                              {
+ 256   4                                      if (isneedinitstage == 1)
+ 257   4                                      {
+ 258   5                                              isneedinitstage = 0;
+ 259   5                                              //init stage A
+ 260   5                                              LED_WHITE_Setting(0,0);
+ 261   5                                              LED_RGB_Setting(0,0);
+ 262   5                                              led_type = 0;
+ 263   5                                              dpdtime = 0;
+ 264   5                                              ischarging = 0;
+ 265   5                                      }
+ 266   4                                      if (keystatus & 0x01)//key
+ 267   4                                      {
+ 268   5                                              //display power as LED
+ 269   5                                              led_type = 1;
+ 270   5                                              isneedinitbatled = 1;
+ 271   5                                              batlevelledtimeout = 200;
+ 272   5                                      }
+ 273   4                                      if (keystatus & 0x02)
+ 274   4                                      {
+ 275   5                                              system_stage = Stage_B;
+ 276   5                                              isneedinitstage = 1;
+ 277   5                                      }
+ 278   4                                      if (keystatus & 0x04)
+ 279   4                                      {
+ 280   5                                              if (system_stage == Stage_B)
+ 281   5                                                      system_stage = Stage_D;
+ 282   5                                              else
+ 283   5                                                      system_stage = Stage_C;
+ 284   5                                              isneedinitstage = 1;
+ 285   5                                      }                       
+ 286   4                              }
+ 287   3                              else if (system_stage == Stage_B)
+ 288   3                              {
+ 289   4                                      if (isneedinitstage == 1)
+ 290   4                                      {
+ 291   5                                              isneedinitstage = 0;
+ 292   5                                              //init stage B
+ 293   5                                              led_type = 2;   
+ 294   5                                              isneedinitbatled = 1;
+ 295   5                                              dpdtime = 0;
+ 296   5                                              ischarging = 0;
+ 297   5                                      }
+ 298   4                                      if (keystatus & 0x01)//key
+ 299   4                                      {
+ 300   5                                              //change pwm
+C51 COMPILER V9.54   MAIN                                                                  02/27/2019 22:16:11 PAGE 6   
 
- 301   4                                      if (keystatus & 0x02)//safety
- 302   4                                      {
+ 301   5                                              i  = Change_Motor_PWM();
+ 302   5                                              LED_RGB_Setting(i,0);
  303   5                                      }
- 304   4                                      else
+ 304   4                                      if (keystatus & 0x02)//safety
  305   4                                      {
- 306   5                                              system_stage = Stage_A;
- 307   5                                              isneedinitstage = 1;
- 308   5                                              //turn off pwm
- 309   5                                              TurnOffMotor();
- 310   5                                              LED_RGB_Setting(0,0);
- 311   5                                      }
- 312   4                                      
- 313   4                                      if (keystatus & 0x04)//charging
- 314   4                                      {
- 315   5                                              if (system_stage == Stage_A)
- 316   5                                              {
- 317   6                                                      system_stage = Stage_C;
- 318   6                                              }
- 319   5                                              else
- 320   5                                                      system_stage = Stage_D;
- 321   5                                              TurnOffMotor();
- 322   5                                              LED_RGB_Setting(0,0);
- 323   5                                              isneedinitstage = 1;
- 324   5                                      }
- 325   4                                      
- 326   4                                      if (keystatus & 0x08)
- 327   4                                      {
- 328   5                                              //turn off pwm
- 329   5                                              TurnOffMotor();
- 330   5                                              LED_RGB_Setting(0,0);
- 331   5                                      }
- 332   4                                      
- 333   4                              }
- 334   3                              else if (system_stage == Stage_C)
- 335   3                              {
- 336   4                                      if (isneedinitstage == 1)
- 337   4                                      {
- 338   5                                              isneedinitstage = 0;
- 339   5                                              //init stage C
- 340   5                                              led_type = 3;   
- 341   5                                              isneedinitbatled = 1;
- 342   5                                              dpdtime = 0;
- 343   5                                              ischarging = 1;
- 344   5                                              //turn off pwm
- 345   5                                              TurnOffMotor();
- 346   5                                              LED_RGB_Setting(0,0);
- 347   5                                      }
- 348   4                                      if (keystatus & 0x01)//key
- 349   4                                      {
- 350   5                                              
- 351   5                                      }
- 352   4                                      if (keystatus & 0x02)//safety
- 353   4                                      {
- 354   5                                              //enter stage_B
- 355   5                                              system_stage = Stage_D;
- 356   5                                              isneedinitstage = 1;
- 357   5                                      }
- 358   4                                      
- 359   4                                      if (keystatus & 0x04)//charging
- 360   4                                      {
- 361   5                                              dpdtime = 0;
- 362   5                                      }
-C51 COMPILER V9.54   MAIN                                                                  02/26/2019 22:53:34 PAGE 7   
+ 306   5                                      }
+ 307   4                                      else
+ 308   4                                      {
+ 309   5                                              system_stage = Stage_A;
+ 310   5                                              isneedinitstage = 1;
+ 311   5                                              //turn off pwm
+ 312   5                                              TurnOffMotor();
+ 313   5                                              LED_RGB_Setting(0,0);
+ 314   5                                      }
+ 315   4                                      
+ 316   4                                      if (keystatus & 0x04)//charging
+ 317   4                                      {
+ 318   5                                              if (system_stage == Stage_A)
+ 319   5                                              {
+ 320   6                                                      system_stage = Stage_C;
+ 321   6                                              }
+ 322   5                                              else
+ 323   5                                                      system_stage = Stage_D;
+ 324   5                                              TurnOffMotor();
+ 325   5                                              LED_RGB_Setting(0,0);
+ 326   5                                              isneedinitstage = 1;
+ 327   5                                      }
+ 328   4                                      
+ 329   4                                      if (keystatus & 0x08)
+ 330   4                                      {
+ 331   5                                              //turn off pwm
+ 332   5                                              TurnOffMotor();
+ 333   5                                              LED_RGB_Setting(0,0);
+ 334   5                                      }
+ 335   4                                      
+ 336   4                              }
+ 337   3                              else if (system_stage == Stage_C)
+ 338   3                              {
+ 339   4                                      if (isneedinitstage == 1)
+ 340   4                                      {
+ 341   5                                              isneedinitstage = 0;
+ 342   5                                              //init stage C
+ 343   5                                              led_type = 3;   
+ 344   5                                              isneedinitbatled = 1;
+ 345   5                                              dpdtime = 0;
+ 346   5                                              ischarging = 1;
+ 347   5                                              //turn off pwm
+ 348   5                                              TurnOffMotor();
+ 349   5                                              LED_RGB_Setting(0,0);
+ 350   5                                      }
+ 351   4                                      if (keystatus & 0x01)//key
+ 352   4                                      {
+ 353   5                                              
+ 354   5                                      }
+ 355   4                                      if (keystatus & 0x02)//safety
+ 356   4                                      {
+ 357   5                                              //enter stage_B
+ 358   5                                              system_stage = Stage_D;
+ 359   5                                              isneedinitstage = 1;
+ 360   5                                      }
+ 361   4                                      
+ 362   4                                      if (keystatus & 0x04)//charging
+C51 COMPILER V9.54   MAIN                                                                  02/27/2019 22:16:11 PAGE 7   
 
- 363   4                                      else
- 364   4                                      {
- 365   5                                              if (system_stage == Stage_D)
- 366   5                                              {
- 367   6                                                      system_stage = Stage_B;
- 368   6                                              }
- 369   5                                              else
- 370   5                                                      system_stage = Stage_A;
- 371   5                                              isneedinitstage = 1;
- 372   5                                      }
- 373   4                              }
- 374   3                              else if (system_stage == Stage_D)
- 375   3                              {
- 376   4                                      if (isneedinitstage == 1)
- 377   4                                      {
- 378   5                                              isneedinitstage = 0;
- 379   5                                              isneedinitbatled = 1;
- 380   5                                              //init stage D
- 381   5                                              led_type = 3;
- 382   5                                              dpdtime = 0;
- 383   5                                              ischarging = 1;
- 384   5                                      }
- 385   4                                      if (keystatus & 0x01)//key
- 386   4                                      {
- 387   5                                              //change pwm
- 388   5                                              i  = Change_Motor_PWM();
- 389   5                                              LED_RGB_Setting(i,0);
- 390   5                                      }
- 391   4                                      if (keystatus & 0x02)//safety
- 392   4                                      {
+ 363   4                                      {
+ 364   5                                              dpdtime = 0;
+ 365   5                                      }
+ 366   4                                      else
+ 367   4                                      {
+ 368   5                                              if (system_stage == Stage_D)
+ 369   5                                              {
+ 370   6                                                      system_stage = Stage_B;
+ 371   6                                              }
+ 372   5                                              else
+ 373   5                                                      system_stage = Stage_A;
+ 374   5                                              isneedinitstage = 1;
+ 375   5                                      }
+ 376   4                              }
+ 377   3                              else if (system_stage == Stage_D)
+ 378   3                              {
+ 379   4                                      if (isneedinitstage == 1)
+ 380   4                                      {
+ 381   5                                              isneedinitstage = 0;
+ 382   5                                              isneedinitbatled = 1;
+ 383   5                                              //init stage D
+ 384   5                                              led_type = 3;
+ 385   5                                              dpdtime = 0;
+ 386   5                                              ischarging = 1;
+ 387   5                                      }
+ 388   4                                      if (keystatus & 0x01)//key
+ 389   4                                      {
+ 390   5                                              //change pwm
+ 391   5                                              i  = Change_Motor_PWM();
+ 392   5                                              LED_RGB_Setting(i,0);
  393   5                                      }
- 394   4                                      else
+ 394   4                                      if (keystatus & 0x02)//safety
  395   4                                      {
- 396   5                                              system_stage = Stage_C;
- 397   5                                              isneedinitstage = 1;
- 398   5                                              TurnOffMotor();
- 399   5                                              LED_RGB_Setting(0,0);
- 400   5                                      }
- 401   4                                      
- 402   4                                      if (keystatus & 0x04)//charging
- 403   4                                      {
- 404   5                                              dpdtime = 0;
- 405   5                                      }
- 406   4                                      else
- 407   4                                      {
- 408   5                                              if (system_stage == Stage_C)
- 409   5                                              {
- 410   6                                                      system_stage = Stage_A;
- 411   6                                              }
- 412   5                                              else
- 413   5                                                      system_stage = Stage_B;
- 414   5                                              isneedinitstage = 1;    
- 415   5                                              TurnOffMotor(); 
- 416   5                                              LED_RGB_Setting(0,0);
- 417   5                                      }
- 418   4                                      
- 419   4                                      if (keystatus & 0x08)
- 420   4                                      {
- 421   5                                              //turn off pwm
- 422   5                                              TurnOffMotor();
- 423   5                                              LED_RGB_Setting(0,0);
- 424   5                                      }
-C51 COMPILER V9.54   MAIN                                                                  02/26/2019 22:53:34 PAGE 8   
+ 396   5                                      }
+ 397   4                                      else
+ 398   4                                      {
+ 399   5                                              system_stage = Stage_C;
+ 400   5                                              isneedinitstage = 1;
+ 401   5                                              TurnOffMotor();
+ 402   5                                              LED_RGB_Setting(0,0);
+ 403   5                                      }
+ 404   4                                      
+ 405   4                                      if (keystatus & 0x04)//charging
+ 406   4                                      {
+ 407   5                                              dpdtime = 0;
+ 408   5                                      }
+ 409   4                                      else
+ 410   4                                      {
+ 411   5                                              if (system_stage == Stage_C)
+ 412   5                                              {
+ 413   6                                                      system_stage = Stage_A;
+ 414   6                                              }
+ 415   5                                              else
+ 416   5                                                      system_stage = Stage_B;
+ 417   5                                              isneedinitstage = 1;    
+ 418   5                                              TurnOffMotor(); 
+ 419   5                                              LED_RGB_Setting(0,0);
+ 420   5                                      }
+ 421   4                                      
+ 422   4                                      if (keystatus & 0x08)
+ 423   4                                      {
+ 424   5                                              //turn off pwm
+C51 COMPILER V9.54   MAIN                                                                  02/27/2019 22:16:11 PAGE 8   
 
- 425   4                              }
- 426   3                              
- 427   3                              //ADC process
- 428   3                              getbatlevel();
- 429   3                              if (led_type)
- 430   3                              {
- 431   4                                      if(isneedinitbatled && batlevel_led_value)
- 432   4                                      {
- 433   5                                              i = led_type - 1;
- 434   5                                              LED_WHITE_Setting(batlevel_led_value,i);
- 435   5                                              isneedinitbatled = 0;
- 436   5                                      }
- 437   4                                      if(batlevelledtimeout==0)
- 438   4                                      {
- 439   5                                              if (led_type == 1)
- 440   5                                              {
- 441   6                                                      led_type = 0;
- 442   6                                                      LED_WHITE_Setting(0,0);
- 443   6                                              }
- 444   5                                      }
- 445   4                              }
- 446   3                              //pwm rate
- 447   3                              if (check_motor_done())
- 448   3                              {
- 449   4                                      //turn off pwm
- 450   4                                      TurnOffMotor();
- 451   4                                      LED_RGB_Setting(0,0);
- 452   4                                      //goto stage A,B
- 453   4                                      #warning "change stage to A or B"
-*** WARNING C320 IN LINE 453 OF Code\main.c: "change stage to A or B"
- 454   4                              }
- 455   3                              if(get_motor_level())
- 456   3                              {
- 457   4                                      dpdtime = 0;
- 458   4                              }
- 459   3                              //LED_Process           
- 460   3                              LED_Process(batlevel_led_value);
- 461   3                              
- 462   3                              //dpd
- 463   3                              if (dpdtime >= 2000)
- 464   3                              {
- 465   4                                      dpdtime = 0;
- 466   4                                      //enter dpd
- 467   4                                      //
- 468   4                                      Set_All_GPIO_Quasi_Mode;
- 469   4                                      clr_ADCEN;
- 470   4                                      
- 471   4                                      TurnOffMotor();
- 472   4                                      LED_WHITE_Setting(0,0);
- 473   4                                      LED_RGB_Setting(0,0);
- 474   4                                      DeInit_LED();
-*** WARNING C206 IN LINE 474 OF Code\main.c: 'DeInit_LED': missing function-prototype
- 475   4                                      
- 476   4                                      P17_Input_Mode;
- 477   4                                      set_P1S_7;
- 478   4                                      set_EX1;
- 479   4                                                                      
- 480   4                                      set_PD;
- 481   4      
- 482   4                                      PICON  = 0;
- 483   4                                                              
- 484   4                                      clr_EX0;
-C51 COMPILER V9.54   MAIN                                                                  02/26/2019 22:53:34 PAGE 9   
+ 425   5                                              TurnOffMotor();
+ 426   5                                              LED_RGB_Setting(0,0);
+ 427   5                                      }
+ 428   4                              }
+ 429   3                              
+ 430   3                              //ADC process
+ 431   3                              getbatlevel();
+ 432   3                              if (led_type)
+ 433   3                              {
+ 434   4                                      if(isneedinitbatled && batlevel_led_value)
+ 435   4                                      {
+ 436   5                                              i = led_type - 1;
+ 437   5                                              LED_WHITE_Setting(batlevel_led_value,i);
+ 438   5                                              isneedinitbatled = 0;
+ 439   5                                      }
+ 440   4                                      if(batlevelledtimeout==0)
+ 441   4                                      {
+ 442   5                                              if (led_type == 1)
+ 443   5                                              {
+ 444   6                                                      led_type = 0;
+ 445   6                                                      LED_WHITE_Setting(0,0);
+ 446   6                                              }
+ 447   5                                      }
+ 448   4                              }
+ 449   3                              //pwm rate
+ 450   3                              if (check_motor_done())
+ 451   3                              {
+ 452   4                                      //turn off pwm
+ 453   4                                      TurnOffMotor();
+ 454   4                                      LED_RGB_Setting(0,0);
+ 455   4                                      //goto stage A,B
+ 456   4                                      #warning "change stage to A or B"
+*** WARNING C320 IN LINE 456 OF Code\main.c: "change stage to A or B"
+ 457   4                              }
+ 458   3                              if(get_motor_level())
+ 459   3                              {
+ 460   4                                      dpdtime = 0;
+ 461   4                              }
+ 462   3                              //LED_Process           
+ 463   3                              LED_Process(batlevel_led_value);
+ 464   3                              
+ 465   3                              //dpd
+ 466   3                              if (dpdtime >= 2000)
+ 467   3                              {
+ 468   4                                      dpdtime = 0;
+ 469   4                                      //enter dpd
+ 470   4                                      //
+ 471   4                                      Set_All_GPIO_Quasi_Mode;
+ 472   4                                      clr_ADCEN;
+ 473   4                                      
+ 474   4                                      TurnOffMotor();
+ 475   4                                      LED_WHITE_Setting(0,0);
+ 476   4                                      LED_RGB_Setting(0,0);
+ 477   4                                      DeInit_LED();
+*** WARNING C206 IN LINE 477 OF Code\main.c: 'DeInit_LED': missing function-prototype
+ 478   4                                      
+ 479   4                                      P17_Input_Mode;
+ 480   4                                      set_P1S_7;
+ 481   4                                      set_EX1;
+ 482   4                                                                      
+ 483   4                                      set_PD;
+ 484   4      
+C51 COMPILER V9.54   MAIN                                                                  02/27/2019 22:16:11 PAGE 9   
 
- 485   4                                      clr_EX1;
- 486   4                                      clr_EPI;
- 487   4                                      isneedinitsys = 1;
- 488   4                              }
- 489   3                      }
- 490   2              }
- 491   1      }
- 492          
- 493          void EXT_INT1(void) interrupt 2
- 494          {
- 495   1              
- 496   1      }
- 497          
- 498          void PinInterrupt_ISR (void) interrupt 7
- 499          {
- 500   1              if(PIF == 0x10) //pin 0
- 501   1                      MOTOR_FG_PinInterrupt_ISR();
- 502   1              PIF = 0x00;
- 503   1      }
+ 485   4                                      PICON  = 0;
+ 486   4                                                              
+ 487   4                                      clr_EX0;
+ 488   4                                      clr_EX1;
+ 489   4                                      clr_EPI;
+ 490   4                                      isneedinitsys = 1;
+ 491   4                              }
+ 492   3                      }
+ 493   2              }
+ 494   1      }
+ 495          
+ 496          void EXT_INT1(void) interrupt 2
+ 497          {
+ 498   1              
+ 499   1      }
+ 500          
+ 501          void PinInterrupt_ISR (void) interrupt 7
+ 502          {
+ 503   1              if(PIF == 0x10) //pin 0
+ 504   1                      MOTOR_FG_PinInterrupt_ISR();
+ 505   1              PIF = 0x00;
+ 506   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   1077    ----
+   CODE SIZE        =   1092    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     36       5
+   DATA SIZE        =     27       5
    IDATA SIZE       =   ----    ----
    BIT SIZE         =      6    ----
 END OF MODULE INFORMATION.

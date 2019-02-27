@@ -102,11 +102,11 @@ void LED_RGB_Set_value(unsigned char led_value)
 //		LED_G_SETTING(led_value&LEDR);	
 //	}
 		
-		LED_B_SETTING(led_value&LEDB);
+		LED_R_SETTING(led_value&LEDR);
 		led_value = led_value >> 1;
-		LED_G_SETTING(led_value&LEDB);	
+		LED_B_SETTING(led_value&LEDR);	
 		led_value = led_value >> 1;	
-		LED_R_SETTING(led_value&LEDB);
+		LED_G_SETTING(led_value&LEDR);
 }
 void LED_RGB_Setting(unsigned char led_value,unsigned char led_mode)
 {

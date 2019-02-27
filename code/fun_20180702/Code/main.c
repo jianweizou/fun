@@ -16,8 +16,7 @@ bit BIT_TMP;
 
 unsigned char is_5ms_Flag;
 unsigned int dpdtime;
-unsigned char getbattery_time;
-#define ADC_CNT	12
+#define ADC_CNT	8
 unsigned char adccnt;
 unsigned int adc[ADC_CNT];
 unsigned char batlevel;
@@ -52,7 +51,6 @@ void Timer0_ISR (void) interrupt 1          //interrupt address is 0x000B
     TL0 = TL0_INIT;
 	is_5ms_Flag = 1;
 	dpdtime++;
-	getbattery_time++;
 	startADC_cnt ++;
 	led_display_time++;
 	if (isStartMotor)
@@ -80,7 +78,7 @@ unsigned int getadcvalue(void)
 	unsigned char i;
 	unsigned int adcvalue;
 	adcvalue = 0;
-	for(i=4;i<ADC_CNT;i++)
+	for(i=0;i<ADC_CNT;i++)
 	{
 		adcvalue += adc[i];
 	}
@@ -199,8 +197,7 @@ unsigned char getbatlevel(void)
 void SysInit(void)
 {
 	Init_LED();
-	Timer0_Init();
-	Enable_ADC_AIN2;
+	Timer0_Init();	
 	startADC_cnt = 0;
 	adccnt = 0;
 	KeyInit();	
@@ -213,16 +210,22 @@ void SysInit(void)
 	batlevel_led_value = 0;
 	ischarging = 0;
 	adc_pre_cnt = 0;
+	P07_PushPull_Mode;
+	P07 = 1;
+	P07_Input_Mode;
+	Enable_ADC_AIN2;
 	if (isstartsystem == 0)
 	{
-		while(dpdtime<200)
+		while(dpdtime<300)
 		{
 			getbatlevel();
-			startADC_cnt++;
+//			startADC_cnt++;
 		}
 		isstartsystem = 1;
 	}
 	dpdtime = 0;
+	led_display_time = 0;
+	startADC_cnt = 0;
 //	while(1)
 //	{
 //		if (getbatlevel() == 1)
