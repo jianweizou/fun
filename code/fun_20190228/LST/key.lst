@@ -1,0 +1,154 @@
+C51 COMPILER V9.54   KEY                                                                   02/28/2019 20:38:17 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE KEY
+OBJECT MODULE PLACED IN .\Output\key.obj
+COMPILER INVOKED BY: D:\keil\C51\BIN\C51.EXE Code\key.c ROM(COMPACT) OPTIMIZE(8,SIZE) BROWSE INCDIR(..\..\Include;..\Inc
+                    -lude) DEFINE(FOSC_160000) DEBUG OBJECTEXTEND PRINT(.\LST\key.lst) OBJECT(.\Output\key.obj)
+
+line level    source
+
+   1          #include "N76E003.h"
+   2          #include "SFR_Macro.h"
+   3          #include "Function_define.h"
+   4          #include "dataflash.h"
+   5          #include "key.h"
+   6          
+   7          #define Fun_KEY_INPUT   P17_Input_Mode
+   8          #define Fun_KEY_P17             P17
+   9          #define Safety_KEY_INPUT        P30_Input_Mode
+  10          #define Safety_KEY              P30
+  11          #define Charging_KEY_INPUT      P05_Input_Mode
+  12          #define Charging_KEY    P05
+  13          
+  14          unsigned char curKey,preKey;
+  15          unsigned int debounce;
+  16          unsigned char Safety_key_debounce;
+  17          unsigned char Charging_key_debounce;
+  18          extern char is_5ms_Flag;
+  19          
+  20          extern bit BIT_TMP;
+  21          bit iswaitrelease;
+  22          
+  23          void KeyInit(void)
+  24          {
+  25   1              curKey = 0;
+  26   1              preKey = 0;
+  27   1              debounce = 0;
+  28   1              iswaitrelease = 0;
+  29   1              Safety_key_debounce = 0;
+  30   1              Charging_key_debounce = 0;
+  31   1              Fun_KEY_INPUT;
+  32   1              Safety_KEY_INPUT;
+  33   1              Charging_KEY_INPUT;
+  34   1      }
+  35          
+  36          char KeyScan(void)
+  37          {
+  38   1              unsigned char keystatus ;
+  39   1              keystatus = 0;
+  40   1              if (is_5ms_Flag)
+  41   1              {
+  42   2                      is_5ms_Flag = 0;
+  43   2                      if (iswaitrelease == 0)
+  44   2                              curKey = Fun_KEY_P17;
+  45   2                      else
+  46   2                      {
+  47   3                              if (Fun_KEY_P17 == 1)
+  48   3                              {
+  49   4                                      iswaitrelease = 0;
+  50   4                                      debounce = 0;
+  51   4                              }
+  52   3                              curKey = preKey;
+  53   3                      }
+  54   2                      if (curKey != preKey)
+C51 COMPILER V9.54   KEY                                                                   02/28/2019 20:38:17 PAGE 2   
+
+  55   2                      {
+  56   3                              preKey = curKey;/*
+  57   3                              if (debounce>=400)
+  58   3                              {
+  59   3                                      keystatus = 0x08;
+  60   3                              }
+  61   3                              else*/ if (debounce > 10)
+  62   3                              {
+  63   4                                      keystatus = 1;
+  64   4                              }       
+  65   3                              debounce = 0;
+  66   3                      }
+  67   2                      else if(curKey == 0)
+  68   2                      {
+  69   3                              debounce++;
+  70   3                              if (debounce >= 500)
+  71   3                              {
+  72   4                                      debounce = 500;
+  73   4                              }
+  74   3                              else if (debounce >= 400)
+  75   3                              {
+  76   4                                      debounce = 500;
+  77   4                                      keystatus = 0x08;                               
+  78   4                                      iswaitrelease = 1;
+  79   4                              }
+  80   3                      }
+  81   2                      
+  82   2                      if (Safety_KEY)
+  83   2                      {
+  84   3                              Safety_key_debounce = 0;
+  85   3                      }
+  86   2                      else
+  87   2                      {
+  88   3                              Safety_key_debounce++;
+  89   3                              if (Safety_key_debounce > 20)
+  90   3                              {
+  91   4                                      Safety_key_debounce = 20;
+  92   4                                      keystatus |= 0x02;
+  93   4                              }
+  94   3                      }
+  95   2                      
+  96   2                      if (Charging_KEY)
+  97   2                      {
+  98   3                              Charging_key_debounce = 0;
+  99   3                      }
+ 100   2                      else
+ 101   2                      {
+ 102   3                              Charging_key_debounce++;
+ 103   3                              if (Charging_key_debounce > 20)
+ 104   3                              {
+ 105   4                                      Charging_key_debounce = 20;
+ 106   4                                      keystatus |= 0x04;
+ 107   4                              }
+ 108   3                      }
+ 109   2              }
+ 110   1              return keystatus;
+ 111   1      }
+ 112          
+ 113          void EnterDPD(void)
+ 114          {
+ 115   1              //…Ë÷√P17∞¥º¸ªΩ–—
+ 116   1          P17_Input_Mode;
+C51 COMPILER V9.54   KEY                                                                   02/28/2019 20:38:17 PAGE 3   
+
+ 117   1              set_P0S_7;
+ 118   1              Enable_INT_Port1;
+ 119   1              Enable_BIT7_FallEdge_Trig;
+ 120   1          set_EPI;                                                    // Enable pin interrupt
+ 121   1          set_EA;                     
+ 122   1              //dpd
+ 123   1              set_PD;
+ 124   1              
+ 125   1              PICON  = PICON & 0xFE;
+ 126   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    253    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      6    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

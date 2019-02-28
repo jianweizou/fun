@@ -133,7 +133,7 @@ unsigned char getbatlevel(void)
 			adccnt = 0;
 			adcvalue = getadcvalue();
 			i = get_motor_level();
-			if (i == 4)
+			if (i == 1)
 			{
 				adcvalue = adcvalue + 0x20;
 			}
@@ -141,13 +141,13 @@ unsigned char getbatlevel(void)
 			{
 				adcvalue = adcvalue + 0x10;
 			}
-			else if (i == 1)
+			else if (i == 4)
 			{
 				adcvalue = adcvalue + 0x08;
 			}
 			if (ischarging)
 			{
-				adcvalue = adcvalue - 0x80;	//0x90 -> 0.3v
+				adcvalue = adcvalue - 0x30;	//0x90 -> 0.3v
 			}
 			if (adcvalue > 0xCA0)	//>75%	8v		
 			{
@@ -216,7 +216,7 @@ void SysInit(void)
 	Enable_ADC_AIN2;
 	if (isstartsystem == 0)
 	{
-		while(dpdtime<300)
+		while(dpdtime<60)
 		{
 			getbatlevel();
 //			startADC_cnt++;

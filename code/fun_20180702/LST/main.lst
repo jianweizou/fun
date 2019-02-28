@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   MAIN                                                                  02/27/2019 22:16:11 PAGE 1   
+C51 COMPILER V9.54   MAIN                                                                  02/28/2019 22:29:28 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
@@ -62,7 +62,7 @@ line level    source
   50   1          TH0 = TH0_INIT;
   51   1          TL0 = TL0_INIT;
   52   1              is_5ms_Flag = 1;
-C51 COMPILER V9.54   MAIN                                                                  02/27/2019 22:16:11 PAGE 2   
+C51 COMPILER V9.54   MAIN                                                                  02/28/2019 22:29:28 PAGE 2   
 
   53   1              dpdtime++;
   54   1              startADC_cnt ++;
@@ -126,7 +126,7 @@ line level    source
  112   1              return val;
  113   1      }
  114          
-C51 COMPILER V9.54   MAIN                                                                  02/27/2019 22:16:11 PAGE 3   
+C51 COMPILER V9.54   MAIN                                                                  02/28/2019 22:29:28 PAGE 3   
 
  115          unsigned char getbatlevel(void)
  116          {
@@ -149,7 +149,7 @@ line level    source
  133   3                              adccnt = 0;
  134   3                              adcvalue = getadcvalue();
  135   3                              i = get_motor_level();
- 136   3                              if (i == 4)
+ 136   3                              if (i == 1)
  137   3                              {
  138   4                                      adcvalue = adcvalue + 0x20;
  139   4                              }
@@ -157,13 +157,13 @@ line level    source
  141   3                              {
  142   4                                      adcvalue = adcvalue + 0x10;
  143   4                              }
- 144   3                              else if (i == 1)
+ 144   3                              else if (i == 4)
  145   3                              {
  146   4                                      adcvalue = adcvalue + 0x08;
  147   4                              }
  148   3                              if (ischarging)
  149   3                              {
- 150   4                                      adcvalue = adcvalue - 0x80;     //0x90 -> 0.3v
+ 150   4                                      adcvalue = adcvalue - 0x30;     //0x90 -> 0.3v
  151   4                              }
  152   3                              if (adcvalue > 0xCA0)   //>75%  8v              
  153   3                              {
@@ -190,7 +190,7 @@ line level    source
  174   3      //                              adc_pre_cnt = 10;
  175   3      //                              if (ischarging)
  176   3      //                              {
-C51 COMPILER V9.54   MAIN                                                                  02/27/2019 22:16:11 PAGE 4   
+C51 COMPILER V9.54   MAIN                                                                  02/28/2019 22:29:28 PAGE 4   
 
  177   3      //                                      if (templevel >= batlevel)
  178   3      //                                              batlevel = templevel;
@@ -234,7 +234,7 @@ line level    source
  216   1              Enable_ADC_AIN2;
  217   1              if (isstartsystem == 0)
  218   1              {
- 219   2                      while(dpdtime<300)
+ 219   2                      while(dpdtime<60)
  220   2                      {
  221   3                              getbatlevel();
  222   3      //                      startADC_cnt++;
@@ -254,7 +254,7 @@ line level    source
  236          void main(void)
  237          {
  238   1              unsigned char keystatus,i;
-C51 COMPILER V9.54   MAIN                                                                  02/27/2019 22:16:11 PAGE 5   
+C51 COMPILER V9.54   MAIN                                                                  02/28/2019 22:29:28 PAGE 5   
 
  239   1              Set_All_GPIO_Quasi_Mode;
  240   1              isneedinitsys = 1;
@@ -318,7 +318,7 @@ line level    source
  298   4                                      if (keystatus & 0x01)//key
  299   4                                      {
  300   5                                              //change pwm
-C51 COMPILER V9.54   MAIN                                                                  02/27/2019 22:16:11 PAGE 6   
+C51 COMPILER V9.54   MAIN                                                                  02/28/2019 22:29:28 PAGE 6   
 
  301   5                                              i  = Change_Motor_PWM();
  302   5                                              LED_RGB_Setting(i,0);
@@ -382,7 +382,7 @@ line level    source
  360   5                                      }
  361   4                                      
  362   4                                      if (keystatus & 0x04)//charging
-C51 COMPILER V9.54   MAIN                                                                  02/27/2019 22:16:11 PAGE 7   
+C51 COMPILER V9.54   MAIN                                                                  02/28/2019 22:29:28 PAGE 7   
 
  363   4                                      {
  364   5                                              dpdtime = 0;
@@ -446,7 +446,7 @@ line level    source
  422   4                                      if (keystatus & 0x08)
  423   4                                      {
  424   5                                              //turn off pwm
-C51 COMPILER V9.54   MAIN                                                                  02/27/2019 22:16:11 PAGE 8   
+C51 COMPILER V9.54   MAIN                                                                  02/28/2019 22:29:28 PAGE 8   
 
  425   5                                              TurnOffMotor();
  426   5                                              LED_RGB_Setting(0,0);
@@ -510,7 +510,7 @@ line level    source
  482   4                                                                      
  483   4                                      set_PD;
  484   4      
-C51 COMPILER V9.54   MAIN                                                                  02/27/2019 22:16:11 PAGE 9   
+C51 COMPILER V9.54   MAIN                                                                  02/28/2019 22:29:28 PAGE 9   
 
  485   4                                      PICON  = 0;
  486   4                                                              
