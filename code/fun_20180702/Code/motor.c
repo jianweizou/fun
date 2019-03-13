@@ -54,7 +54,7 @@ void TurnOffMotor(void)
 		P04 = 0;
 		P06 = 0;
 		P12_PushPull_Mode;
-		P12 = 1;
+		P12 = 0;
 }
 /*
 unsigned Change_Motor_PWM(void)
