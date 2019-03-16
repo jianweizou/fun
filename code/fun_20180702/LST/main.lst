@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   MAIN                                                                  03/13/2019 22:35:00 PAGE 1   
+C51 COMPILER V9.54   MAIN                                                                  03/16/2019 18:33:30 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
@@ -62,7 +62,7 @@ line level    source
   50   1          TH0 = TH0_INIT;
   51   1          TL0 = TL0_INIT;
   52   1              is_5ms_Flag = 1;
-C51 COMPILER V9.54   MAIN                                                                  03/13/2019 22:35:00 PAGE 2   
+C51 COMPILER V9.54   MAIN                                                                  03/16/2019 18:33:30 PAGE 2   
 
   53   1              dpdtime++;
   54   1              startADC_cnt ++;
@@ -126,7 +126,7 @@ line level    source
  112   1              return val;
  113   1      }
  114          
-C51 COMPILER V9.54   MAIN                                                                  03/13/2019 22:35:00 PAGE 3   
+C51 COMPILER V9.54   MAIN                                                                  03/16/2019 18:33:30 PAGE 3   
 
  115          unsigned char getbatlevel(void)
  116          {
@@ -190,7 +190,7 @@ line level    source
  174   3      //                              adc_pre_cnt = 10;
  175   3      //                              if (ischarging)
  176   3      //                              {
-C51 COMPILER V9.54   MAIN                                                                  03/13/2019 22:35:00 PAGE 4   
+C51 COMPILER V9.54   MAIN                                                                  03/16/2019 18:33:30 PAGE 4   
 
  177   3      //                                      if (templevel >= batlevel)
  178   3      //                                              batlevel = templevel;
@@ -228,9 +228,9 @@ line level    source
  210   1              batlevel_led_value = 0;
  211   1              ischarging = 0;
  212   1              adc_pre_cnt = 0;
- 213   1              P07_PushPull_Mode;
- 214   1              P07 = 1;
- 215   1              P07_Input_Mode;
+ 213   1      //      P07_PushPull_Mode;
+ 214   1      //      P07 = 1;
+ 215   1      //      P07_Input_Mode;
  216   1              Enable_ADC_AIN2;
  217   1              if (isstartsystem == 0)
  218   1              {
@@ -254,7 +254,7 @@ line level    source
  236          void main(void)
  237          {
  238   1              unsigned char keystatus,i;
-C51 COMPILER V9.54   MAIN                                                                  03/13/2019 22:35:00 PAGE 5   
+C51 COMPILER V9.54   MAIN                                                                  03/16/2019 18:33:30 PAGE 5   
 
  239   1              Set_All_GPIO_Quasi_Mode;
  240   1              isneedinitsys = 1;
@@ -318,7 +318,7 @@ line level    source
  298   4                                      if (keystatus & 0x01)//key
  299   4                                      {
  300   5                                              //change pwm
-C51 COMPILER V9.54   MAIN                                                                  03/13/2019 22:35:00 PAGE 6   
+C51 COMPILER V9.54   MAIN                                                                  03/16/2019 18:33:30 PAGE 6   
 
  301   5                                              i  = Change_Motor_PWM();
  302   5                                              LED_RGB_Setting(i,0);
@@ -382,7 +382,7 @@ line level    source
  360   5                                      }
  361   4                                      
  362   4                                      if (keystatus & 0x04)//charging
-C51 COMPILER V9.54   MAIN                                                                  03/13/2019 22:35:00 PAGE 7   
+C51 COMPILER V9.54   MAIN                                                                  03/16/2019 18:33:30 PAGE 7   
 
  363   4                                      {
  364   5                                              dpdtime = 0;
@@ -446,7 +446,7 @@ line level    source
  422   4                                      if (keystatus & 0x08)
  423   4                                      {
  424   5                                              //turn off pwm
-C51 COMPILER V9.54   MAIN                                                                  03/13/2019 22:35:00 PAGE 8   
+C51 COMPILER V9.54   MAIN                                                                  03/16/2019 18:33:30 PAGE 8   
 
  425   5                                              TurnOffMotor();
  426   5                                              LED_RGB_Setting(0,0);
@@ -497,60 +497,47 @@ line level    source
  470   4                                      //
  471   4                                      Set_All_GPIO_Quasi_Mode;
  472   4                                      clr_ADCEN;
- 473   4                                      P07_PushPull_Mode;
- 474   4                                      P07 = 0;
- 475   4                                      P05_PushPull_Mode;
- 476   4                                      P05 = 0;
- 477   4                                      
- 478   4                                      P14_PushPull_Mode;
- 479   4                                      P14 = 0;
- 480   4                                      TurnOffMotor();
- 481   4                                      LED_WHITE_Setting(0,0);
- 482   4                                      LED_RGB_Setting(0,0);
- 483   4                                      DeInit_LED();
-*** WARNING C206 IN LINE 483 OF Code\main.c: 'DeInit_LED': missing function-prototype
- 484   4                                      
-C51 COMPILER V9.54   MAIN                                                                  03/13/2019 22:35:00 PAGE 9   
+ 473   4                                      
+ 474   4                                      TurnOffMotor();
+ 475   4                                      LED_WHITE_Setting(0,0);
+ 476   4                                      LED_RGB_Setting(0,0);
+ 477   4                                      DeInit_LED();
+*** WARNING C206 IN LINE 477 OF Code\main.c: 'DeInit_LED': missing function-prototype
+ 478   4                                      
+ 479   4                                      P17_Input_Mode;
+ 480   4                                      set_P1S_7;
+ 481   4                                      set_EX1;
+ 482   4                                                                      
+ 483   4                                      set_PD;
+ 484   4      
+C51 COMPILER V9.54   MAIN                                                                  03/16/2019 18:33:30 PAGE 9   
 
- 485   4      //                              clr_T0M;
- 486   4      //                              clr_T1M;
- 487   4      //                              clr_BODEN;
- 488   4      //                              clr_HIRCEN;
- 489   4      //                              clr_CLOEN;
- 490   4                                      
- 491   4                                      
- 492   4                                      P17_Input_Mode;
- 493   4                                      set_P1S_7;
- 494   4                                      set_EX1;
- 495   4                                                                      
- 496   4                              set_PD;
- 497   4      
- 498   4                                      PICON  = 0;
- 499   4                                                              
- 500   4                                      clr_EX0;
- 501   4                                      clr_EX1;
- 502   4                                      clr_EPI;
- 503   4                                      isneedinitsys = 1;
- 504   4                              }
- 505   3                      }
- 506   2              }
- 507   1      }
- 508          
- 509          void EXT_INT1(void) interrupt 2
- 510          {
- 511   1              
- 512   1      }
- 513          
- 514          void PinInterrupt_ISR (void) interrupt 7
- 515          {
- 516   1              if(PIF == 0x10) //pin 0
- 517   1                      MOTOR_FG_PinInterrupt_ISR();
- 518   1              PIF = 0x00;
- 519   1      }
+ 485   4                                      PICON  = 0;
+ 486   4                                                              
+ 487   4                                      clr_EX0;
+ 488   4                                      clr_EX1;
+ 489   4                                      clr_EPI;
+ 490   4                                      isneedinitsys = 1;
+ 491   4                              }
+ 492   3                      }
+ 493   2              }
+ 494   1      }
+ 495          
+ 496          void EXT_INT1(void) interrupt 2
+ 497          {
+ 498   1              
+ 499   1      }
+ 500          
+ 501          void PinInterrupt_ISR (void) interrupt 7
+ 502          {
+ 503   1              if(PIF == 0x10) //pin 0
+ 504   1                      MOTOR_FG_PinInterrupt_ISR();
+ 505   1              PIF = 0x00;
+ 506   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   1116    ----
+   CODE SIZE        =   1078    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

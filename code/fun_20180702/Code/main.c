@@ -210,9 +210,9 @@ void SysInit(void)
 	batlevel_led_value = 0;
 	ischarging = 0;
 	adc_pre_cnt = 0;
-	P07_PushPull_Mode;
-	P07 = 1;
-	P07_Input_Mode;
+//	P07_PushPull_Mode;
+//	P07 = 1;
+//	P07_Input_Mode;
 	Enable_ADC_AIN2;
 	if (isstartsystem == 0)
 	{
@@ -470,30 +470,17 @@ void main(void)
 				//
 				Set_All_GPIO_Quasi_Mode;
 				clr_ADCEN;
-				P07_PushPull_Mode;
-				P07 = 0;
-				P05_PushPull_Mode;
-				P05 = 0;
 				
-				P14_PushPull_Mode;
-				P14 = 0;
 				TurnOffMotor();
 				LED_WHITE_Setting(0,0);
 				LED_RGB_Setting(0,0);
 				DeInit_LED();
 				
-//				clr_T0M;
-//				clr_T1M;
-//				clr_BODEN;
-//				clr_HIRCEN;
-//				clr_CLOEN;
-				
-				
 				P17_Input_Mode;
 				set_P1S_7;
 				set_EX1;
 								
-			set_PD;
+				set_PD;
 
 				PICON  = 0;
 							
