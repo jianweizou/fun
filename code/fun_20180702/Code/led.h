@@ -12,6 +12,8 @@
 #define LED4	8
 
 void Init_LED(void);
-void LED_Process(unsigned char led_value);
+void LED_Process(unsigned char stage,unsigned char led_value);
 void LED_WHITE_Setting(unsigned char led_value,unsigned char led_mode);
 void LED_RGB_Setting(unsigned char led_value,unsigned char led_mode);
+unsigned char batlevel_to_led_value(unsigned char stage);
+void LED_Setting(unsigned char stage,unsigned char batlevel);

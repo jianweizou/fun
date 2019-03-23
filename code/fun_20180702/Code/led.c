@@ -23,12 +23,12 @@
 #define LED_B_SETTING(x)	P15 = x
 
 extern unsigned char is_5ms_Flag;
-
-char led_white_mode;
+unsigned char led_stage=0;
+unsigned char led_white_mode;
 bit led_rgb_mode;
 bit led_white_tog;
 unsigned int led_display_time = 0;
-
+extern unsigned char batlevel;
 void Init_LED(void)
 {
 	LED1_OUTPUT;
@@ -79,7 +79,7 @@ void LED_WHITE_Set_value(unsigned char led_value)
 }
 void LED_WHITE_Setting(unsigned char led_value,unsigned char led_mode)
 {
-	led_white_mode = led_mode;
+//	led_white_mode = led_mode;
 	LED_WHITE_Set_value(led_value);
 	led_display_time = 0;
 	led_white_tog = 0;
@@ -114,49 +114,212 @@ void LED_RGB_Setting(unsigned char led_value,unsigned char led_mode)
 	LED_RGB_Set_value(led_value);
 }
 
-void LED_Process(unsigned char led_value)
+unsigned char batlevel_to_led_value(unsigned char stage)
 {
-	if (led_white_mode == 1)
+	unsigned char val;
+	if (stage == 1)//stage A
+	{
+		if (batlevel >= 5)
+		{
+			val = 0x0F;
+		}
+		else if (batlevel == 4)
+		{
+			val = 0x07;
+		}
+		else if (batlevel == 3)
+		{
+			val = 0x03;
+		}
+		else if (batlevel == 2)
+		{
+			val = 0x01;
+		}			
+	}
+	else if (stage == 4)//stage C
+	{
+		if (batlevel == 6)	//100%
+			val = 0x0F;
+		else if (batlevel == 5)	//>75%
+		{
+			val = 0x07;
+		}
+		else if (batlevel == 4)	//50%
+		{
+			val = 0x03;
+		}
+		else if (batlevel == 3)	//25
+		{
+			val = 0x01;
+		}
+		else
+			val = 0;
+	}
+	else if (stage == 2)//stage B
+	{
+		if (batlevel >= 5)	//>75%
+		{
+			val = 0x0F;
+		}
+		else if (batlevel == 4)//>50%
+		{
+			val = 0x07;
+		}
+		else if (batlevel == 3)//>25%
+		{
+			val = 0x03;
+		}
+		else if (batlevel == 2)//>10%
+		{
+			val = 0x01;
+		}
+		else if (batlevel == 1)//<10%
+		{
+			val = 0x00;
+		}
+	}
+	else if (stage == 8)//stage D
+	{
+		if (batlevel == 6)
+		{
+			val = 0x0F;
+		}
+		else if (batlevel == 5)	//>75%
+		{
+			val = 0x07;
+		}
+		else if (batlevel == 4)//>50%
+		{
+			val = 0x03;
+		}
+		else if (batlevel == 3)//>25%
+		{
+			val = 0x01;
+		}
+		else	//<25%
+		{
+			val = 0;
+		}
+	}
+	return val;
+}
+
+void LED_Setting(unsigned char stage,unsigned char batlevel)
+{
+	unsigned char temp;
+	led_stage = stage;
+	led_display_time = 0;
+	if (led_stage == 0)
+	{
+		LED_WHITE_Setting(0,0);
+	}
+	else if (led_stage == 1)	//stage_A
+	{
+		led_white_mode = 0;
+		temp = batlevel_to_led_value(led_stage);
+		LED_WHITE_Setting(temp,0);
+	}
+	else if (led_stage == 4)//stage C
+	{
+		led_white_mode = 0;
+		temp = batlevel_to_led_value(led_stage);
+		LED_WHITE_Setting(temp,0);
+	}
+	else if (led_stage == 2)//stage B
+	{
+		led_white_mode = 0;
+		temp = batlevel_to_led_value(led_stage);
+		if (temp == 0)
+			LED_WHITE_Setting(1,0);
+		else
+			LED_WHITE_Setting(temp,0);
+	}
+	else if (led_stage == 8)//stage D
+	{
+		led_white_mode = 0;
+		temp = batlevel_to_led_value(led_stage);
+		LED_WHITE_Setting(temp,0);
+	}
+}
+
+void LED_Process(unsigned char stage,unsigned char led_value)
+{
+	unsigned char temp;
+	if (led_stage == 1)	//stage
 	{
 		if (led_display_time == 600)
 		{
-			led_display_time = 0;
-			if (led_white_tog == 0)
-			{
-				led_white_tog = 1;
-				led_display_time = 1;
-				LED_WHITE_Set_value(0);
-			}
-			else
-			{
-				led_white_tog = 0;
-				led_display_time = 0;
-				LED_WHITE_Set_value(led_value);
-			}
+			led_stage = 0;
+			LED_WHITE_Setting(0,0);
 		}
 	}
-	else if (led_white_mode == 2)
+	else if (led_stage == 4)//stage C
 	{
-		if (led_display_time == 200)
+		if (led_display_time == 100)
 		{
 			led_display_time = 0;
 			if (led_white_tog == 0)
 			{
 				led_white_tog = 1;
 				led_display_time = 1;
-				led_value = (led_value<<1) + 1;
-				LED_WHITE_Set_value(led_value);
+				temp = batlevel_to_led_value(led_stage);
+				temp = (temp<<1) + 1;
+				LED_WHITE_Set_value(temp);
 			}
 			else
 			{
 				led_white_tog = 0;
 				led_display_time = 0;
-				LED_WHITE_Set_value(led_value);
+				temp = batlevel_to_led_value(led_stage);
+				LED_WHITE_Set_value(temp);
 			}
 		}		
 	}
-	
-	if (led_rgb_mode)
+	else if (led_stage == 2)//stage B
 	{
+		if (led_display_time == 50)
+		{
+			led_display_time = 0;
+			if (led_white_tog == 0)
+			{
+				led_white_tog = 1;
+				led_display_time = 1;
+				temp = batlevel_to_led_value(led_stage);
+				if (temp == 0)
+				{
+					temp = (temp<<1) + 1;
+				}				
+				LED_WHITE_Set_value(temp);
+			}
+			else
+			{
+				led_white_tog = 0;
+				led_display_time = 0;
+				temp = batlevel_to_led_value(led_stage);
+				LED_WHITE_Set_value(temp);
+			}
+		}		
+	}
+	else if (led_stage == 8)//stage D
+	{
+		if (led_display_time == 100)
+		{
+			led_display_time = 0;
+			if (led_white_tog == 0)
+			{
+				led_white_tog = 1;
+				led_display_time = 1;
+				temp = batlevel_to_led_value(led_stage);
+				temp = (temp<<1) + 1;
+				LED_WHITE_Set_value(temp);
+			}
+			else
+			{
+				led_white_tog = 0;
+				led_display_time = 0;
+				temp = batlevel_to_led_value(led_stage);
+				LED_WHITE_Set_value(temp);
+			}
+		}		
 	}
 }

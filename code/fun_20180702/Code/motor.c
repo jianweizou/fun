@@ -212,11 +212,38 @@ unsigned char get_motor_level(void)
 	return Motor_Level;
 }
 
+unsigned char cur_pwm(void)
+{
+	unsigned int curpwm;
+	if (isMaxPWM == 1)
+		return 0;
+	curpwm = PWM0H;
+	curpwm = curpwm<<8;
+	curpwm |= PWM0L;
+	if (curpwm > 0x120)
+	{
+		return 1;
+	}
+	else if (curpwm > 0x80)
+	{
+		return 2;
+	}
+	return 3;
+}
+
 unsigned char check_motor_done(void)
 {
 	if (isStartMotor)
 	{
-		if (Motor_done_cnt > 10)
+		if (Motor_Level == 1)
+		{
+			if (cur_Motor_PWM > 0xF0)
+			{
+				if (Motor_done_cnt > 10)
+					return 1;
+			}
+		}
+		if (Motor_done_cnt > 1)
 			return 1;
 	}
 	if ((Motor_Level == 1)&&(isMaxPWM == 0))

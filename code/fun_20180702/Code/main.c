@@ -20,7 +20,8 @@ unsigned int dpdtime;
 unsigned char adccnt;
 unsigned int adc[ADC_CNT];
 unsigned char batlevel;
-unsigned char batlevelledtimeout;
+unsigned int batlevelledtimeout;
+unsigned int adcvalue;
 extern unsigned char Motor_Level;
 extern unsigned int led_display_time;
 /********************************/
@@ -86,37 +87,12 @@ unsigned int getadcvalue(void)
 	return adcvalue;
 }
 
-unsigned char batlevel_to_led_value(void)
-{
-	unsigned char val;
-	if (batlevel == 4)
-	{
-		val = 0x0F;
-	}
-	else if (batlevel == 3)
-	{
-		val = 0x07;
-	}
-	else if (batlevel == 2)
-	{
-		val = 0x03;
-	}
-	else if (batlevel == 1)
-	{
-		val = 0x01;
-	}
-	else
-	{
-		val = 0;
-	}
-	return val;
-}
 
 unsigned char getbatlevel(void)
 {
-	unsigned int adcvalue;
 	unsigned char templevel;
 	unsigned char i;
+	unsigned char cur_pwm_level;
 	if (startADC_cnt > 0)
 	{
 		startADC_cnt = 0;
@@ -135,7 +111,16 @@ unsigned char getbatlevel(void)
 			i = get_motor_level();
 			if (i == 1)
 			{
-				adcvalue = adcvalue + 0x20;
+				cur_pwm_level = cur_pwm();
+//				if (cur_pwm_level == 0)
+//					adcvalue = adcvalue + 0x30;
+//				else
+				if (cur_pwm_level == 1)
+					adcvalue = adcvalue + 0x08;
+				else if (cur_pwm_level == 2)
+					adcvalue = adcvalue + 0x10;
+				else
+					adcvalue = adcvalue + 0x20;
 			}
 			else if (i == 2)
 			{
@@ -147,28 +132,41 @@ unsigned char getbatlevel(void)
 			}
 			if (ischarging)
 			{
-				adcvalue = adcvalue - 0x30;	//0x90 -> 0.3v
+				if (batlevel < 3)
+					adcvalue = adcvalue - 0x50;
+				else if (batlevel < 5)
+					adcvalue = adcvalue - 0x40;
+				else
+					adcvalue = adcvalue - 0x30;	//0x90 -> 0.3v
 			}
-			if (adcvalue > 0xCA0)	//>75%	8v		
+			if (adcvalue > 0xD08)		//100% 8.2
 			{
-				templevel = 4;
+				templevel = 6;
+			}
+			else if (adcvalue > 0xCA0)	//>75%	8v		
+			{
+				templevel = 5;
 			}
 			else if (adcvalue > 0xC40)	//>50%	7.7v
 			{
+				templevel = 4;
+			}
+			else if (adcvalue > 0xBE0)	//>25%	7.5
+			{
 				templevel = 3;
 			}
-			else if (adcvalue > 0xBD0)	//>25%	7.4
+			else if (adcvalue > 0xBA0)	//10%	7.2v
 			{
 				templevel = 2;
 			}
-			else if (adcvalue > 0xB60)	//<25%	7v
+			else
 			{
 				templevel = 1;
 			}
-			else if (adcvalue < 0xA00)
-			{
-				templevel = 0;
-			}
+//			else if (adcvalue < 0xA00)
+//			{
+//				templevel = 0;
+//			}
 //			if (adc_pre_cnt > 4)
 //			{
 //				adc_pre_cnt = 10;
@@ -186,7 +184,7 @@ unsigned char getbatlevel(void)
 //			else
 				batlevel = templevel;
 			adc_pre_cnt++;
-			batlevel_led_value = batlevel_to_led_value();
+//			batlevel_led_value = batlevel_to_led_value();
 			return 1;
 		}
 	}	
@@ -223,6 +221,13 @@ void SysInit(void)
 		}
 		isstartsystem = 1;
 	}
+	else
+	{
+		while(dpdtime<10)
+		{
+			getbatlevel();
+		}		
+	}
 	dpdtime = 0;
 	led_display_time = 0;
 	startADC_cnt = 0;
@@ -257,7 +262,7 @@ void main(void)
 				{
 					isneedinitstage = 0;
 					//init stage A
-					LED_WHITE_Setting(0,0);
+					LED_Setting(0,0);
 					LED_RGB_Setting(0,0);
 					led_type = 0;
 					dpdtime = 0;
@@ -268,7 +273,8 @@ void main(void)
 					//display power as LED
 					led_type = 1;
 					isneedinitbatled = 1;
-					batlevelledtimeout = 200;
+					batlevelledtimeout = 600;
+					LED_Setting(system_stage,batlevel);
 				}
 				if (keystatus & 0x02)
 				{
@@ -293,13 +299,17 @@ void main(void)
 					led_type = 2;	
 					isneedinitbatled = 1;
 					dpdtime = 0;
-					ischarging = 0;
+					ischarging = 0;			
 				}
 				if (keystatus & 0x01)//key
 				{
 					//change pwm
 					i  = Change_Motor_PWM();
 					LED_RGB_Setting(i,0);
+					if (i == 0)
+						LED_Setting(0,0);
+					else
+						LED_Setting(system_stage,batlevel);
 				}
 				if (keystatus & 0x02)//safety
 				{
@@ -311,6 +321,7 @@ void main(void)
 					//turn off pwm
 					TurnOffMotor();
 					LED_RGB_Setting(0,0);
+					LED_Setting(0,0);
 				}
 				
 				if (keystatus & 0x04)//charging
@@ -321,8 +332,8 @@ void main(void)
 					}
 					else
 						system_stage = Stage_D;
-					TurnOffMotor();
-					LED_RGB_Setting(0,0);
+//					TurnOffMotor();
+//					LED_RGB_Setting(0,0);
 					isneedinitstage = 1;
 				}
 				
@@ -331,6 +342,7 @@ void main(void)
 					//turn off pwm
 					TurnOffMotor();
 					LED_RGB_Setting(0,0);
+					LED_Setting(0,0);
 				}
 				
 			}
@@ -344,9 +356,10 @@ void main(void)
 					isneedinitbatled = 1;
 					dpdtime = 0;
 					ischarging = 1;
+					LED_Setting(system_stage,batlevel);
 					//turn off pwm
-					TurnOffMotor();
-					LED_RGB_Setting(0,0);
+//					TurnOffMotor();
+//					LED_RGB_Setting(0,0);
 				}
 				if (keystatus & 0x01)//key
 				{
@@ -370,7 +383,10 @@ void main(void)
 						system_stage = Stage_B;
 					}
 					else
+					{
 						system_stage = Stage_A;
+						LED_Setting(0,0);
+					}
 					isneedinitstage = 1;
 				}
 			}
@@ -384,6 +400,7 @@ void main(void)
 					led_type = 3;
 					dpdtime = 0;
 					ischarging = 1;
+					LED_Setting(system_stage,batlevel);
 				}
 				if (keystatus & 0x01)//key
 				{
@@ -413,10 +430,18 @@ void main(void)
 						system_stage = Stage_A;
 					}
 					else
+					{
 						system_stage = Stage_B;
+						i = get_motor_level();
+						LED_RGB_Setting(i,0);
+						if (i == 0)
+							LED_Setting(0,0);
+						else
+							LED_Setting(system_stage,batlevel);
+					}
 					isneedinitstage = 1;	
-					TurnOffMotor();	
-					LED_RGB_Setting(0,0);
+//					TurnOffMotor();	
+//					LED_RGB_Setting(0,0);
 				}
 				
 				if (keystatus & 0x08)
@@ -429,6 +454,7 @@ void main(void)
 			
 			//ADC process
 			getbatlevel();
+			/*
 			if (led_type)
 			{
 				if(isneedinitbatled && batlevel_led_value)
@@ -446,12 +472,14 @@ void main(void)
 					}
 				}
 			}
+			*/
 			//pwm rate
 			if (check_motor_done())
 			{
 				//turn off pwm
 				TurnOffMotor();
 				LED_RGB_Setting(0,0);
+				LED_Setting(0,0);
 				//goto stage A,B
 				#warning "change stage to A or B"
 			}
@@ -460,7 +488,7 @@ void main(void)
 				dpdtime = 0;
 			}
 			//LED_Process		
-			LED_Process(batlevel_led_value);
+			LED_Process(system_stage,batlevel_led_value);
 			
 			//dpd
 			if (dpdtime >= 2000)

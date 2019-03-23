@@ -134,18 +134,18 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>379</LineNumber>
+          <LineNumber>283</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>-16776866</Address>
+          <Address>-16775488</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>Code\MAIN.C</Filename>
+          <Filename>Code\LED.C</Filename>
           <ExecCommand></ExecCommand>
-          <Expression></Expression>
+          <Expression>\\I2C_EEPROM\LED\283</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -163,6 +163,16 @@
           <count>2</count>
           <WinNumber>1</WinNumber>
           <ItemText>adc</ItemText>
+        </Ww>
+        <Ww>
+          <count>3</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>batlevel</ItemText>
+        </Ww>
+        <Ww>
+          <count>4</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>adcvalue</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
