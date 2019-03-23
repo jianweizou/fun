@@ -136,7 +136,7 @@
           <Type>0</Type>
           <LineNumber>283</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>-16775488</Address>
+          <Address>-16775461</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -145,7 +145,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>Code\LED.C</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\I2C_EEPROM\LED\283</Expression>
+          <Expression></Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>

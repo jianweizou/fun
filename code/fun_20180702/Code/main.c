@@ -139,11 +139,11 @@ unsigned char getbatlevel(void)
 				else
 					adcvalue = adcvalue - 0x30;	//0x90 -> 0.3v
 			}
-			if (adcvalue > 0xD08)		//100% 8.2
+			if (adcvalue > 0xD20)		//100% 8.2
 			{
 				templevel = 6;
 			}
-			else if (adcvalue > 0xCA0)	//>75%	8v		
+			else if (adcvalue > 0xCB0)	//>75%	8v		
 			{
 				templevel = 5;
 			}
@@ -167,23 +167,15 @@ unsigned char getbatlevel(void)
 //			{
 //				templevel = 0;
 //			}
-//			if (adc_pre_cnt > 4)
-//			{
-//				adc_pre_cnt = 10;
-//				if (ischarging)
-//				{
-//					if (templevel >= batlevel)
-//						batlevel = templevel;
-//				}
-//				else
-//				{
-//					if (templevel <= batlevel)
-//						batlevel = templevel;
-//				}
-//			}
-//			else
+			if (batlevel != templevel)
+				adc_pre_cnt++;
+			else
+				adc_pre_cnt = 0;
+			if (adc_pre_cnt > 4)
+			{
+				adc_pre_cnt = 0;
 				batlevel = templevel;
-			adc_pre_cnt++;
+			}
 //			batlevel_led_value = batlevel_to_led_value();
 			return 1;
 		}
