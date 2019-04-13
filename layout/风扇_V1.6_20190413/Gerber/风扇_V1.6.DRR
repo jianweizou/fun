@@ -1,0 +1,16 @@
+---------------------------------------------------------------------------
+NCDrill File Report For: ∑Á…»_V1.6.PcbDoc   2019/4/13  18:28:35
+---------------------------------------------------------------------------
+
+Layer Pair : Top Layer to Bottom Layer
+ASCII RoundHoles File : ∑Á…»_V1.TXT
+EIA File   : ∑Á…»_V1.6.DRL
+
+Tool         Hole Size           Hole Type     Hole Count Plated       Tool Travel
+---------------------------------------------------------------------------
+T1        11.81mil (0.29997mm)     Round          104              18.76 Inch (476.59 mm)
+T2        23.62mil (0.59995mm)     Round          19               7.13 Inch (181.23 mm)
+---------------------------------------------------------------------------
+Totals                                            123              25.90 Inch (657.82 mm)
+
+Total Processing Time (hh:mm:ss) : 00:00:00
