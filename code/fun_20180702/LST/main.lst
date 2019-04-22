@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   MAIN                                                                  03/23/2019 18:14:13 PAGE 1   
+C51 COMPILER V9.54   MAIN                                                                  04/22/2019 21:34:19 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
@@ -62,7 +62,7 @@ line level    source
   50          {
   51   1          TH0 = TH0_INIT;
   52   1          TL0 = TL0_INIT;
-C51 COMPILER V9.54   MAIN                                                                  03/23/2019 18:14:13 PAGE 2   
+C51 COMPILER V9.54   MAIN                                                                  04/22/2019 21:34:19 PAGE 2   
 
   53   1              is_5ms_Flag = 1;
   54   1              dpdtime++;
@@ -126,7 +126,7 @@ line level    source
  112   3                              if (i == 1)
  113   3                              {
  114   4                                      cur_pwm_level = cur_pwm();
-C51 COMPILER V9.54   MAIN                                                                  03/23/2019 18:14:13 PAGE 3   
+C51 COMPILER V9.54   MAIN                                                                  04/22/2019 21:34:19 PAGE 3   
 
  115   4      //                              if (cur_pwm_level == 0)
  116   4      //                                      adcvalue = adcvalue + 0x30;
@@ -190,7 +190,7 @@ line level    source
  174   3                              if (adc_pre_cnt > 4)
  175   3                              {
  176   4                                      adc_pre_cnt = 0;
-C51 COMPILER V9.54   MAIN                                                                  03/23/2019 18:14:13 PAGE 4   
+C51 COMPILER V9.54   MAIN                                                                  04/22/2019 21:34:19 PAGE 4   
 
  177   4                                      batlevel = templevel;
  178   4                              }
@@ -254,7 +254,7 @@ line level    source
  236   1              Set_All_GPIO_Quasi_Mode;
  237   1              isneedinitsys = 1;
  238   1              isstartsystem = 0;
-C51 COMPILER V9.54   MAIN                                                                  03/23/2019 18:14:13 PAGE 5   
+C51 COMPILER V9.54   MAIN                                                                  04/22/2019 21:34:19 PAGE 5   
 
  239   1              while(1)
  240   1              {
@@ -318,7 +318,7 @@ line level    source
  298   5                                              //change pwm
  299   5                                              i  = Change_Motor_PWM();
  300   5                                              LED_RGB_Setting(i,0);
-C51 COMPILER V9.54   MAIN                                                                  03/23/2019 18:14:13 PAGE 6   
+C51 COMPILER V9.54   MAIN                                                                  04/22/2019 21:34:19 PAGE 6   
 
  301   5                                              if (i == 0)
  302   5                                                      LED_Setting(0,0);
@@ -382,7 +382,7 @@ line level    source
  360   4                                      if (keystatus & 0x02)//safety
  361   4                                      {
  362   5                                              //enter stage_B
-C51 COMPILER V9.54   MAIN                                                                  03/23/2019 18:14:13 PAGE 7   
+C51 COMPILER V9.54   MAIN                                                                  04/22/2019 21:34:19 PAGE 7   
 
  363   5                                              system_stage = Stage_D;
  364   5                                              isneedinitstage = 1;
@@ -446,7 +446,7 @@ line level    source
  422   6                                                      system_stage = Stage_A;
  423   6                                              }
  424   5                                              else
-C51 COMPILER V9.54   MAIN                                                                  03/23/2019 18:14:13 PAGE 8   
+C51 COMPILER V9.54   MAIN                                                                  04/22/2019 21:34:19 PAGE 8   
 
  425   5                                              {
  426   6                                                      system_stage = Stage_B;
@@ -510,7 +510,7 @@ line level    source
  483   3                              LED_Process(system_stage,batlevel_led_value);
  484   3                              
  485   3                              //dpd
-C51 COMPILER V9.54   MAIN                                                                  03/23/2019 18:14:13 PAGE 9   
+C51 COMPILER V9.54   MAIN                                                                  04/22/2019 21:34:19 PAGE 9   
 
  486   3                              if (dpdtime >= 2000)
  487   3                              {

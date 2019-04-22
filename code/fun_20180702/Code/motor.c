@@ -235,15 +235,27 @@ unsigned char check_motor_done(void)
 {
 	if (isStartMotor)
 	{
-		if (Motor_Level == 1)
+		if (cur_Motor_PWM > 0xF0)
 		{
-			if (cur_Motor_PWM > 0xF0)
+			if (Motor_done_cnt > 3)
+				return 1;
+		}
+		else
+		{
+			if (Motor_done_cnt > 6)
 			{
-				if (Motor_done_cnt > 10)
-					return 1;
+				return 1;
 			}
 		}
-		if (Motor_done_cnt > 1)
+//		if (Motor_Level == 1)
+//		{
+//			if (cur_Motor_PWM > 0xF0)
+//			{
+//				if (Motor_done_cnt > 10)
+//					return 1;
+//			}
+//		}
+//		if (Motor_done_cnt > 1)
 			return 1;
 	}
 	if ((Motor_Level == 1)&&(isMaxPWM == 0))
