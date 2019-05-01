@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   LED                                                                   04/22/2019 21:34:19 PAGE 1   
+C51 COMPILER V9.54   LED                                                                   05/01/2019 10:51:00 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE LED
@@ -62,7 +62,7 @@ line level    source
   52   1              led_rgb_mode = 0;
   53   1      }
   54          
-C51 COMPILER V9.54   LED                                                                   04/22/2019 21:34:19 PAGE 2   
+C51 COMPILER V9.54   LED                                                                   05/01/2019 10:51:00 PAGE 2   
 
   55          void DeInit_LED(void)
   56          {
@@ -126,7 +126,7 @@ line level    source
  113   1              led_rgb_mode = led_mode;
  114   1              LED_RGB_Set_value(led_value);
  115   1      }
-C51 COMPILER V9.54   LED                                                                   04/22/2019 21:34:19 PAGE 3   
+C51 COMPILER V9.54   LED                                                                   05/01/2019 10:51:00 PAGE 3   
 
  116          
  117          unsigned char batlevel_to_led_value(unsigned char stage)
@@ -190,7 +190,7 @@ line level    source
  175   3                      }
  176   2                      else if (batlevel == 1)//<10%
  177   2                      {
-C51 COMPILER V9.54   LED                                                                   04/22/2019 21:34:19 PAGE 4   
+C51 COMPILER V9.54   LED                                                                   05/01/2019 10:51:00 PAGE 4   
 
  178   3                              val = 0x00;
  179   3                      }
@@ -254,7 +254,7 @@ line level    source
  237   1              else if (led_stage == 8)//stage D
  238   1              {
  239   2                      led_white_mode = 0;
-C51 COMPILER V9.54   LED                                                                   04/22/2019 21:34:19 PAGE 5   
+C51 COMPILER V9.54   LED                                                                   05/01/2019 10:51:00 PAGE 5   
 
  240   2                      temp = batlevel_to_led_value(led_stage);
  241   2                      LED_WHITE_Setting(temp,0);
@@ -267,7 +267,7 @@ line level    source
  247   1              unsigned char temp;
  248   1              if (led_stage == 1)     //stage
  249   1              {
- 250   2                      if (led_display_time == 600)
+ 250   2                      if (led_display_time >= 600)
  251   2                      {
  252   3                              led_stage = 0;
  253   3                              LED_WHITE_Setting(0,0);
@@ -275,7 +275,7 @@ line level    source
  255   2              }
  256   1              else if (led_stage == 4)//stage C
  257   1              {
- 258   2                      if (led_display_time == 100)
+ 258   2                      if (led_display_time >= 100)
  259   2                      {
  260   3                              led_display_time = 0;
  261   3                              if (led_white_tog == 0)
@@ -297,7 +297,7 @@ line level    source
  277   2              }
  278   1              else if (led_stage == 2)//stage B
  279   1              {
- 280   2                      if (led_display_time == 50)
+ 280   2                      if (led_display_time >= 50)
  281   2                      {
  282   3                              led_display_time = 0;
  283   3                              if (led_white_tog == 0)
@@ -318,13 +318,13 @@ line level    source
  298   4                                      temp = batlevel_to_led_value(led_stage);
  299   4                                      LED_WHITE_Set_value(temp);
  300   4                              }
-C51 COMPILER V9.54   LED                                                                   04/22/2019 21:34:19 PAGE 6   
+C51 COMPILER V9.54   LED                                                                   05/01/2019 10:51:00 PAGE 6   
 
  301   3                      }               
  302   2              }
  303   1              else if (led_stage == 8)//stage D
  304   1              {
- 305   2                      if (led_display_time == 100)
+ 305   2                      if (led_display_time >= 100)
  306   2                      {
  307   3                              led_display_time = 0;
  308   3                              if (led_white_tog == 0)
@@ -350,7 +350,7 @@ line level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    626    ----
+   CODE SIZE        =    638    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

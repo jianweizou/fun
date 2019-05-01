@@ -230,6 +230,18 @@ void SysInit(void)
 //	}
 }
 
+void P05_wakeup_init(void){
+	P05_Input_Mode;
+	
+	PINEN = 0x20;
+	PIPEN = 0x00;
+	PICON = 0x40;
+	
+	set_EPI;
+	
+	set_EA;
+}
+
 void main(void)
 {
 	unsigned char keystatus,i;
@@ -495,6 +507,8 @@ void main(void)
 				LED_WHITE_Setting(0,0);
 				LED_RGB_Setting(0,0);
 				DeInit_LED();
+				
+				P05_wakeup_init();
 				
 				P17_Input_Mode;
 				set_P1S_7;

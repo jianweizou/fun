@@ -247,7 +247,7 @@ void LED_Process(unsigned char stage,unsigned char led_value)
 	unsigned char temp;
 	if (led_stage == 1)	//stage
 	{
-		if (led_display_time == 600)
+		if (led_display_time >= 600)
 		{
 			led_stage = 0;
 			LED_WHITE_Setting(0,0);
@@ -255,7 +255,7 @@ void LED_Process(unsigned char stage,unsigned char led_value)
 	}
 	else if (led_stage == 4)//stage C
 	{
-		if (led_display_time == 100)
+		if (led_display_time >= 100)
 		{
 			led_display_time = 0;
 			if (led_white_tog == 0)
@@ -277,7 +277,7 @@ void LED_Process(unsigned char stage,unsigned char led_value)
 	}
 	else if (led_stage == 2)//stage B
 	{
-		if (led_display_time == 50)
+		if (led_display_time >= 50)
 		{
 			led_display_time = 0;
 			if (led_white_tog == 0)
@@ -302,7 +302,7 @@ void LED_Process(unsigned char stage,unsigned char led_value)
 	}
 	else if (led_stage == 8)//stage D
 	{
-		if (led_display_time == 100)
+		if (led_display_time >= 100)
 		{
 			led_display_time = 0;
 			if (led_white_tog == 0)
