@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   LED                                                                   05/01/2019 10:51:00 PAGE 1   
+C51 COMPILER V9.54   LED                                                                   05/18/2019 14:36:54 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE LED
@@ -62,7 +62,7 @@ line level    source
   52   1              led_rgb_mode = 0;
   53   1      }
   54          
-C51 COMPILER V9.54   LED                                                                   05/01/2019 10:51:00 PAGE 2   
+C51 COMPILER V9.54   LED                                                                   05/18/2019 14:36:54 PAGE 2   
 
   55          void DeInit_LED(void)
   56          {
@@ -126,7 +126,7 @@ line level    source
  113   1              led_rgb_mode = led_mode;
  114   1              LED_RGB_Set_value(led_value);
  115   1      }
-C51 COMPILER V9.54   LED                                                                   05/01/2019 10:51:00 PAGE 3   
+C51 COMPILER V9.54   LED                                                                   05/18/2019 14:36:54 PAGE 3   
 
  116          
  117          unsigned char batlevel_to_led_value(unsigned char stage)
@@ -190,7 +190,7 @@ line level    source
  175   3                      }
  176   2                      else if (batlevel == 1)//<10%
  177   2                      {
-C51 COMPILER V9.54   LED                                                                   05/01/2019 10:51:00 PAGE 4   
+C51 COMPILER V9.54   LED                                                                   05/18/2019 14:36:54 PAGE 4   
 
  178   3                              val = 0x00;
  179   3                      }
@@ -254,7 +254,7 @@ line level    source
  237   1              else if (led_stage == 8)//stage D
  238   1              {
  239   2                      led_white_mode = 0;
-C51 COMPILER V9.54   LED                                                                   05/01/2019 10:51:00 PAGE 5   
+C51 COMPILER V9.54   LED                                                                   05/18/2019 14:36:54 PAGE 5   
 
  240   2                      temp = batlevel_to_led_value(led_stage);
  241   2                      LED_WHITE_Setting(temp,0);
@@ -318,7 +318,7 @@ line level    source
  298   4                                      temp = batlevel_to_led_value(led_stage);
  299   4                                      LED_WHITE_Set_value(temp);
  300   4                              }
-C51 COMPILER V9.54   LED                                                                   05/01/2019 10:51:00 PAGE 6   
+C51 COMPILER V9.54   LED                                                                   05/18/2019 14:36:54 PAGE 6   
 
  301   3                      }               
  302   2              }
