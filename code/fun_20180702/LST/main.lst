@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   MAIN                                                                  05/18/2019 14:36:54 PAGE 1   
+C51 COMPILER V9.54   MAIN                                                                  05/19/2019 14:10:07 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
@@ -62,7 +62,7 @@ line level    source
   50          {
   51   1          TH0 = TH0_INIT;
   52   1          TL0 = TL0_INIT;
-C51 COMPILER V9.54   MAIN                                                                  05/18/2019 14:36:54 PAGE 2   
+C51 COMPILER V9.54   MAIN                                                                  05/19/2019 14:10:07 PAGE 2   
 
   53   1              is_5ms_Flag = 1;
   54   1              dpdtime++;
@@ -126,7 +126,7 @@ line level    source
  112   3                              if (i == 1)
  113   3                              {
  114   4                                      cur_pwm_level = cur_pwm();
-C51 COMPILER V9.54   MAIN                                                                  05/18/2019 14:36:54 PAGE 3   
+C51 COMPILER V9.54   MAIN                                                                  05/19/2019 14:10:07 PAGE 3   
 
  115   4      //                              if (cur_pwm_level == 0)
  116   4      //                                      adcvalue = adcvalue + 0x30;
@@ -190,7 +190,7 @@ line level    source
  174   3                              if (adc_pre_cnt > 4)
  175   3                              {
  176   4                                      adc_pre_cnt = 0;
-C51 COMPILER V9.54   MAIN                                                                  05/18/2019 14:36:54 PAGE 4   
+C51 COMPILER V9.54   MAIN                                                                  05/19/2019 14:10:07 PAGE 4   
 
  177   4                                      batlevel = templevel;
  178   4                              }
@@ -254,7 +254,7 @@ line level    source
  236   1              PINEN = 0x20;
  237   1              PIPEN = 0x00;
  238   1              PICON = 0x40;
-C51 COMPILER V9.54   MAIN                                                                  05/18/2019 14:36:54 PAGE 5   
+C51 COMPILER V9.54   MAIN                                                                  05/19/2019 14:10:07 PAGE 5   
 
  239   1              
  240   1              set_EPI;
@@ -318,7 +318,7 @@ line level    source
  298   3                              {
  299   4                                      if (isneedinitstage == 1)
  300   4                                      {
-C51 COMPILER V9.54   MAIN                                                                  05/18/2019 14:36:54 PAGE 6   
+C51 COMPILER V9.54   MAIN                                                                  05/19/2019 14:10:07 PAGE 6   
 
  301   5                                              isneedinitstage = 0;
  302   5                                              //init stage B
@@ -382,7 +382,7 @@ line level    source
  360   5                                              isneedinitbatled = 1;
  361   5                                              dpdtime = 0;
  362   5                                              ischarging = 1;
-C51 COMPILER V9.54   MAIN                                                                  05/18/2019 14:36:54 PAGE 7   
+C51 COMPILER V9.54   MAIN                                                                  05/19/2019 14:10:07 PAGE 7   
 
  363   5                                              LED_Setting(system_stage,batlevel);
  364   5                                              //turn off pwm
@@ -446,7 +446,7 @@ line level    source
  422   5                                              TurnOffMotor();
  423   5                                              LED_RGB_Setting(0,0);
  424   5                                      }
-C51 COMPILER V9.54   MAIN                                                                  05/18/2019 14:36:54 PAGE 8   
+C51 COMPILER V9.54   MAIN                                                                  05/19/2019 14:10:07 PAGE 8   
 
  425   4                                      
  426   4                                      if (keystatus & 0x04)//charging
@@ -510,72 +510,73 @@ line level    source
  484   4                                      TurnOffMotor();
  485   4                                      LED_RGB_Setting(0,0);
  486   4                                      LED_Setting(0,0);
-C51 COMPILER V9.54   MAIN                                                                  05/18/2019 14:36:54 PAGE 9   
+C51 COMPILER V9.54   MAIN                                                                  05/19/2019 14:10:07 PAGE 9   
 
- 487   4                                      //goto stage A,B
- 488   4                                      #warning "change stage to A or B"
-*** WARNING C320 IN LINE 488 OF Code\main.c: "change stage to A or B"
- 489   4                              }
- 490   3                              if(get_motor_level())
- 491   3                              {
- 492   4                                      dpdtime = 0;
- 493   4                              }
- 494   3                              //LED_Process           
- 495   3                              LED_Process(system_stage,batlevel_led_value);
- 496   3                              
- 497   3                              //dpd
- 498   3                              if (dpdtime >= 2000)
- 499   3                              {
- 500   4                                      dpdtime = 0;
- 501   4                                      //enter dpd
- 502   4                                      //
- 503   4                                      Set_All_GPIO_Quasi_Mode;
- 504   4                                      clr_ADCEN;
- 505   4                                      
- 506   4                                      TurnOffMotor();
- 507   4                                      LED_WHITE_Setting(0,0);
- 508   4                                      LED_RGB_Setting(0,0);
- 509   4                                      DeInit_LED();
-*** WARNING C206 IN LINE 509 OF Code\main.c: 'DeInit_LED': missing function-prototype
- 510   4                                      
- 511   4                                      P05_wakeup_init();
- 512   4                                      
- 513   4                                      P17_Input_Mode;
- 514   4                                      set_P1S_7;
- 515   4                                      set_EX1;
- 516   4                                                                      
- 517   4                                      set_PD;
- 518   4      
- 519   4                                      PICON  = 0;
- 520   4                                                              
- 521   4                                      clr_EX0;
- 522   4                                      clr_EX1;
- 523   4                                      clr_EPI;
- 524   4                                      isneedinitsys = 1;
- 525   4                              }
- 526   3                      }
- 527   2              }
- 528   1      }
- 529          
- 530          void EXT_INT1(void) interrupt 2
- 531          {
- 532   1              
- 533   1      }
- 534          
- 535          void PinInterrupt_ISR (void) interrupt 7
- 536          {
- 537   1              if(PIF == 0x10) //pin 0
- 538   1                      MOTOR_FG_PinInterrupt_ISR();
- 539   1              PIF = 0x00;
- 540   1      }
+ 487   4                                      isneedinitstage = 1;
+ 488   4                                      //goto stage A,B
+ 489   4                                      #warning "change stage to A or B"
+*** WARNING C320 IN LINE 489 OF Code\main.c: "change stage to A or B"
+ 490   4                              }
+ 491   3                              if(get_motor_level())
+ 492   3                              {
+ 493   4                                      dpdtime = 0;
+ 494   4                              }
+ 495   3                              //LED_Process           
+ 496   3                              LED_Process(system_stage,batlevel_led_value);
+ 497   3                              
+ 498   3                              //dpd
+ 499   3                              if (dpdtime >= 2000)
+ 500   3                              {
+ 501   4                                      dpdtime = 0;
+ 502   4                                      //enter dpd
+ 503   4                                      //
+ 504   4                                      Set_All_GPIO_Quasi_Mode;
+ 505   4                                      clr_ADCEN;
+ 506   4                                      
+ 507   4                                      TurnOffMotor();
+ 508   4                                      LED_WHITE_Setting(0,0);
+ 509   4                                      LED_RGB_Setting(0,0);
+ 510   4                                      DeInit_LED();
+*** WARNING C206 IN LINE 510 OF Code\main.c: 'DeInit_LED': missing function-prototype
+ 511   4                                      
+ 512   4                                      P05_wakeup_init();
+ 513   4                                      
+ 514   4                                      P17_Input_Mode;
+ 515   4                                      set_P1S_7;
+ 516   4                                      set_EX1;
+ 517   4                                                                      
+ 518   4                                      set_PD;
+ 519   4      
+ 520   4                                      PICON  = 0;
+ 521   4                                                              
+ 522   4                                      clr_EX0;
+ 523   4                                      clr_EX1;
+ 524   4                                      clr_EPI;
+ 525   4                                      isneedinitsys = 1;
+ 526   4                              }
+ 527   3                      }
+ 528   2              }
+ 529   1      }
+ 530          
+ 531          void EXT_INT1(void) interrupt 2
+ 532          {
+ 533   1              
+ 534   1      }
+ 535          
+ 536          void PinInterrupt_ISR (void) interrupt 7
+ 537          {
+ 538   1              if(PIF == 0x10) //pin 0
+ 539   1                      MOTOR_FG_PinInterrupt_ISR();
+ 540   1              PIF = 0x00;
+ 541   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   1192    ----
+   CODE SIZE        =   1194    ----
    CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =   ----    ----
-C51 COMPILER V9.54   MAIN                                                                  05/18/2019 14:36:54 PAGE 10  
+C51 COMPILER V9.54   MAIN                                                                  05/19/2019 14:10:07 PAGE 10  
 
+   XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
    DATA SIZE        =     30       4
    IDATA SIZE       =   ----    ----

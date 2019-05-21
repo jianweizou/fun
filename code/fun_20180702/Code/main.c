@@ -484,6 +484,7 @@ void main(void)
 				TurnOffMotor();
 				LED_RGB_Setting(0,0);
 				LED_Setting(0,0);
+				isneedinitstage = 1;
 				//goto stage A,B
 				#warning "change stage to A or B"
 			}
