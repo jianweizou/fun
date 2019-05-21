@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   MOTOR                                                                 05/19/2019 14:10:08 PAGE 1   
+C51 COMPILER V9.54   MOTOR                                                                 05/21/2019 20:22:52 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MOTOR
@@ -22,309 +22,305 @@ line level    source
   12          unsigned int cur_Motor_PWM;
   13          unsigned char Motor_Wakeup_cnt;
   14          unsigned char Motor_done_cnt;
-  15          
-  16          void MOTOR_FG_PinInterrupt_ISR (void)
-  17          {
-  18   1              Motor_done_cnt = 0;
-  19   1      }
-  20          
-  21          
-  22          void InitPWM(void)
-  23          {
-  24   1              Motor_Level = 0;
-  25   1      //    set_PWMRUN;       
-  26   1              P12_PushPull_Mode;
-  27   1              P12 = 1;
-  28   1              isStartMotor = 0;
-  29   1              Motor_done_cnt = 0;
-  30   1              
-  31   1              P06_PushPull_Mode;
-  32   1              P06 = 0;                        //CW
-  33   1              P04_PushPull_Mode;      //motor power
-  34   1              P04 = 0;
-  35   1      }
-  36          
-  37          void TurnOffMotor(void)
-  38          {
-  39   1                      clr_EPI;
-  40   1                      //turn off
-  41   1                      Motor_Level = 0;
-  42   1                      PWM0_P12_OUTPUT_DISABLE;
-  43   1                      set_SFRPAGE;
-  44   1                      PWM0H = 0x00;
-  45   1                      PWM0L = 0x00;   
-  46   1                      clr_SFRPAGE;
-  47   1                      set_LOAD;
-  48   1                      clr_CLRPWM;
-  49   1                      //dispower
-  50   1                      P12 = 0;        
-  51   1                      isStartMotor = 0;
-  52   1                      Motor_done_cnt = 0;
-  53   1              
-  54   1                      P04 = 0;
-C51 COMPILER V9.54   MOTOR                                                                 05/19/2019 14:10:08 PAGE 2   
+  15          bit isMotorRun;
+  16          unsigned char Motor_Run_cnt;
+  17          void MOTOR_FG_PinInterrupt_ISR (void)
+  18          {
+  19   1              Motor_done_cnt = 0;
+  20   1              isMotorRun = 1;
+  21   1      }
+  22          
+  23          
+  24          void InitPWM(void)
+  25          {
+  26   1              Motor_Level = 0;
+  27   1      //    set_PWMRUN;       
+  28   1              P12_PushPull_Mode;
+  29   1              P12 = 1;
+  30   1              isStartMotor = 0;
+  31   1              isMotorRun = 0;
+  32   1              Motor_Run_cnt = 0;
+  33   1              Motor_done_cnt = 0;
+  34   1              
+  35   1              P06_PushPull_Mode;
+  36   1              P06 = 0;                        //CW
+  37   1              P04_PushPull_Mode;      //motor power
+  38   1              P04 = 0;
+  39   1      }
+  40          
+  41          void TurnOffMotor(void)
+  42          {
+  43   1                      clr_EPI;
+  44   1                      //turn off
+  45   1                      Motor_Level = 0;
+  46   1                      PWM0_P12_OUTPUT_DISABLE;
+  47   1                      set_SFRPAGE;
+  48   1                      PWM0H = 0x00;
+  49   1                      PWM0L = 0x00;   
+  50   1                      clr_SFRPAGE;
+  51   1                      set_LOAD;
+  52   1                      clr_CLRPWM;
+  53   1                      //dispower
+  54   1                      P12 = 0;        
+C51 COMPILER V9.54   MOTOR                                                                 05/21/2019 20:22:52 PAGE 2   
 
-  55   1                      P06 = 0;
-  56   1                      P12_PushPull_Mode;
-  57   1                      P12 = 0;
-  58   1      }
-  59          /*
-  60          unsigned Change_Motor_PWM(void)
-  61          {
-  62                  if (Motor_Level == 0)
-  63                  {
-  64                          //enable FG ext interrupt
-  65                          isStartMotor = 1;
-  66                          PICON = 0x05;   //port1
-  67                          PINEN  = 0x00;
-  68                          PIPEN = 0x10;   //IO 4
-  69                          set_EPI;                                                        // Enable pin interrupt
-  70                          
-  71                          Motor_Level = 1;
-  72                          //pwm High
-  73                          P12 = 0;
-  74                          P04 = 1;
-  75          //              set_SFRPAGE;
-  76          //              PWM0H = 0x00;                                           
-  77          //              PWM0L = 0xA6;   
-  78          //              clr_SFRPAGE;
-  79          //              set_LOAD;
-  80          //              set_PWMRUN;                             
-  81                  }
-  82                  else if (Motor_Level == 1)
-  83                  {
-  84                          Motor_Level = 2;
-  85          
-  86                          PWM0_P12_OUTPUT_ENABLE;
-  87                          
-  88                          PWM_IMDEPENDENT_MODE;
-  89                          PWM_CLOCK_FSYS;
-  90                          PWMPH = 0x03;
-  91                          PWMPL = 0xE7;                                           //0x3E7 = 16KHZ,        0x290=24.46khz
-  92                          set_SFRPAGE;                                            //PWM4 and PWM5 duty seting is in SFP page 1
-  93                          PWM0H = 0x01;                                           
-  94                          PWM0L = 0xF3;
-  95                          clr_SFRPAGE;                            
-  96                          set_LOAD;
-  97                          
-  98                          //pwm mid
-  99                          set_SFRPAGE;
- 100                          PWM0H = 0x00;                                           
- 101                          PWM0L = 0xF0;   
- 102                          clr_SFRPAGE;
- 103                          set_LOAD;
- 104                          set_PWMRUN;                     
- 105                  }
- 106                  else if (Motor_Level == 2)
- 107                  {
- 108                          Motor_Level = 4;
- 109                          //pwm low               
- 110                          set_SFRPAGE;
- 111                          PWM0H = 0x01;                                           
- 112                          PWM0L = 0x80;   
- 113                          clr_SFRPAGE;
- 114                          set_LOAD;
- 115                          set_PWMRUN;             
- 116                  }
-C51 COMPILER V9.54   MOTOR                                                                 05/19/2019 14:10:08 PAGE 3   
+  55   1                      isStartMotor = 0;
+  56   1                      isMotorRun = 0;
+  57   1                      Motor_done_cnt = 0;
+  58   1                      Motor_Run_cnt = 0;
+  59   1                      P04 = 0;
+  60   1                      P06 = 0;
+  61   1                      P12_PushPull_Mode;
+  62   1                      P12 = 0;
+  63   1      }
+  64          /*
+  65          unsigned Change_Motor_PWM(void)
+  66          {
+  67                  if (Motor_Level == 0)
+  68                  {
+  69                          //enable FG ext interrupt
+  70                          isStartMotor = 1;
+  71                          PICON = 0x05;   //port1
+  72                          PINEN  = 0x00;
+  73                          PIPEN = 0x10;   //IO 4
+  74                          set_EPI;                                                        // Enable pin interrupt
+  75                          
+  76                          Motor_Level = 1;
+  77                          //pwm High
+  78                          P12 = 0;
+  79                          P04 = 1;
+  80          //              set_SFRPAGE;
+  81          //              PWM0H = 0x00;                                           
+  82          //              PWM0L = 0xA6;   
+  83          //              clr_SFRPAGE;
+  84          //              set_LOAD;
+  85          //              set_PWMRUN;                             
+  86                  }
+  87                  else if (Motor_Level == 1)
+  88                  {
+  89                          Motor_Level = 2;
+  90          
+  91                          PWM0_P12_OUTPUT_ENABLE;
+  92                          
+  93                          PWM_IMDEPENDENT_MODE;
+  94                          PWM_CLOCK_FSYS;
+  95                          PWMPH = 0x03;
+  96                          PWMPL = 0xE7;                                           //0x3E7 = 16KHZ,        0x290=24.46khz
+  97                          set_SFRPAGE;                                            //PWM4 and PWM5 duty seting is in SFP page 1
+  98                          PWM0H = 0x01;                                           
+  99                          PWM0L = 0xF3;
+ 100                          clr_SFRPAGE;                            
+ 101                          set_LOAD;
+ 102                          
+ 103                          //pwm mid
+ 104                          set_SFRPAGE;
+ 105                          PWM0H = 0x00;                                           
+ 106                          PWM0L = 0xF0;   
+ 107                          clr_SFRPAGE;
+ 108                          set_LOAD;
+ 109                          set_PWMRUN;                     
+ 110                  }
+ 111                  else if (Motor_Level == 2)
+ 112                  {
+ 113                          Motor_Level = 4;
+ 114                          //pwm low               
+ 115                          set_SFRPAGE;
+ 116                          PWM0H = 0x01;                                           
+C51 COMPILER V9.54   MOTOR                                                                 05/21/2019 20:22:52 PAGE 3   
 
- 117          
- 118                  return Motor_Level;
- 119          }*/
- 120          
- 121          unsigned Change_Motor_PWM(void)
- 122          {
- 123   1              if (Motor_Level == 0)
- 124   1              {
- 125   2                      P06 = 1;
- 126   2                      isStartMotor = 1;
- 127   2                      PICON = 0x05;   //port1
- 128   2                      PINEN  = 0x00;
- 129   2                      PIPEN = 0x10;   //IO 4
- 130   2                      set_EPI;                                                        // Enable pin interrupt         
- 131   2                      
- 132   2                      Motor_Level = 1;
- 133   2                      P04 = 1;
- 134   2                      P12_Quasi_Mode;
- 135   2                      //enable PWM0
- 136   2                      PWM0_P12_OUTPUT_ENABLE;
+ 117                          PWM0L = 0x80;   
+ 118                          clr_SFRPAGE;
+ 119                          set_LOAD;
+ 120                          set_PWMRUN;             
+ 121                  }
+ 122          
+ 123                  return Motor_Level;
+ 124          }*/
+ 125          
+ 126          unsigned Change_Motor_PWM(void)
+ 127          {
+ 128   1              if (Motor_Level == 0)
+ 129   1              {
+ 130   2                      P06 = 1;
+ 131   2                      isStartMotor = 1;
+ 132   2                      Motor_Run_cnt = 100;
+ 133   2                      PICON = 0x05;   //port1
+ 134   2                      PINEN  = 0x00;
+ 135   2                      PIPEN = 0x10;   //IO 4
+ 136   2                      set_EPI;                                                        // Enable pin interrupt         
  137   2                      
- 138   2                      PWM_IMDEPENDENT_MODE;
- 139   2                      PWM_CLOCK_FSYS;
- 140   2                      PWMPH = 0x03;
- 141   2                      PWMPL = 0xE7;                                           //0x3E7 = 16KHZ,        0x290=24.46khz
- 142   2                      set_SFRPAGE;                                            //PWM4 and PWM5 duty seting is in SFP page 1
- 143   2                      PWM0H = 0x01;                                           
- 144   2                      PWM0L = 0xF3;
- 145   2                      clr_SFRPAGE;                            
- 146   2                      set_LOAD;
- 147   2      
- 148   2                      //pwm low               
- 149   2                      set_SFRPAGE;
- 150   2                      PWM0H = 0x01;                                           
- 151   2                      PWM0L = 0x80;   
- 152   2                      clr_SFRPAGE;
- 153   2                      set_LOAD;
- 154   2                      set_PWMRUN;     
- 155   2                      cur_Motor_PWM = 0x180;
- 156   2                      Motor_Wakeup_cnt = 0;
- 157   2                      isMaxPWM = 0;
- 158   2              }
- 159   1              else if (Motor_Level == 1)
- 160   1              {
- 161   2                      Motor_Level = 2;
- 162   2                      //pwm mid
- 163   2      //              set_SFRPAGE;
- 164   2      //              PWM0H = 0x00;
- 165   2      //              PWM0L = 0xF0;   
- 166   2      //              clr_SFRPAGE;
- 167   2      //              set_LOAD;
- 168   2      //              set_PWMRUN;     
- 169   2                      //enable PWM0
- 170   2                      PWM0_P12_OUTPUT_ENABLE;
- 171   2                      
- 172   2                      PWM_IMDEPENDENT_MODE;
- 173   2                      PWM_CLOCK_FSYS;
- 174   2                      PWMPH = 0x03;
- 175   2                      PWMPL = 0xE7;                                           //0x3E7 = 16KHZ,        0x290=24.46khz
- 176   2                      set_SFRPAGE;                                            //PWM4 and PWM5 duty seting is in SFP page 1
- 177   2                      PWM0H = 0x01;                                           
- 178   2                      PWM0L = 0xF3;
-C51 COMPILER V9.54   MOTOR                                                                 05/19/2019 14:10:08 PAGE 4   
+ 138   2                      Motor_Level = 1;
+ 139   2                      P04 = 1;
+ 140   2                      P12_Quasi_Mode;
+ 141   2                      //enable PWM0
+ 142   2                      PWM0_P12_OUTPUT_ENABLE;
+ 143   2                      
+ 144   2                      PWM_IMDEPENDENT_MODE;
+ 145   2                      PWM_CLOCK_FSYS;
+ 146   2                      PWMPH = 0x03;
+ 147   2                      PWMPL = 0xE7;                                           //0x3E7 = 16KHZ,        0x290=24.46khz
+ 148   2                      set_SFRPAGE;                                            //PWM4 and PWM5 duty seting is in SFP page 1
+ 149   2                      PWM0H = 0x01;                                           
+ 150   2                      PWM0L = 0xF3;
+ 151   2                      clr_SFRPAGE;                            
+ 152   2                      set_LOAD;
+ 153   2      
+ 154   2                      //pwm low               
+ 155   2                      set_SFRPAGE;
+ 156   2                      PWM0H = 0x01;                                           
+ 157   2                      PWM0L = 0x80;   
+ 158   2                      clr_SFRPAGE;
+ 159   2                      set_LOAD;
+ 160   2                      set_PWMRUN;     
+ 161   2                      cur_Motor_PWM = 0x180;
+ 162   2                      Motor_Wakeup_cnt = 0;
+ 163   2                      isMaxPWM = 0;
+ 164   2              }
+ 165   1              else if (Motor_Level == 1)
+ 166   1              {
+ 167   2                      Motor_Level = 2;
+ 168   2                      //pwm mid
+ 169   2      //              set_SFRPAGE;
+ 170   2      //              PWM0H = 0x00;
+ 171   2      //              PWM0L = 0xF0;   
+ 172   2      //              clr_SFRPAGE;
+ 173   2      //              set_LOAD;
+ 174   2      //              set_PWMRUN;     
+ 175   2                      //enable PWM0
+ 176   2                      PWM0_P12_OUTPUT_ENABLE;
+ 177   2                      
+ 178   2                      PWM_IMDEPENDENT_MODE;
+C51 COMPILER V9.54   MOTOR                                                                 05/21/2019 20:22:52 PAGE 4   
 
- 179   2                      clr_SFRPAGE;                            
- 180   2                      set_LOAD;
- 181   2      
- 182   2                      //pwm low               
- 183   2                      set_SFRPAGE;
- 184   2                      PWM0H = 0x00;                                           
- 185   2                      PWM0L = 0xF0;   
- 186   2                      clr_SFRPAGE;
- 187   2                      set_LOAD;
- 188   2                      set_PWMRUN;             
- 189   2              }
- 190   1              else if (Motor_Level == 2)
- 191   1              {
- 192   2                      Motor_Level = 4;
- 193   2      
- 194   2                      //pwm low               
- 195   2                      set_SFRPAGE;
- 196   2                      PWM0H = 0x01;                                           
- 197   2                      PWM0L = 0x80;   
- 198   2                      clr_SFRPAGE;
- 199   2                      set_LOAD;
- 200   2                      set_PWMRUN;
- 201   2      
- 202   2              }
- 203   1              else if (Motor_Level == 4)
- 204   1              {
- 205   2                      TurnOffMotor();
- 206   2              }
- 207   1              return Motor_Level;
- 208   1      }
- 209          
- 210          unsigned char get_motor_level(void)
- 211          {
- 212   1              return Motor_Level;
- 213   1      }
- 214          
- 215          unsigned char cur_pwm(void)
- 216          {
- 217   1              unsigned int curpwm;
- 218   1              if (isMaxPWM == 1)
- 219   1                      return 0;
- 220   1              curpwm = PWM0H;
- 221   1              curpwm = curpwm<<8;
- 222   1              curpwm |= PWM0L;
- 223   1              if (curpwm > 0x120)
- 224   1              {
- 225   2                      return 1;
- 226   2              }
- 227   1              else if (curpwm > 0x80)
- 228   1              {
- 229   2                      return 2;
- 230   2              }
- 231   1              return 3;
- 232   1      }
- 233          
- 234          unsigned char check_motor_done(void)
- 235          {
- 236   1              if (isStartMotor)
- 237   1              {
- 238   2                      if (Motor_Level == 1)
- 239   2                      {
- 240   3                              if (cur_Motor_PWM > 0xF0)
-C51 COMPILER V9.54   MOTOR                                                                 05/19/2019 14:10:08 PAGE 5   
+ 179   2                      PWM_CLOCK_FSYS;
+ 180   2                      PWMPH = 0x03;
+ 181   2                      PWMPL = 0xE7;                                           //0x3E7 = 16KHZ,        0x290=24.46khz
+ 182   2                      set_SFRPAGE;                                            //PWM4 and PWM5 duty seting is in SFP page 1
+ 183   2                      PWM0H = 0x01;                                           
+ 184   2                      PWM0L = 0xF3;
+ 185   2                      clr_SFRPAGE;                            
+ 186   2                      set_LOAD;
+ 187   2      
+ 188   2                      //pwm low               
+ 189   2                      set_SFRPAGE;
+ 190   2                      PWM0H = 0x00;                                           
+ 191   2                      PWM0L = 0xF0;   
+ 192   2                      clr_SFRPAGE;
+ 193   2                      set_LOAD;
+ 194   2                      set_PWMRUN;             
+ 195   2              }
+ 196   1              else if (Motor_Level == 2)
+ 197   1              {
+ 198   2                      Motor_Level = 4;
+ 199   2      
+ 200   2                      //pwm low               
+ 201   2                      set_SFRPAGE;
+ 202   2                      PWM0H = 0x01;                                           
+ 203   2                      PWM0L = 0x80;   
+ 204   2                      clr_SFRPAGE;
+ 205   2                      set_LOAD;
+ 206   2                      set_PWMRUN;
+ 207   2      
+ 208   2              }
+ 209   1              else if (Motor_Level == 4)
+ 210   1              {
+ 211   2                      TurnOffMotor();
+ 212   2              }
+ 213   1              return Motor_Level;
+ 214   1      }
+ 215          
+ 216          unsigned char get_motor_level(void)
+ 217          {
+ 218   1              return Motor_Level;
+ 219   1      }
+ 220          
+ 221          unsigned char cur_pwm(void)
+ 222          {
+ 223   1              unsigned int curpwm;
+ 224   1              if (isMaxPWM == 1)
+ 225   1                      return 0;
+ 226   1              curpwm = PWM0H;
+ 227   1              curpwm = curpwm<<8;
+ 228   1              curpwm |= PWM0L;
+ 229   1              if (curpwm > 0x120)
+ 230   1              {
+ 231   2                      return 1;
+ 232   2              }
+ 233   1              else if (curpwm > 0x80)
+ 234   1              {
+ 235   2                      return 2;
+ 236   2              }
+ 237   1              return 3;
+ 238   1      }
+ 239          
+ 240          unsigned char check_motor_done(void)
+C51 COMPILER V9.54   MOTOR                                                                 05/21/2019 20:22:52 PAGE 5   
 
- 241   3                              {
- 242   4                                      if (Motor_done_cnt > 40)
- 243   4                                              return 1;
- 244   4                              }
- 245   3                              else
- 246   3                              {
- 247   4                                      if (Motor_done_cnt > 20)
- 248   4                                              return 1;
+ 241          {
+ 242   1              if (isStartMotor)
+ 243   1              {
+ 244   2                      if (isMotorRun == 1)
+ 245   2                      {
+ 246   3                              if (cur_Motor_PWM >= 5)
+ 247   3                              {
+ 248   4                                      return 1;
  249   4                              }
  250   3                      }
- 251   2                      else if (Motor_Level == 2)
+ 251   2                      if (Motor_Run_cnt > 0)
  252   2                      {
- 253   3                              if (Motor_done_cnt > 40)
- 254   3                                      return 1;
- 255   3                      }
- 256   2                      else if (Motor_Level == 4)
- 257   2                      {
- 258   3                              if (Motor_done_cnt > 60)
- 259   3                                      return 1;
- 260   3                      }               
- 261   2              }
- 262   1              if ((Motor_Level == 1)&&(isMaxPWM == 0))
- 263   1              {
- 264   2                      Motor_Wakeup_cnt++;
- 265   2                      if (Motor_Wakeup_cnt >= 20)
- 266   2                      {
- 267   3                              Motor_Wakeup_cnt = 0;
- 268   3                              cur_Motor_PWM-=6;
- 269   3                              if (cur_Motor_PWM >= 10)
- 270   3                              {
- 271   4                                      cur_Motor_PWM -= 6;
- 272   4                                      set_SFRPAGE;
- 273   4                                      PWM0H = cur_Motor_PWM>>8;
- 274   4                                      PWM0L = cur_Motor_PWM&0xFF;     
- 275   4                                      clr_SFRPAGE;
- 276   4                                      set_LOAD;
- 277   4                                      clr_CLRPWM;
- 278   4                              }
- 279   3                              else
- 280   3                              {
- 281   4                                      isMaxPWM = 1;
- 282   4                                      PWM0_P12_OUTPUT_DISABLE;
- 283   4                                      set_SFRPAGE;
- 284   4                                      PWM0H = 0x00;
- 285   4                                      PWM0L = 0x00;   
- 286   4                                      clr_SFRPAGE;
- 287   4                                      set_LOAD;
- 288   4                                      clr_CLRPWM;
- 289   4                                      
- 290   4                                      //High
- 291   4                                      P12 = 0;
- 292   4                              }
- 293   3                      
- 294   3                      }
- 295   2              }
- 296   1              return 0;
- 297   1      }
+ 253   3                              Motor_Run_cnt--;
+ 254   3                              if ((Motor_Run_cnt == 0) && (isMotorRun == 0))
+ 255   3                                      return 1;
+ 256   3                      }
+ 257   2              }
+ 258   1              if ((Motor_Level == 1)&&(isMaxPWM == 0))
+ 259   1              {
+ 260   2                      Motor_Wakeup_cnt++;
+ 261   2                      if (Motor_Wakeup_cnt >= 20)
+ 262   2                      {
+ 263   3                              Motor_Wakeup_cnt = 0;
+ 264   3                              cur_Motor_PWM-=6;
+ 265   3                              if (cur_Motor_PWM >= 10)
+ 266   3                              {
+ 267   4                                      cur_Motor_PWM -= 6;
+ 268   4                                      set_SFRPAGE;
+ 269   4                                      PWM0H = cur_Motor_PWM>>8;
+ 270   4                                      PWM0L = cur_Motor_PWM&0xFF;     
+ 271   4                                      clr_SFRPAGE;
+ 272   4                                      set_LOAD;
+ 273   4                                      clr_CLRPWM;
+ 274   4                              }
+ 275   3                              else
+ 276   3                              {
+ 277   4                                      isMaxPWM = 1;
+ 278   4                                      PWM0_P12_OUTPUT_DISABLE;
+ 279   4                                      set_SFRPAGE;
+ 280   4                                      PWM0H = 0x00;
+ 281   4                                      PWM0L = 0x00;   
+ 282   4                                      clr_SFRPAGE;
+ 283   4                                      set_LOAD;
+ 284   4                                      clr_CLRPWM;
+ 285   4                                      
+ 286   4                                      //High
+ 287   4                                      P12 = 0;
+ 288   4                              }
+ 289   3                      
+ 290   3                      }
+ 291   2              }
+ 292   1              return 0;
+ 293   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    715    ----
+   CODE SIZE        =    695    ----
    CONSTANT SIZE    =   ----    ----
-C51 COMPILER V9.54   MOTOR                                                                 05/19/2019 14:10:08 PAGE 6   
-
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =      5    ----
+   DATA SIZE        =      6    ----
    IDATA SIZE       =   ----    ----
-   BIT SIZE         =      2    ----
+C51 COMPILER V9.54   MOTOR                                                                 05/21/2019 20:22:52 PAGE 6   
+
+   BIT SIZE         =      3    ----
 END OF MODULE INFORMATION.
 
 

@@ -12,10 +12,12 @@ bit isMaxPWM;
 unsigned int cur_Motor_PWM;
 unsigned char Motor_Wakeup_cnt;
 unsigned char Motor_done_cnt;
-
+bit isMotorRun;
+unsigned char Motor_Run_cnt;
 void MOTOR_FG_PinInterrupt_ISR (void)
 {
 	Motor_done_cnt = 0;
+	isMotorRun = 1;
 }
 
 
@@ -26,6 +28,8 @@ void InitPWM(void)
 	P12_PushPull_Mode;
 	P12 = 1;
 	isStartMotor = 0;
+	isMotorRun = 0;
+	Motor_Run_cnt = 0;
 	Motor_done_cnt = 0;
 	
 	P06_PushPull_Mode;
@@ -49,8 +53,9 @@ void TurnOffMotor(void)
 		//dispower
 		P12 = 0;	
 		isStartMotor = 0;
+		isMotorRun = 0;
 		Motor_done_cnt = 0;
-	
+		Motor_Run_cnt = 0;
 		P04 = 0;
 		P06 = 0;
 		P12_PushPull_Mode;
@@ -124,6 +129,7 @@ unsigned Change_Motor_PWM(void)
 	{
 		P06 = 1;
 		isStartMotor = 1;
+		Motor_Run_cnt = 100;
 		PICON = 0x05;	//port1
 		PINEN  = 0x00;
 		PIPEN = 0x10;	//IO 4
@@ -235,29 +241,19 @@ unsigned char check_motor_done(void)
 {
 	if (isStartMotor)
 	{
-		if (Motor_Level == 1)
+		if (isMotorRun == 1)
 		{
-			if (cur_Motor_PWM > 0xF0)
+			if (cur_Motor_PWM >= 5)
 			{
-				if (Motor_done_cnt > 40)
-					return 1;
-			}
-			else
-			{
-				if (Motor_done_cnt > 20)
-					return 1;
+				return 1;
 			}
 		}
-		else if (Motor_Level == 2)
+		if (Motor_Run_cnt > 0)
 		{
-			if (Motor_done_cnt > 40)
+			Motor_Run_cnt--;
+			if ((Motor_Run_cnt == 0) && (isMotorRun == 0))
 				return 1;
 		}
-		else if (Motor_Level == 4)
-		{
-			if (Motor_done_cnt > 60)
-				return 1;
-		}		
 	}
 	if ((Motor_Level == 1)&&(isMaxPWM == 0))
 	{

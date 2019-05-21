@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   MAIN                                                                  05/19/2019 14:10:07 PAGE 1   
+C51 COMPILER V9.54   MAIN                                                                  05/21/2019 20:22:52 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
@@ -62,7 +62,7 @@ line level    source
   50          {
   51   1          TH0 = TH0_INIT;
   52   1          TL0 = TL0_INIT;
-C51 COMPILER V9.54   MAIN                                                                  05/19/2019 14:10:07 PAGE 2   
+C51 COMPILER V9.54   MAIN                                                                  05/21/2019 20:22:52 PAGE 2   
 
   53   1              is_5ms_Flag = 1;
   54   1              dpdtime++;
@@ -126,7 +126,7 @@ line level    source
  112   3                              if (i == 1)
  113   3                              {
  114   4                                      cur_pwm_level = cur_pwm();
-C51 COMPILER V9.54   MAIN                                                                  05/19/2019 14:10:07 PAGE 3   
+C51 COMPILER V9.54   MAIN                                                                  05/21/2019 20:22:52 PAGE 3   
 
  115   4      //                              if (cur_pwm_level == 0)
  116   4      //                                      adcvalue = adcvalue + 0x30;
@@ -190,7 +190,7 @@ line level    source
  174   3                              if (adc_pre_cnt > 4)
  175   3                              {
  176   4                                      adc_pre_cnt = 0;
-C51 COMPILER V9.54   MAIN                                                                  05/19/2019 14:10:07 PAGE 4   
+C51 COMPILER V9.54   MAIN                                                                  05/21/2019 20:22:52 PAGE 4   
 
  177   4                                      batlevel = templevel;
  178   4                              }
@@ -254,7 +254,7 @@ line level    source
  236   1              PINEN = 0x20;
  237   1              PIPEN = 0x00;
  238   1              PICON = 0x40;
-C51 COMPILER V9.54   MAIN                                                                  05/19/2019 14:10:07 PAGE 5   
+C51 COMPILER V9.54   MAIN                                                                  05/21/2019 20:22:52 PAGE 5   
 
  239   1              
  240   1              set_EPI;
@@ -318,7 +318,7 @@ line level    source
  298   3                              {
  299   4                                      if (isneedinitstage == 1)
  300   4                                      {
-C51 COMPILER V9.54   MAIN                                                                  05/19/2019 14:10:07 PAGE 6   
+C51 COMPILER V9.54   MAIN                                                                  05/21/2019 20:22:52 PAGE 6   
 
  301   5                                              isneedinitstage = 0;
  302   5                                              //init stage B
@@ -382,7 +382,7 @@ line level    source
  360   5                                              isneedinitbatled = 1;
  361   5                                              dpdtime = 0;
  362   5                                              ischarging = 1;
-C51 COMPILER V9.54   MAIN                                                                  05/19/2019 14:10:07 PAGE 7   
+C51 COMPILER V9.54   MAIN                                                                  05/21/2019 20:22:52 PAGE 7   
 
  363   5                                              LED_Setting(system_stage,batlevel);
  364   5                                              //turn off pwm
@@ -446,7 +446,7 @@ line level    source
  422   5                                              TurnOffMotor();
  423   5                                              LED_RGB_Setting(0,0);
  424   5                                      }
-C51 COMPILER V9.54   MAIN                                                                  05/19/2019 14:10:07 PAGE 8   
+C51 COMPILER V9.54   MAIN                                                                  05/21/2019 20:22:52 PAGE 8   
 
  425   4                                      
  426   4                                      if (keystatus & 0x04)//charging
@@ -510,7 +510,7 @@ line level    source
  484   4                                      TurnOffMotor();
  485   4                                      LED_RGB_Setting(0,0);
  486   4                                      LED_Setting(0,0);
-C51 COMPILER V9.54   MAIN                                                                  05/19/2019 14:10:07 PAGE 9   
+C51 COMPILER V9.54   MAIN                                                                  05/21/2019 20:22:52 PAGE 9   
 
  487   4                                      isneedinitstage = 1;
  488   4                                      //goto stage A,B
@@ -574,7 +574,7 @@ line level    source
 MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =   1194    ----
    CONSTANT SIZE    =   ----    ----
-C51 COMPILER V9.54   MAIN                                                                  05/19/2019 14:10:07 PAGE 10  
+C51 COMPILER V9.54   MAIN                                                                  05/21/2019 20:22:52 PAGE 10  
 
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
