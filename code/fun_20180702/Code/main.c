@@ -32,13 +32,11 @@ extern unsigned int led_display_time;
 
 unsigned char system_stage;
 bit isneedinitstage;
-bit isneedinitbatled;
 bit isneedinitsys;
 bit ischarging;
 bit isstartsystem;
 unsigned char startADC_cnt;
 unsigned char batlevel_led_value;
-unsigned char led_type;
 unsigned char adc_pre_cnt;
 /*******************************/
 
@@ -88,12 +86,12 @@ unsigned int getadcvalue(void)
 }
 
 
-unsigned char getbatlevel(void)
+unsigned char getbatlevel(unsigned char adc_delay)
 {
 	unsigned char templevel;
 	unsigned char i;
 	unsigned char cur_pwm_level;
-	if (startADC_cnt > 0)
+	if (startADC_cnt > adc_delay)
 	{
 		startADC_cnt = 0;
 		clr_ADCF;
@@ -112,9 +110,6 @@ unsigned char getbatlevel(void)
 			if (i == 1)
 			{
 				cur_pwm_level = cur_pwm();
-//				if (cur_pwm_level == 0)
-//					adcvalue = adcvalue + 0x30;
-//				else
 				if (cur_pwm_level == 1)
 					adcvalue = adcvalue + 0x08;
 				else if (cur_pwm_level == 2)
@@ -163,10 +158,6 @@ unsigned char getbatlevel(void)
 			{
 				templevel = 1;
 			}
-//			else if (adcvalue < 0xA00)
-//			{
-//				templevel = 0;
-//			}
 			if (batlevel != templevel)
 				adc_pre_cnt++;
 			else
@@ -176,7 +167,6 @@ unsigned char getbatlevel(void)
 				adc_pre_cnt = 0;
 				batlevel = templevel;
 			}
-//			batlevel_led_value = batlevel_to_led_value();
 			return 1;
 		}
 	}	
@@ -194,40 +184,29 @@ void SysInit(void)
 	InitPWM();
 	system_stage = Stage_A;
 	isneedinitstage = 1;
-	led_type = 0; 
-	isneedinitbatled = 0;
 	batlevelledtimeout = 0;	
 	batlevel_led_value = 0;
 	ischarging = 0;
 	adc_pre_cnt = 0;
-//	P07_PushPull_Mode;
-//	P07 = 1;
-//	P07_Input_Mode;
 	Enable_ADC_AIN2;
 	if (isstartsystem == 0)
 	{
 		while(dpdtime<60)
 		{
-			getbatlevel();
-//			startADC_cnt++;
+			getbatlevel(0);
 		}
 		isstartsystem = 1;
 	}
 	else
 	{
-		while(dpdtime<10)
+		while(dpdtime<20)
 		{
-			getbatlevel();
+			getbatlevel(1);
 		}		
 	}
 	dpdtime = 0;
 	led_display_time = 0;
 	startADC_cnt = 0;
-//	while(1)
-//	{
-//		if (getbatlevel() == 1)
-//			break;
-//	}
 }
 
 void P05_wakeup_init(void){
@@ -259,26 +238,24 @@ void main(void)
 		{
 			if (batlevelledtimeout)
 				batlevelledtimeout--;
-			keystatus = KeyScan();
-			if (system_stage == Stage_A)
+			keystatus = KeyScan();		//keystatus->0:null；1：按键；2：安全开关；4：充电；8：长按
+			if (system_stage == Stage_A)	//没用充电，安全开关没闭合
 			{
 				if (isneedinitstage == 1)
 				{
 					isneedinitstage = 0;
 					//init stage A
-					LED_Setting(0,0);
-					LED_RGB_Setting(0,0);
-					led_type = 0;
+					TurnOffMotor();
+					LED_Setting(0);
+					LED_RGB_Setting(0);
 					dpdtime = 0;
 					ischarging = 0;
 				}
 				if (keystatus & 0x01)//key
 				{
 					//display power as LED
-					led_type = 1;
-					isneedinitbatled = 1;
 					batlevelledtimeout = 600;
-					LED_Setting(system_stage,batlevel);
+					LED_Setting(system_stage);
 				}
 				if (keystatus & 0x02)
 				{
@@ -287,33 +264,35 @@ void main(void)
 				}
 				if (keystatus & 0x04)
 				{
-					if (system_stage == Stage_B)
-						system_stage = Stage_D;
-					else
-						system_stage = Stage_C;
+					system_stage = Stage_C;
 					isneedinitstage = 1;
 				}			
 			}
-			else if (system_stage == Stage_B)
+			else if (system_stage == Stage_B)	//闭合安全开关
 			{
 				if (isneedinitstage == 1)
 				{
 					isneedinitstage = 0;
 					//init stage B
-					led_type = 2;	
-					isneedinitbatled = 1;
 					dpdtime = 0;
-					ischarging = 0;			
+					ischarging = 0;
+					//check motor level
+					i = get_motor_level();					
+					LED_RGB_Setting(i);
+					if (i == 0)
+						LED_Setting(0);
+					else
+						LED_Setting(system_stage);
 				}
 				if (keystatus & 0x01)//key
 				{
 					//change pwm
 					i  = Change_Motor_PWM();
-					LED_RGB_Setting(i,0);
+					LED_RGB_Setting(i);
 					if (i == 0)
-						LED_Setting(0,0);
+						LED_Setting(0);
 					else
-						LED_Setting(system_stage,batlevel);
+						LED_Setting(system_stage);
 				}
 				if (keystatus & 0x02)//safety
 				{
@@ -324,20 +303,13 @@ void main(void)
 					isneedinitstage = 1;
 					//turn off pwm
 					TurnOffMotor();
-					LED_RGB_Setting(0,0);
-					LED_Setting(0,0);
+					LED_RGB_Setting(0);
+					LED_Setting(0);
 				}
 				
 				if (keystatus & 0x04)//charging
 				{
-					if (system_stage == Stage_A)
-					{
-						system_stage = Stage_C;
-					}
-					else
-						system_stage = Stage_D;
-//					TurnOffMotor();
-//					LED_RGB_Setting(0,0);
+					system_stage = Stage_D;
 					isneedinitstage = 1;
 				}
 				
@@ -345,25 +317,21 @@ void main(void)
 				{
 					//turn off pwm
 					TurnOffMotor();
-					LED_RGB_Setting(0,0);
-					LED_Setting(0,0);
+					LED_RGB_Setting(0);
+					LED_Setting(0);
 				}
-				
 			}
-			else if (system_stage == Stage_C)
+			else if (system_stage == Stage_C)	//充电中
 			{
 				if (isneedinitstage == 1)
 				{
 					isneedinitstage = 0;
-					//init stage C
-					led_type = 3;	
-					isneedinitbatled = 1;
+					//init stage C	
 					dpdtime = 0;
-					ischarging = 1;
-					LED_Setting(system_stage,batlevel);
-					//turn off pwm
-//					TurnOffMotor();
-//					LED_RGB_Setting(0,0);
+					ischarging = 1;					
+					TurnOffMotor();
+					LED_RGB_Setting(0);
+					LED_Setting(system_stage);
 				}
 				if (keystatus & 0x01)//key
 				{
@@ -382,35 +350,30 @@ void main(void)
 				}
 				else
 				{
-					if (system_stage == Stage_D)
-					{
-						system_stage = Stage_B;
-					}
-					else
-					{
-						system_stage = Stage_A;
-						LED_Setting(0,0);
-					}
+					system_stage = Stage_A;
+					ischarging = 0;
+					LED_Setting(0);
 					isneedinitstage = 1;
 				}
 			}
-			else if (system_stage == Stage_D)
+			else if (system_stage == Stage_D)	//充电和闭合安全开关
 			{
 				if (isneedinitstage == 1)
 				{
 					isneedinitstage = 0;
-					isneedinitbatled = 1;
 					//init stage D
-					led_type = 3;
 					dpdtime = 0;
 					ischarging = 1;
-					LED_Setting(system_stage,batlevel);
+					//check motor level
+					i = get_motor_level();					
+					LED_RGB_Setting(i);
+					LED_Setting(system_stage);
 				}
 				if (keystatus & 0x01)//key
 				{
 					//change pwm
 					i  = Change_Motor_PWM();
-					LED_RGB_Setting(i,0);
+					LED_RGB_Setting(i);
 				}
 				if (keystatus & 0x02)//safety
 				{
@@ -420,7 +383,7 @@ void main(void)
 					system_stage = Stage_C;
 					isneedinitstage = 1;
 					TurnOffMotor();
-					LED_RGB_Setting(0,0);
+					LED_RGB_Setting(0);
 				}
 				
 				if (keystatus & 0x04)//charging
@@ -429,71 +392,43 @@ void main(void)
 				}
 				else
 				{
-					if (system_stage == Stage_C)
-					{
-						system_stage = Stage_A;
-					}
+					system_stage = Stage_B;
+					ischarging = 0;
+					i = get_motor_level();
+					LED_RGB_Setting(i);
+					if (i == 0)
+						LED_Setting(0);
 					else
-					{
-						system_stage = Stage_B;
-						i = get_motor_level();
-						LED_RGB_Setting(i,0);
-						if (i == 0)
-							LED_Setting(0,0);
-						else
-							LED_Setting(system_stage,batlevel);
-					}
-					isneedinitstage = 1;	
-//					TurnOffMotor();	
-//					LED_RGB_Setting(0,0);
+						LED_Setting(system_stage);				
+					isneedinitstage = 1;
 				}
 				
 				if (keystatus & 0x08)
 				{
 					//turn off pwm
 					TurnOffMotor();
-					LED_RGB_Setting(0,0);
+					LED_RGB_Setting(0);
+					LED_Setting(system_stage);
 				}
 			}
 			
 			//ADC process
-			getbatlevel();
-			/*
-			if (led_type)
-			{
-				if(isneedinitbatled && batlevel_led_value)
-				{
-					i = led_type - 1;
-					LED_WHITE_Setting(batlevel_led_value,i);
-					isneedinitbatled = 0;
-				}
-				if(batlevelledtimeout==0)
-				{
-					if (led_type == 1)
-					{
-						led_type = 0;
-						LED_WHITE_Setting(0,0);
-					}
-				}
-			}
-			*/
+			getbatlevel(5);
 			//pwm rate
 			if (check_motor_done())
 			{
 				//turn off pwm
 				TurnOffMotor();
-				LED_RGB_Setting(0,0);
-				LED_Setting(0,0);
+				LED_RGB_Setting(0);
+				LED_Setting(0);
 				isneedinitstage = 1;
-				//goto stage A,B
-				#warning "change stage to A or B"
 			}
 			if(get_motor_level())
 			{
 				dpdtime = 0;
 			}
 			//LED_Process		
-			LED_Process(system_stage,batlevel_led_value);
+			LED_Process(system_stage);
 			
 			//dpd
 			if (dpdtime >= 2000)
@@ -505,8 +440,8 @@ void main(void)
 				clr_ADCEN;
 				
 				TurnOffMotor();
-				LED_WHITE_Setting(0,0);
-				LED_RGB_Setting(0,0);
+				LED_WHITE_Setting(0);
+				LED_RGB_Setting(0);
 				DeInit_LED();
 				
 				P05_wakeup_init();

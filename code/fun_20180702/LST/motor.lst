@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   MOTOR                                                                 05/21/2019 20:22:52 PAGE 1   
+C51 COMPILER V9.54   MOTOR                                                                 05/21/2019 21:08:39 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MOTOR
@@ -62,7 +62,7 @@ line level    source
   52   1                      clr_CLRPWM;
   53   1                      //dispower
   54   1                      P12 = 0;        
-C51 COMPILER V9.54   MOTOR                                                                 05/21/2019 20:22:52 PAGE 2   
+C51 COMPILER V9.54   MOTOR                                                                 05/21/2019 21:08:39 PAGE 2   
 
   55   1                      isStartMotor = 0;
   56   1                      isMotorRun = 0;
@@ -126,7 +126,7 @@ line level    source
  114                          //pwm low               
  115                          set_SFRPAGE;
  116                          PWM0H = 0x01;                                           
-C51 COMPILER V9.54   MOTOR                                                                 05/21/2019 20:22:52 PAGE 3   
+C51 COMPILER V9.54   MOTOR                                                                 05/21/2019 21:08:39 PAGE 3   
 
  117                          PWM0L = 0x80;   
  118                          clr_SFRPAGE;
@@ -190,7 +190,7 @@ line level    source
  176   2                      PWM0_P12_OUTPUT_ENABLE;
  177   2                      
  178   2                      PWM_IMDEPENDENT_MODE;
-C51 COMPILER V9.54   MOTOR                                                                 05/21/2019 20:22:52 PAGE 4   
+C51 COMPILER V9.54   MOTOR                                                                 05/21/2019 21:08:39 PAGE 4   
 
  179   2                      PWM_CLOCK_FSYS;
  180   2                      PWMPH = 0x03;
@@ -254,7 +254,7 @@ line level    source
  238   1      }
  239          
  240          unsigned char check_motor_done(void)
-C51 COMPILER V9.54   MOTOR                                                                 05/21/2019 20:22:52 PAGE 5   
+C51 COMPILER V9.54   MOTOR                                                                 05/21/2019 21:08:39 PAGE 5   
 
  241          {
  242   1              if (isStartMotor)
@@ -318,7 +318,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    PDATA SIZE       =   ----    ----
    DATA SIZE        =      6    ----
    IDATA SIZE       =   ----    ----
-C51 COMPILER V9.54   MOTOR                                                                 05/21/2019 20:22:52 PAGE 6   
+C51 COMPILER V9.54   MOTOR                                                                 05/21/2019 21:08:39 PAGE 6   
 
    BIT SIZE         =      3    ----
 END OF MODULE INFORMATION.

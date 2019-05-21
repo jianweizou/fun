@@ -23,9 +23,6 @@
 #define LED_B_SETTING(x)	P15 = x
 
 extern unsigned char is_5ms_Flag;
-unsigned char led_stage=0;
-unsigned char led_white_mode;
-bit led_rgb_mode;
 bit led_white_tog;
 unsigned int led_display_time = 0;
 extern unsigned char batlevel;
@@ -47,9 +44,6 @@ void Init_LED(void)
 	LED_R_SETTING(0);
 	LED_G_SETTING(0);
 	LED_B_SETTING(0);
-	
-	led_white_mode = 0;
-	led_rgb_mode = 0;
 }
 
 void DeInit_LED(void)
@@ -77,9 +71,8 @@ void LED_WHITE_Set_value(unsigned char led_value)
 	led_value = led_value >> 1;
 	LED4_SETTING(led_value&LED1);	
 }
-void LED_WHITE_Setting(unsigned char led_value,unsigned char led_mode)
+void LED_WHITE_Setting(unsigned char led_value)
 {
-//	led_white_mode = led_mode;
 	LED_WHITE_Set_value(led_value);
 	led_display_time = 0;
 	led_white_tog = 0;
@@ -87,30 +80,14 @@ void LED_WHITE_Setting(unsigned char led_value,unsigned char led_mode)
 
 void LED_RGB_Set_value(unsigned char led_value)
 {
-//	LED_R_SETTING(led_value&LEDR);
-//	#warning "need update RGB-LED "
-//	if (led_value&LEDR)
-//	{
-//		LED_G_SETTING(1);
-//		LED_B_SETTING(1);
-//	}
-//	else
-//	{
-//		led_value = led_value >> 1;
-//		LED_B_SETTING(led_value&LEDR);
-//		led_value = led_value >> 1;
-//		LED_G_SETTING(led_value&LEDR);	
-//	}
-		
-		LED_R_SETTING(led_value&LEDR);
-		led_value = led_value >> 1;
-		LED_B_SETTING(led_value&LEDR);	
-		led_value = led_value >> 1;	
-		LED_G_SETTING(led_value&LEDR);
+	LED_R_SETTING(led_value&LEDR);
+	led_value = led_value >> 1;
+	LED_B_SETTING(led_value&LEDR);	
+	led_value = led_value >> 1;	
+	LED_G_SETTING(led_value&LEDR);
 }
-void LED_RGB_Setting(unsigned char led_value,unsigned char led_mode)
+void LED_RGB_Setting(unsigned char led_value)
 {
-	led_rgb_mode = led_mode;
 	LED_RGB_Set_value(led_value);
 }
 
@@ -204,45 +181,40 @@ unsigned char batlevel_to_led_value(unsigned char stage)
 	return val;
 }
 
-void LED_Setting(unsigned char stage,unsigned char batlevel)
+void LED_Setting(unsigned char led_stage)
 {
 	unsigned char temp;
-	led_stage = stage;
 	led_display_time = 0;
 	if (led_stage == 0)
 	{
-		LED_WHITE_Setting(0,0);
+		LED_WHITE_Setting(0);
 	}
 	else if (led_stage == 1)	//stage_A
 	{
-		led_white_mode = 0;
 		temp = batlevel_to_led_value(led_stage);
-		LED_WHITE_Setting(temp,0);
+		LED_WHITE_Setting(temp);
 	}
 	else if (led_stage == 4)//stage C
 	{
-		led_white_mode = 0;
 		temp = batlevel_to_led_value(led_stage);
-		LED_WHITE_Setting(temp,0);
+		LED_WHITE_Setting(temp);
 	}
 	else if (led_stage == 2)//stage B
 	{
-		led_white_mode = 0;
 		temp = batlevel_to_led_value(led_stage);
 		if (temp == 0)
-			LED_WHITE_Setting(1,0);
+			LED_WHITE_Setting(1);
 		else
-			LED_WHITE_Setting(temp,0);
+			LED_WHITE_Setting(temp);
 	}
 	else if (led_stage == 8)//stage D
 	{
-		led_white_mode = 0;
 		temp = batlevel_to_led_value(led_stage);
-		LED_WHITE_Setting(temp,0);
+		LED_WHITE_Setting(temp);
 	}
 }
 
-void LED_Process(unsigned char stage,unsigned char led_value)
+void LED_Process(unsigned char led_stage)
 {
 	unsigned char temp;
 	if (led_stage == 1)	//stage
@@ -250,7 +222,7 @@ void LED_Process(unsigned char stage,unsigned char led_value)
 		if (led_display_time >= 600)
 		{
 			led_stage = 0;
-			LED_WHITE_Setting(0,0);
+			LED_WHITE_Setting(0);
 		}
 	}
 	else if (led_stage == 4)//stage C
