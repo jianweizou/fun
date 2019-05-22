@@ -16,7 +16,8 @@ bit isMotorRun;
 unsigned char Motor_Run_cnt;
 void MOTOR_FG_PinInterrupt_ISR (void)
 {
-	Motor_done_cnt = 0;
+	if (Motor_done_cnt > 0)
+		Motor_done_cnt--;
 	isMotorRun = 1;
 }
 
@@ -241,18 +242,22 @@ unsigned char check_motor_done(void)
 {
 	if (isStartMotor)
 	{
+		Motor_done_cnt++;
 		if (isMotorRun == 1)
 		{
-			if (cur_Motor_PWM >= 5)
+			if (Motor_done_cnt >= 10)
 			{
 				return 1;
 			}
 		}
-		if (Motor_Run_cnt > 0)
+		else
 		{
-			Motor_Run_cnt--;
-			if ((Motor_Run_cnt == 0) && (isMotorRun == 0))
-				return 1;
+			if (Motor_Run_cnt > 0)
+			{
+				Motor_Run_cnt--;
+				if (Motor_Run_cnt == 0)
+					return 1;
+			}
 		}
 	}
 	if ((Motor_Level == 1)&&(isMaxPWM == 0))

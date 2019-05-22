@@ -52,8 +52,6 @@ void Timer0_ISR (void) interrupt 1          //interrupt address is 0x000B
 	dpdtime++;
 	startADC_cnt ++;
 	led_display_time++;
-	if (isStartMotor)
-		Motor_done_cnt++;
 }
 
 void Timer0_Init(void)
