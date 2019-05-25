@@ -111,7 +111,11 @@ unsigned char batlevel_to_led_value(unsigned char stage)
 		else if (batlevel == 2)
 		{
 			val = 0x01;
-		}			
+		}
+		else
+		{
+			val = 0x00;
+		}
 	}
 	else if (stage == 4)//stage C
 	{

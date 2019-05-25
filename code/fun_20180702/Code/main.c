@@ -22,6 +22,9 @@ unsigned int adc[ADC_CNT];
 unsigned char batlevel;
 unsigned int batlevelledtimeout;
 unsigned int adcvalue;
+unsigned int DPD_CNT=0;
+unsigned char adcchangecnt=0;
+unsigned char adc_dis_cnt=0;
 extern unsigned char Motor_Level;
 extern unsigned int led_display_time;
 /********************************/
@@ -38,8 +41,70 @@ bit isstartsystem;
 unsigned char startADC_cnt;
 unsigned char batlevel_led_value;
 unsigned char adc_pre_cnt;
-/*******************************/
 
+float bat_val;
+
+
+
+#define set_SWRST   BIT_TMP=EA;EA=0;TA=0xAA;TA=0x55;CHPCON|=SET_BIT7 ;EA=BIT_TMP;
+void SW_Reset(void)
+{
+    TA = 0xAA;
+    TA = 0x55;
+    set_SWRST;
+}
+
+/*******************************/
+typedef unsigned char         UINT8;
+typedef unsigned int          UINT16;
+typedef unsigned long         UINT32;
+
+typedef unsigned char         uint8_t;
+typedef unsigned int          uint16_t;
+typedef unsigned long         uint32_t;
+/*uart1*/
+void InitialUART1_Timer3(UINT32 u32Baudrate) //use timer3 as Baudrate generator
+{
+		P02_Quasi_Mode;		//Setting UART pin as Quasi mode for transmit
+		P16_Quasi_Mode;		//Setting UART pin as Quasi mode for transmit
+	
+	  SCON_1 = 0x50;   	//UART1 Mode1,REN_1=1,TI_1=1
+    T3CON = 0x08;   	//T3PS2=0,T3PS1=0,T3PS0=0(Prescale=1), UART1 in MODE 1
+		clr_BRCK;
+	
+#ifdef FOSC_160000
+		RH3    = HIBYTE(65536 - (1000000/u32Baudrate)-1);  		/*16 MHz */
+		RL3    = LOBYTE(65536 - (1000000/u32Baudrate)-1);			/*16 MHz */
+#endif
+#ifdef FOSC_166000
+		RH3    = HIBYTE(65536 - (1037500/u32Baudrate));  			/*16.6 MHz */
+		RL3    = LOBYTE(65536 - (1037500/u32Baudrate));				/*16.6 MHz */
+#endif
+    set_TR3;         //Trigger Timer3
+}
+UINT8 Receive_Data_From_UART1(void)
+{
+    UINT8 c;
+    
+    while (!RI_1);
+    c = SBUF_1;
+    RI_1 = 0;
+    return (c);
+}
+
+void Send_Data_To_UART1 (UINT8 c)
+{
+    TI_1 = 0;
+    SBUF_1 = c;
+    while(TI_1==0);
+}
+char putchar (char c)
+{
+		while (!TI_1);  /* wait until transmitter ready */
+		TI_1 = 0;
+		SBUF_1 = c;      /* output character */
+		return (c);
+}
 
 /************************************************************************************************************
 *    TIMER 0 interrupt subroutine
@@ -73,14 +138,14 @@ void Timer0_Init(void)
 unsigned int getadcvalue(void)
 {
 	unsigned char i;
-	unsigned int adcvalue;
-	adcvalue = 0;
+	unsigned int adcvalue_temp;
+	adcvalue_temp = 0;
 	for(i=0;i<ADC_CNT;i++)
 	{
-		adcvalue += adc[i];
+		adcvalue_temp += adc[i];
 	}
-	adcvalue >>=3;
-	return adcvalue;
+	adcvalue_temp >>=3;
+	return adcvalue_temp;
 }
 
 
@@ -89,54 +154,119 @@ unsigned char getbatlevel(unsigned char adc_delay)
 	unsigned char templevel;
 	unsigned char i;
 	unsigned char cur_pwm_level;
+	unsigned int adcvaluetemp;
 	if (startADC_cnt > adc_delay)
 	{
 		startADC_cnt = 0;
+		CKDIV = 0x04; 
 		clr_ADCF;
 		set_ADCS;									// ADC start trig signal
 		while(ADCF == 0);
-		adcvalue = ADCRH;
-		adcvalue <<= 4;
-		adcvalue |= ADCRL&0x0F;
-		adc[adccnt] = adcvalue;
+		CKDIV = 0x00; 
+		adcvaluetemp = ADCRH;
+		adcvaluetemp <<= 4;
+		adcvaluetemp |= ADCRL&0x0F;
+		adc[adccnt] = adcvaluetemp;
 		adccnt++;
 		if (adccnt >= ADC_CNT)
 		{
 			adccnt = 0;
-			adcvalue = getadcvalue();
+			adcvaluetemp = getadcvalue();
+			printf("\n adcvaluetemp=0x%x",adcvaluetemp);
 			i = get_motor_level();
-			if (i == 1)
+			if ((ischarging) &&(i != 0))
 			{
-				cur_pwm_level = cur_pwm();
-				if (cur_pwm_level == 1)
-					adcvalue = adcvalue + 0x08;
-				else if (cur_pwm_level == 2)
-					adcvalue = adcvalue + 0x10;
+				if (i == 1)
+				{
+					cur_pwm_level = cur_pwm();
+					if (cur_pwm_level == 1)
+						adcvaluetemp = adcvaluetemp + 0x20;
+					else if (cur_pwm_level == 2)
+						adcvaluetemp = adcvaluetemp + 0x38;
+					else
+						adcvaluetemp = adcvaluetemp + 0x60;
+					adcvaluetemp = adcvaluetemp - 0x80;	//0x90 -> 0.3v
+				}
+				else if (i == 2)
+				{
+					adcvaluetemp = adcvaluetemp + 0x38;
+					adcvaluetemp = adcvaluetemp - 0x90;	//0x90 -> 0.3v
+				}
+				else if (i == 4)
+				{
+					adcvaluetemp = adcvaluetemp + 0x20;
+					adcvaluetemp = adcvaluetemp - 0xA0;	//0x90 -> 0.3v
+				}
 				else
-					adcvalue = adcvalue + 0x20;
+				{
+					adcvaluetemp = adcvaluetemp - 0xB0;	//0x90 -> 0.3v
+				}
 			}
-			else if (i == 2)
+			else if ((ischarging== 0) && (i != 0))
 			{
-				adcvalue = adcvalue + 0x10;
+				if (i == 1)
+				{
+					cur_pwm_level = cur_pwm();
+					if (cur_pwm_level == 1)
+						adcvaluetemp = adcvaluetemp + 0x28;
+					else if (cur_pwm_level == 2)
+						adcvaluetemp = adcvaluetemp + 0x48;
+					else
+						adcvaluetemp = adcvaluetemp + 0x70;
+				}
+				else if (i == 2)
+				{
+					adcvaluetemp = adcvaluetemp + 0x48;
+				}
+				else if (i == 4)
+				{
+					adcvaluetemp = adcvaluetemp + 0x28;
+				}
 			}
-			else if (i == 4)
+			else if ((ischarging == 1) && (i == 0))
 			{
-				adcvalue = adcvalue + 0x08;
+				adcvaluetemp = adcvaluetemp - 0xB0;
+				if (adcvaluetemp > 0xD40)
+					adcvaluetemp = 0xD40;
 			}
-			if (ischarging)
+			if (isstartsystem == 0)
 			{
-				if (batlevel < 3)
-					adcvalue = adcvalue - 0x50;
-				else if (batlevel < 5)
-					adcvalue = adcvalue - 0x40;
+				if (adcvaluetemp >= 0xD40)
+					adcvalue = adcvaluetemp - 0x40;
 				else
-					adcvalue = adcvalue - 0x30;	//0x90 -> 0.3v
+				{
+					adcvalue = adcvaluetemp + 0x100;
+				}
+				if (adcvalue > 0xD20)
+					adcvalue = 0xD20;
 			}
-			if (adcvalue > 0xD20)		//100% 8.2
+			else
+			{
+				if (adcvalue == 0)
+					adcvalue = adcvaluetemp;
+				if (adcvaluetemp > (adcvalue + 8))
+				{
+					adcchangecnt++;
+					if (adcchangecnt > 5)
+					{
+						adcchangecnt = 0;
+						adcvalue++;
+					}
+				}
+				else
+				{
+					adcchangecnt = 0;
+					adcvalue--;
+				}
+			}
+			printf("\n adcvalue=0x%x",adcvalue);
+			bat_val = ((float)adcvalue) *3.34 /4096.0 * 3.0;
+			printf("\n bat=%0.4f",bat_val);
+			if (adcvalue > 0xCD0)		//100% 8.2
 			{
 				templevel = 6;
 			}
-			else if (adcvalue > 0xCB0)	//>75%	8v		
+			else if (adcvalue > 0xCA0)	//>75%	7.9v		
 			{
 				templevel = 5;
 			}
@@ -160,7 +290,7 @@ unsigned char getbatlevel(unsigned char adc_delay)
 				adc_pre_cnt++;
 			else
 				adc_pre_cnt = 0;
-			if (adc_pre_cnt > 4)
+			if (adc_pre_cnt > 5)
 			{
 				adc_pre_cnt = 0;
 				batlevel = templevel;
@@ -169,42 +299,6 @@ unsigned char getbatlevel(unsigned char adc_delay)
 		}
 	}	
 	return 0;
-}
-
-
-void SysInit(void)
-{
-	Init_LED();
-	Timer0_Init();	
-	startADC_cnt = 0;
-	adccnt = 0;
-	KeyInit();	
-	InitPWM();
-	system_stage = Stage_A;
-	isneedinitstage = 1;
-	batlevelledtimeout = 0;	
-	batlevel_led_value = 0;
-	ischarging = 0;
-	adc_pre_cnt = 0;
-	Enable_ADC_AIN2;
-	if (isstartsystem == 0)
-	{
-		while(dpdtime<60)
-		{
-			getbatlevel(0);
-		}
-		isstartsystem = 1;
-	}
-	else
-	{
-		while(dpdtime<20)
-		{
-			getbatlevel(1);
-		}		
-	}
-	dpdtime = 0;
-	led_display_time = 0;
-	startADC_cnt = 0;
 }
 
 void P05_wakeup_init(void){
@@ -218,6 +312,72 @@ void P05_wakeup_init(void){
 	
 	set_EA;
 }
+void Enter_DPD(void)
+{
+	dpdtime = 0;
+	//enter dpd
+	//
+	Set_All_GPIO_Quasi_Mode;
+	clr_ADCEN;
+
+	TurnOffMotor();
+	LED_WHITE_Setting(0);
+	LED_RGB_Setting(0);
+	DeInit_LED();
+
+	P05_wakeup_init();
+
+	P17_Input_Mode;
+	set_P1S_7;
+	set_EX1;
+					
+	set_PD;
+
+	PICON  = 0;
+				
+	clr_EX0;
+	clr_EX1;
+	clr_EPI;
+	isneedinitsys = 1;	
+}
+
+void SysInit(void)
+{	
+	InitialUART1_Timer3(115200);
+	TI_1 = 1;
+	Init_LED();
+	Timer0_Init();	
+	startADC_cnt = 0;
+	adccnt = 0;
+	KeyInit();	
+	InitPWM();
+	system_stage = Stage_A;
+	isneedinitstage = 1;
+	batlevelledtimeout = 0;	
+	batlevel_led_value = 0;
+	ischarging = 0;
+	adc_pre_cnt = 0;
+	adcvalue = 0;
+	Enable_ADC_AIN2;
+	
+	if (isstartsystem != 1)
+	{
+		dpdtime = 0;
+		while(dpdtime<200)
+		{
+			if (P05 == 0)
+				ischarging = 1;
+			getbatlevel(0);
+		}
+		isstartsystem = 1;
+		DPD_CNT = 2000;
+	}
+	dpdtime = 0;
+	led_display_time = 0;
+	startADC_cnt = 0;
+	adc_dis_cnt = 50;
+}
+
 
 void main(void)
 {
@@ -248,6 +408,8 @@ void main(void)
 					LED_RGB_Setting(0);
 					dpdtime = 0;
 					ischarging = 0;
+					adccnt = 0;
+					adc_dis_cnt = 400;
 				}
 				if (keystatus & 0x01)//key
 				{
@@ -281,16 +443,20 @@ void main(void)
 						LED_Setting(0);
 					else
 						LED_Setting(system_stage);
+					led_display_time = 600;
+					adccnt = 0;
+					adc_dis_cnt = 400;
 				}
 				if (keystatus & 0x01)//key
 				{
 					//change pwm
 					i  = Change_Motor_PWM();
 					LED_RGB_Setting(i);
-					if (i == 0)
-						LED_Setting(0);
-					else
+//					if (i == 0)
+//						LED_Setting(0);
+//					else
 						LED_Setting(system_stage);
+					adccnt = 0;
 				}
 				if (keystatus & 0x02)//safety
 				{
@@ -316,7 +482,9 @@ void main(void)
 					//turn off pwm
 					TurnOffMotor();
 					LED_RGB_Setting(0);
-					LED_Setting(0);
+//					LED_Setting(0);
+					adccnt = 0;
+					adc_dis_cnt = 400;
 				}
 			}
 			else if (system_stage == Stage_C)	//³äµçÖÐ
@@ -330,6 +498,9 @@ void main(void)
 					TurnOffMotor();
 					LED_RGB_Setting(0);
 					LED_Setting(system_stage);
+					led_display_time = 600;
+					adccnt = 0;
+					adc_dis_cnt = 400;
 				}
 				if (keystatus & 0x01)//key
 				{
@@ -366,12 +537,15 @@ void main(void)
 					i = get_motor_level();					
 					LED_RGB_Setting(i);
 					LED_Setting(system_stage);
+					adccnt = 0;
+					adc_dis_cnt = 400;
 				}
 				if (keystatus & 0x01)//key
 				{
 					//change pwm
 					i  = Change_Motor_PWM();
 					LED_RGB_Setting(i);
+					adccnt = 0;
 				}
 				if (keystatus & 0x02)//safety
 				{
@@ -394,9 +568,9 @@ void main(void)
 					ischarging = 0;
 					i = get_motor_level();
 					LED_RGB_Setting(i);
-					if (i == 0)
-						LED_Setting(0);
-					else
+//					if (i == 0)
+//						LED_Setting(0);
+//					else
 						LED_Setting(system_stage);				
 					isneedinitstage = 1;
 				}
@@ -406,20 +580,31 @@ void main(void)
 					//turn off pwm
 					TurnOffMotor();
 					LED_RGB_Setting(0);
-					LED_Setting(system_stage);
+//					LED_Setting(system_stage);
+					adccnt = 0;
+					adc_dis_cnt = 400;
 				}
 			}
 			
 			//ADC process
-			getbatlevel(5);
+			if (adc_dis_cnt > 0)
+			{
+				adc_dis_cnt--;
+			}
+			else
+			{
+				getbatlevel(5);
+			}
 			//pwm rate
 			if (check_motor_done())
 			{
 				//turn off pwm
 				TurnOffMotor();
 				LED_RGB_Setting(0);
-				LED_Setting(0);
+//				LED_Setting(0);
 				isneedinitstage = 1;
+				adccnt = 0;
+				adc_dis_cnt = 400;
 			}
 			if(get_motor_level())
 			{
@@ -429,33 +614,10 @@ void main(void)
 			LED_Process(system_stage);
 			
 			//dpd
-			if (dpdtime >= 2000)
+			if (dpdtime >= DPD_CNT)
 			{
-				dpdtime = 0;
-				//enter dpd
-				//
-				Set_All_GPIO_Quasi_Mode;
-				clr_ADCEN;
-				
-				TurnOffMotor();
-				LED_WHITE_Setting(0);
-				LED_RGB_Setting(0);
-				DeInit_LED();
-				
-				P05_wakeup_init();
-				
-				P17_Input_Mode;
-				set_P1S_7;
-				set_EX1;
-								
-				set_PD;
-
-				PICON  = 0;
-							
-				clr_EX0;
-				clr_EX1;
-				clr_EPI;
-				isneedinitsys = 1;
+				DPD_CNT = 2000;
+				Enter_DPD();
 			}
 		}
 	}

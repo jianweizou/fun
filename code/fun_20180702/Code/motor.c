@@ -18,7 +18,11 @@ void MOTOR_FG_PinInterrupt_ISR (void)
 {
 	if (Motor_done_cnt > 0)
 		Motor_done_cnt--;
-	isMotorRun = 1;
+//	Motor_done_cnt = 0;
+	if (isStartMotor)
+	{
+		isMotorRun = 1;
+	}
 }
 
 
@@ -32,7 +36,6 @@ void InitPWM(void)
 	isMotorRun = 0;
 	Motor_Run_cnt = 0;
 	Motor_done_cnt = 0;
-	
 	P06_PushPull_Mode;
 	P06 = 0;			//CW
 	P04_PushPull_Mode;	//motor power
@@ -62,82 +65,20 @@ void TurnOffMotor(void)
 		P12_PushPull_Mode;
 		P12 = 0;
 }
-/*
-unsigned Change_Motor_PWM(void)
-{
-	if (Motor_Level == 0)
-	{
-		//enable FG ext interrupt
-		isStartMotor = 1;
-		PICON = 0x05;	//port1
-		PINEN  = 0x00;
-		PIPEN = 0x10;	//IO 4
-		set_EPI;							// Enable pin interrupt
-		
-		Motor_Level = 1;
-		//pwm High
-		P12 = 0;
-		P04 = 1;
-//		set_SFRPAGE;
-//		PWM0H = 0x00;						
-//		PWM0L = 0xA6;	
-//		clr_SFRPAGE;
-//		set_LOAD;
-//		set_PWMRUN;				
-	}
-	else if (Motor_Level == 1)
-	{
-		Motor_Level = 2;
-
-		PWM0_P12_OUTPUT_ENABLE;
-		
-		PWM_IMDEPENDENT_MODE;
-		PWM_CLOCK_FSYS;
-		PWMPH = 0x03;
-		PWMPL = 0xE7;						//0x3E7 = 16KHZ,	0x290=24.46khz
-		set_SFRPAGE;						//PWM4 and PWM5 duty seting is in SFP page 1
-		PWM0H = 0x01;						
-		PWM0L = 0xF3;
-		clr_SFRPAGE;				
-		set_LOAD;
-		
-		//pwm mid
-		set_SFRPAGE;
-		PWM0H = 0x00;						
-		PWM0L = 0xF0;	
-		clr_SFRPAGE;
-		set_LOAD;
-		set_PWMRUN;			
-	}
-	else if (Motor_Level == 2)
-	{
-		Motor_Level = 4;
-		//pwm low		
-		set_SFRPAGE;
-		PWM0H = 0x01;						
-		PWM0L = 0x80;	
-		clr_SFRPAGE;
-		set_LOAD;
-		set_PWMRUN;		
-	}
-
-	return Motor_Level;
-}*/
-
 unsigned Change_Motor_PWM(void)
 {
 	if (Motor_Level == 0)
 	{
 		P06 = 1;
-		isStartMotor = 1;
-		Motor_Run_cnt = 100;
-		PICON = 0x05;	//port1
-		PINEN  = 0x00;
-		PIPEN = 0x10;	//IO 4
+		set_P1SR_4;
+		P14_Input_Mode;
+//		PICON = 0x05;	//port1
+//		PINEN  = 0x00;
+//		PIPEN = 0x10;	//IO 4
+		Enable_INT_Port1;
+		Enable_BIT4_RasingEdge_Trig;
 		set_EPI;							// Enable pin interrupt		
 		
-		Motor_Level = 1;
-		P04 = 1;
 		P12_Quasi_Mode;
 		//enable PWM0
 		PWM0_P12_OUTPUT_ENABLE;
@@ -158,10 +99,15 @@ unsigned Change_Motor_PWM(void)
 		PWM0L = 0x80;	
 		clr_SFRPAGE;
 		set_LOAD;
-		set_PWMRUN;	
+		set_PWMRUN;
+		
+		Motor_Level = 1;
 		cur_Motor_PWM = 0x180;
 		Motor_Wakeup_cnt = 0;
 		isMaxPWM = 0;
+		isStartMotor = 1;
+		Motor_Run_cnt = 0;
+		P04 = 1;
 	}
 	else if (Motor_Level == 1)
 	{
@@ -240,23 +186,41 @@ unsigned char cur_pwm(void)
 
 unsigned char check_motor_done(void)
 {
+	unsigned int curpwm;
+	unsigned char motor_done_cnt_temp;
 	if (isStartMotor)
 	{
-		Motor_done_cnt++;
-		if (isMotorRun == 1)
+		Motor_Run_cnt++;
+		if (Motor_Run_cnt < 20)
 		{
-			if (Motor_done_cnt >= 10)
-			{
-				return 1;
-			}
 		}
 		else
 		{
-			if (Motor_Run_cnt > 0)
+			Motor_done_cnt++;
+			if (isMotorRun == 0)
 			{
-				Motor_Run_cnt--;
-				if (Motor_Run_cnt == 0)
+				if (Motor_Run_cnt > 100)
 					return 1;
+			}
+			else if (isMotorRun == 1)
+			{
+				curpwm = cur_pwm();
+				if (curpwm == 1)
+				{
+					motor_done_cnt_temp = 10;
+				}
+				else if (curpwm == 2)
+				{
+					motor_done_cnt_temp = 5;
+				}
+				else
+				{
+					motor_done_cnt_temp = 3;
+				}
+				if (Motor_done_cnt >= motor_done_cnt_temp)
+				{
+					return 1;
+				}
 			}
 		}
 	}
