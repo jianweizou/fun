@@ -40,6 +40,7 @@ void InitPWM(void)
 	P06 = 0;			//CW
 	P04_PushPull_Mode;	//motor power
 	P04 = 0;
+	isMaxPWM = 0;
 }
 
 void TurnOffMotor(void)
@@ -64,6 +65,7 @@ void TurnOffMotor(void)
 		P06 = 0;
 		P12_PushPull_Mode;
 		P12 = 0;
+		isMaxPWM = 0;
 }
 unsigned Change_Motor_PWM(void)
 {
@@ -139,6 +141,7 @@ unsigned Change_Motor_PWM(void)
 		clr_SFRPAGE;
 		set_LOAD;
 		set_PWMRUN;		
+		isMaxPWM = 0;
 	}
 	else if (Motor_Level == 2)
 	{
@@ -151,7 +154,7 @@ unsigned Change_Motor_PWM(void)
 		clr_SFRPAGE;
 		set_LOAD;
 		set_PWMRUN;
-
+		isMaxPWM = 0;
 	}
 	else if (Motor_Level == 4)
 	{

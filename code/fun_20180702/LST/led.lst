@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   LED                                                                   05/25/2019 16:28:10 PAGE 1   
+C51 COMPILER V9.54   LED                                                                   05/26/2019 12:41:32 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE LED
@@ -62,7 +62,7 @@ line level    source
   52   1              P00_OpenDrain_Mode;
   53   1              P01_OpenDrain_Mode;
   54   1              P03_OpenDrain_Mode;
-C51 COMPILER V9.54   LED                                                                   05/25/2019 16:28:10 PAGE 2   
+C51 COMPILER V9.54   LED                                                                   05/26/2019 12:41:32 PAGE 2   
 
   55   1              P10_OpenDrain_Mode;
   56   1              P11_OpenDrain_Mode;
@@ -126,7 +126,7 @@ line level    source
  114   3                      }
  115   2                      else
  116   2                      {
-C51 COMPILER V9.54   LED                                                                   05/25/2019 16:28:10 PAGE 3   
+C51 COMPILER V9.54   LED                                                                   05/26/2019 12:41:32 PAGE 3   
 
  117   3                              val = 0x00;
  118   3                      }
@@ -190,7 +190,7 @@ line level    source
  176   2                      else if (batlevel == 3)//>25%
  177   2                      {
  178   3                              val = 0x01;
-C51 COMPILER V9.54   LED                                                                   05/25/2019 16:28:10 PAGE 4   
+C51 COMPILER V9.54   LED                                                                   05/26/2019 12:41:32 PAGE 4   
 
  179   3                      }
  180   2                      else    //<25%
@@ -254,7 +254,7 @@ line level    source
  238   3                              {
  239   4                                      led_white_tog = 1;
  240   4                                      led_display_time = 1;
-C51 COMPILER V9.54   LED                                                                   05/25/2019 16:28:10 PAGE 5   
+C51 COMPILER V9.54   LED                                                                   05/26/2019 12:41:32 PAGE 5   
 
  241   4                                      temp = batlevel_to_led_value(led_stage);
  242   4                                      temp = (temp<<1) + 1;
@@ -318,7 +318,7 @@ line level    source
  300   2              }
  301   1      }
 
-C51 COMPILER V9.54   LED                                                                   05/25/2019 16:28:10 PAGE 6   
+C51 COMPILER V9.54   LED                                                                   05/26/2019 12:41:32 PAGE 6   
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE

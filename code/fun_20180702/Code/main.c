@@ -22,9 +22,9 @@ unsigned int adc[ADC_CNT];
 unsigned char batlevel;
 unsigned int batlevelledtimeout;
 unsigned int adcvalue;
+unsigned char adc_dis_cnt;
 unsigned int DPD_CNT=0;
 unsigned char adcchangecnt=0;
-unsigned char adc_dis_cnt=0;
 extern unsigned char Motor_Level;
 extern unsigned int led_display_time;
 /********************************/
@@ -38,6 +38,8 @@ bit isneedinitstage;
 bit isneedinitsys;
 bit ischarging;
 bit isstartsystem;
+bit isWaitTurnOffCharging;
+bit isfirstenterdpd;
 unsigned char startADC_cnt;
 unsigned char batlevel_led_value;
 unsigned char adc_pre_cnt;
@@ -148,6 +150,75 @@ unsigned int getadcvalue(void)
 	return adcvalue_temp;
 }
 
+unsigned int charging_bat_feedback(unsigned int cur_adc,unsigned char pwm)
+{
+	unsigned int temp;
+	unsigned int temp_pwm;
+	if (pwm == 1)
+	{
+		temp_pwm = 40;
+	}
+	else if (pwm == 2)
+	{
+		temp_pwm = 30;
+	}
+	else if (pwm == 3)
+	{
+		temp_pwm = 20;
+	}
+	else
+	{
+		temp_pwm = 0;
+	}
+	
+	if (batlevel == 1)
+	{
+		temp = 200 - temp_pwm;
+	}
+	else if (batlevel == 2)
+	{
+		temp = 200 - temp_pwm;
+	}
+	else if (batlevel == 3)
+	{
+		temp = 200 - temp_pwm;
+	}
+	else if (batlevel == 4)
+	{
+		temp = 200 - temp_pwm;
+	}
+	else if (batlevel == 5)
+	{
+		if (cur_adc > 3400)
+		{
+			temp = 80 - temp_pwm;
+		}
+		else if (cur_adc > 3300)
+		{
+			temp = 100 - temp_pwm;
+		}
+		else
+		{
+			temp = 180 - temp_pwm;
+		}
+	}
+	else if (batlevel == 6)
+	{
+		if (cur_adc > 3400)
+		{
+			temp = 50 - temp_pwm;
+		}
+		else if (cur_adc > 3300)
+		{
+			temp = 80 - temp_pwm;
+		}
+		else
+		{
+			temp = 150 - temp_pwm;
+		}
+	}
+	return temp;
+}
 
 unsigned char getbatlevel(unsigned char adc_delay)
 {
@@ -171,76 +242,169 @@ unsigned char getbatlevel(unsigned char adc_delay)
 		if (adccnt >= ADC_CNT)
 		{
 			adccnt = 0;
+			if (adc_dis_cnt > 0)
+				return 0;
 			adcvaluetemp = getadcvalue();
-			printf("\n adcvaluetemp=0x%x",adcvaluetemp);
+			printf("\n adcvaluetemp=%d",adcvaluetemp);
+			
 			i = get_motor_level();
-			if ((ischarging) &&(i != 0))
+			
+//			if (ischarging)
+//			{
+//				printf("\n charging=1");
+//				if (adcvaluetemp < adcvalue)
+//				{
+//					adcvaluetemp =  adcvaluetemp + charging_bat_feedback(adcvaluetemp,i);
+//					printf("\n adcvaluetemp < adcvalue");
+//				}
+//			}
+//			else
+//			{
+//				printf("\n charging=0");
+//				if (adcvaluetemp < adcvalue)
+//				{
+////					if (i == 0)
+////						adcvaluetemp = adcvalue - 0x10;
+////					else if (i == 1)
+////					{
+////						adcvaluetemp = adcvalue + 0x50;
+////					}
+////					else if (i == 2)
+////					{
+////						adcvaluetemp = adcvalue + 0x28;
+////					}
+////					else if (i == 4)
+////					{
+////						adcvaluetemp = adcvalue + 0x18;
+////					}
+//				}
+//			}
+//			if ((ischarging) &&(i != 0))
+//			{
+//				if (i == 1)
+//				{
+//					cur_pwm_level = cur_pwm();
+//					if (cur_pwm_level == 1)
+//						adcvaluetemp = adcvaluetemp + 0x20;
+//					else if (cur_pwm_level == 2)
+//						adcvaluetemp = adcvaluetemp + 0x38;
+//					else
+//						adcvaluetemp = adcvaluetemp + 0x60;
+////					adcvaluetemp = adcvaluetemp - 0x90;
+//				}
+//				else if (i == 2)
+//				{
+//					adcvaluetemp = adcvaluetemp + 0x38;
+////					adcvaluetemp = adcvaluetemp - 0x90;
+//				}
+//				else if (i == 4)
+//				{
+//					adcvaluetemp = adcvaluetemp + 0x20;
+////					adcvaluetemp = adcvaluetemp - 0x90;
+//				}
+//				else
+//				{
+////					adcvaluetemp = adcvaluetemp - 0x90;
+//				}
+//			}
+//			else if ((ischarging== 0) && (i != 0))
+//			{
+//				if (i == 1)
+//				{
+//					cur_pwm_level = cur_pwm();
+//					if (cur_pwm_level == 1)
+//						adcvaluetemp = adcvaluetemp + 0x28;
+//					else if (cur_pwm_level == 2)
+//						adcvaluetemp = adcvaluetemp + 0x48;
+//					else
+//						adcvaluetemp = adcvaluetemp + 0x70;
+//				}
+//				else if (i == 2)
+//				{
+//					adcvaluetemp = adcvaluetemp + 0x48;
+//				}
+//				else if (i == 4)
+//				{
+//					adcvaluetemp = adcvaluetemp + 0x28;
+//				}
+//			}
+//			else if ((ischarging == 1) && (i == 0))
+//			{
+////				adcvaluetemp = adcvaluetemp - 0xB0;
+//			}
+//			if (ischarging)
+//			adcvaluetemp = adcvaluetemp - charging_bat_feedback();
+//			if (isstartsystem == 0)
+//			{
+//				if (adcvaluetemp >= 0xD40)
+//					adcvalue = adcvaluetemp - 0x40;
+//				else
+//				{
+//					adcvalue = adcvaluetemp + 0x100;
+//				}
+//			}
+//			else
+//			{
+//				if (adcvalue == 0)
+//					adcvalue = adcvaluetemp;
+//				if (adcvaluetemp > (adcvalue + 8))
+//				{
+//					adcchangecnt++;
+//					if (adcchangecnt > 20)
+//					{
+//						adcchangecnt = 0;
+//						adcvalue+=4;
+//					}
+//				}
+//				else if (adcvaluetemp < (adcvalue-8))
+//				{
+//					adcchangecnt = 0;
+//					adcvalue-=4;
+//				}
+//				else
+//				{
+//					adcchangecnt = 0;
+//				}
+//			}
+
+
+			if (i == 1)
 			{
-				if (i == 1)
-				{
-					cur_pwm_level = cur_pwm();
-					if (cur_pwm_level == 1)
-						adcvaluetemp = adcvaluetemp + 0x20;
-					else if (cur_pwm_level == 2)
-						adcvaluetemp = adcvaluetemp + 0x38;
-					else
-						adcvaluetemp = adcvaluetemp + 0x60;
-					adcvaluetemp = adcvaluetemp - 0x80;	//0x90 -> 0.3v
-				}
-				else if (i == 2)
-				{
-					adcvaluetemp = adcvaluetemp + 0x38;
-					adcvaluetemp = adcvaluetemp - 0x90;	//0x90 -> 0.3v
-				}
-				else if (i == 4)
-				{
-					adcvaluetemp = adcvaluetemp + 0x20;
-					adcvaluetemp = adcvaluetemp - 0xA0;	//0x90 -> 0.3v
-				}
-				else
-				{
-					adcvaluetemp = adcvaluetemp - 0xB0;	//0x90 -> 0.3v
-				}
-			}
-			else if ((ischarging== 0) && (i != 0))
-			{
-				if (i == 1)
-				{
-					cur_pwm_level = cur_pwm();
-					if (cur_pwm_level == 1)
-						adcvaluetemp = adcvaluetemp + 0x28;
-					else if (cur_pwm_level == 2)
-						adcvaluetemp = adcvaluetemp + 0x48;
-					else
-						adcvaluetemp = adcvaluetemp + 0x70;
-				}
-				else if (i == 2)
-				{
-					adcvaluetemp = adcvaluetemp + 0x48;
-				}
-				else if (i == 4)
-				{
+				cur_pwm_level = cur_pwm();
+				if (cur_pwm_level == 1)
 					adcvaluetemp = adcvaluetemp + 0x28;
-				}
+				else if (cur_pwm_level == 2)
+					adcvaluetemp = adcvaluetemp + 0x48;
+				else
+					adcvaluetemp = adcvaluetemp + 0x70;
 			}
-			else if ((ischarging == 1) && (i == 0))
+			else if (i == 2)
 			{
-				adcvaluetemp = adcvaluetemp - 0xB0;
-				if (adcvaluetemp > 0xD40)
-					adcvaluetemp = 0xD40;
+				adcvaluetemp = adcvaluetemp + 0x48;
 			}
-			if (isstartsystem == 0)
+			else if (i == 4)
 			{
-				if (adcvaluetemp >= 0xD40)
-					adcvalue = adcvaluetemp - 0x40;
+				adcvaluetemp = adcvaluetemp + 0x28;
+			}
+			if (ischarging)
+			{
+				if (isWaitTurnOffCharging == 0)
+					adcvaluetemp = adcvaluetemp - charging_bat_feedback(adcvaluetemp,i);
 				else
 				{
-					adcvalue = adcvaluetemp + 0x100;
+					
 				}
-				if (adcvalue > 0xD20)
-					adcvalue = 0xD20;
 			}
-			else
+			if (isfirstenterdpd == 0)
+			{
+				if (adcvaluetemp < 3100)
+					adcvalue = 3100;
+				else if (adcvaluetemp > 3400)
+					adcvalue = 3300;
+				else 
+					adcvalue = adcvaluetemp;
+			}
+			if (isstartsystem == 1)
 			{
 				if (adcvalue == 0)
 					adcvalue = adcvaluetemp;
@@ -250,21 +414,31 @@ unsigned char getbatlevel(unsigned char adc_delay)
 					if (adcchangecnt > 5)
 					{
 						adcchangecnt = 0;
-						adcvalue++;
+						adcvalue+=5;
 					}
+				}
+				else if (adcvaluetemp < (adcvalue-8))
+				{
+					adcchangecnt = 0;
+					adcvalue-=5;
 				}
 				else
 				{
 					adcchangecnt = 0;
-					adcvalue--;
 				}
-			}
-			printf("\n adcvalue=0x%x",adcvalue);
+			}		
+			
+			
+			printf("\n adcvalue=%d",adcvalue);
 			bat_val = ((float)adcvalue) *3.34 /4096.0 * 3.0;
 			printf("\n bat=%0.4f",bat_val);
 			if (adcvalue > 0xCD0)		//100% 8.2
 			{
 				templevel = 6;
+				if(ischarging == 1)
+				{
+					isWaitTurnOffCharging = 1;
+				}
 			}
 			else if (adcvalue > 0xCA0)	//>75%	7.9v		
 			{
@@ -286,14 +460,17 @@ unsigned char getbatlevel(unsigned char adc_delay)
 			{
 				templevel = 1;
 			}
-			if (batlevel != templevel)
-				adc_pre_cnt++;
-			else
-				adc_pre_cnt = 0;
-			if (adc_pre_cnt > 5)
+			if (isWaitTurnOffCharging == 0)
 			{
-				adc_pre_cnt = 0;
-				batlevel = templevel;
+				if (batlevel != templevel)
+					adc_pre_cnt++;
+				else
+					adc_pre_cnt = 0;
+				if (adc_pre_cnt > 5)
+				{
+					adc_pre_cnt = 0;
+					batlevel = templevel;
+				}
 			}
 			return 1;
 		}
@@ -375,7 +552,9 @@ void SysInit(void)
 	dpdtime = 0;
 	led_display_time = 0;
 	startADC_cnt = 0;
-	adc_dis_cnt = 50;
+	if (isfirstenterdpd == 1)
+		adc_dis_cnt = 200;
+	isWaitTurnOffCharging = 0;
 }
 
 
@@ -385,6 +564,7 @@ void main(void)
 	Set_All_GPIO_Quasi_Mode;
 	isneedinitsys = 1;
 	isstartsystem = 0;
+	isfirstenterdpd = 0;
 	while(1)
 	{
 		if (isneedinitsys)
@@ -409,7 +589,9 @@ void main(void)
 					dpdtime = 0;
 					ischarging = 0;
 					adccnt = 0;
-					adc_dis_cnt = 400;
+					
+					if (isfirstenterdpd == 1)
+					adc_dis_cnt = 200;
 				}
 				if (keystatus & 0x01)//key
 				{
@@ -445,7 +627,8 @@ void main(void)
 						LED_Setting(system_stage);
 					led_display_time = 600;
 					adccnt = 0;
-					adc_dis_cnt = 400;
+					if (isfirstenterdpd == 1)
+					adc_dis_cnt = 200;
 				}
 				if (keystatus & 0x01)//key
 				{
@@ -457,6 +640,8 @@ void main(void)
 //					else
 						LED_Setting(system_stage);
 					adccnt = 0;
+					if (isfirstenterdpd == 1)
+					adc_dis_cnt = 200;
 				}
 				if (keystatus & 0x02)//safety
 				{
@@ -484,7 +669,8 @@ void main(void)
 					LED_RGB_Setting(0);
 //					LED_Setting(0);
 					adccnt = 0;
-					adc_dis_cnt = 400;
+					if (isfirstenterdpd == 1)
+					adc_dis_cnt = 200;
 				}
 			}
 			else if (system_stage == Stage_C)	//³äµçÖÐ
@@ -500,7 +686,8 @@ void main(void)
 					LED_Setting(system_stage);
 					led_display_time = 600;
 					adccnt = 0;
-					adc_dis_cnt = 400;
+					if (isfirstenterdpd == 1)
+					adc_dis_cnt = 200;
 				}
 				if (keystatus & 0x01)//key
 				{
@@ -538,7 +725,8 @@ void main(void)
 					LED_RGB_Setting(i);
 					LED_Setting(system_stage);
 					adccnt = 0;
-					adc_dis_cnt = 400;
+					if (isfirstenterdpd == 1)
+					adc_dis_cnt = 200;
 				}
 				if (keystatus & 0x01)//key
 				{
@@ -546,6 +734,8 @@ void main(void)
 					i  = Change_Motor_PWM();
 					LED_RGB_Setting(i);
 					adccnt = 0;
+					if (isfirstenterdpd == 1)
+					adc_dis_cnt = 200;
 				}
 				if (keystatus & 0x02)//safety
 				{
@@ -582,18 +772,30 @@ void main(void)
 					LED_RGB_Setting(0);
 //					LED_Setting(system_stage);
 					adccnt = 0;
-					adc_dis_cnt = 400;
+					if (isfirstenterdpd == 1)
+					adc_dis_cnt = 200;
 				}
 			}
 			
 			//ADC process
-			if (adc_dis_cnt > 0)
+			if(adc_dis_cnt > 0)
 			{
 				adc_dis_cnt--;
 			}
-			else
+//			else
 			{
 				getbatlevel(5);
+			}
+			if (isWaitTurnOffCharging == 1)
+			{
+				if (keystatus & 0x04)
+				{
+					batlevel = 6;
+				}
+				else
+				{
+					isWaitTurnOffCharging = 0;
+				}
 			}
 			//pwm rate
 			if (check_motor_done())
@@ -604,7 +806,8 @@ void main(void)
 //				LED_Setting(0);
 				isneedinitstage = 1;
 				adccnt = 0;
-				adc_dis_cnt = 400;
+				if (isfirstenterdpd == 1)
+				adc_dis_cnt = 200;
 			}
 			if(get_motor_level())
 			{
@@ -617,6 +820,7 @@ void main(void)
 			if (dpdtime >= DPD_CNT)
 			{
 				DPD_CNT = 2000;
+				isfirstenterdpd = 1;
 				Enter_DPD();
 			}
 		}
