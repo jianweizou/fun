@@ -232,6 +232,11 @@
           <WinNumber>1</WinNumber>
           <ItemText>P1SR</ItemText>
         </Ww>
+        <Ww>
+          <count>20</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Motor_Level</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>

@@ -18,7 +18,7 @@ void MOTOR_FG_PinInterrupt_ISR (void)
 {
 	if (Motor_done_cnt > 0)
 		Motor_done_cnt--;
-//	Motor_done_cnt = 0;
+	
 	if (isStartMotor)
 	{
 		isMotorRun = 1;
@@ -194,7 +194,7 @@ unsigned char check_motor_done(void)
 	if (isStartMotor)
 	{
 		Motor_Run_cnt++;
-		if (Motor_Run_cnt < 20)
+		if (Motor_Run_cnt < 60)
 		{
 		}
 		else
@@ -214,11 +214,11 @@ unsigned char check_motor_done(void)
 				}
 				else if (curpwm == 2)
 				{
-					motor_done_cnt_temp = 5;
+					motor_done_cnt_temp = 8;
 				}
 				else
 				{
-					motor_done_cnt_temp = 3;
+					motor_done_cnt_temp = 5;
 				}
 				if (Motor_done_cnt >= motor_done_cnt_temp)
 				{
