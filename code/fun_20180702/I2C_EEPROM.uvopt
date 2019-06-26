@@ -130,7 +130,40 @@
           <Name>-S1 -B115200 -O1792</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
-      <Breakpoint/>
+      <Breakpoint>
+        <Bp>
+          <Number>0</Number>
+          <Type>0</Type>
+          <LineNumber>696</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>-16774114</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>F:\workplace\fun\code\fun_20180702\Code\MAIN.C</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\I2C_EEPROM\MAIN\696</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>285</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>-16772912</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>F:\workplace\fun\code\fun_20180702\Code\MAIN.C</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\I2C_EEPROM\MAIN\285</Expression>
+        </Bp>
+      </Breakpoint>
       <WatchWindow1>
         <Ww>
           <count>0</count>
@@ -236,6 +269,26 @@
           <count>20</count>
           <WinNumber>1</WinNumber>
           <ItemText>Motor_Level</ItemText>
+        </Ww>
+        <Ww>
+          <count>21</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>led_display_time,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>22</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>adcvaluetemp,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>23</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>adcvalue,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>24</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>isfirstenterdpd</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>

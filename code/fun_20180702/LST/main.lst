@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   MAIN                                                                  06/02/2019 14:09:36 PAGE 1   
+C51 COMPILER V9.54   MAIN                                                                  06/26/2019 22:26:06 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
@@ -49,873 +49,921 @@ line level    source
   39          bit isstartsystem;
   40          bit isWaitTurnOffCharging;
   41          bit isfirstenterdpd;
-  42          unsigned char startADC_cnt;
-  43          unsigned char batlevel_led_value;
-  44          unsigned char adc_pre_cnt;
-  45          
+  42          bit isenableLED;
+  43          unsigned char startADC_cnt;
+  44          unsigned char batlevel_led_value;
+  45          unsigned char adc_pre_cnt;
   46          
   47          
-  48          #define UART_TEST       1
-  49          #define WDT_ENABLE      1
-  50          
-  51          #if UART_TEST
-  52          
-  53          float bat_val;
-  54          /*******************************/
-C51 COMPILER V9.54   MAIN                                                                  06/02/2019 14:09:36 PAGE 2   
+  48          
+  49          #define UART_TEST       1
+  50          #define WDT_ENABLE      1
+  51          
+  52          #if UART_TEST
+  53          
+  54          float bat_val;
+C51 COMPILER V9.54   MAIN                                                                  06/26/2019 22:26:06 PAGE 2   
 
-  55          typedef unsigned char         UINT8;
-  56          typedef unsigned int          UINT16;
-  57          typedef unsigned long         UINT32;
-  58          
-  59          typedef unsigned char         uint8_t;
-  60          typedef unsigned int          uint16_t;
-  61          typedef unsigned long         uint32_t;
-  62          /*uart1*/
-  63          void InitialUART1_Timer3(UINT32 u32Baudrate) //use timer3 as Baudrate generator
-  64          {
-  65   1                      P02_Quasi_Mode;         //Setting UART pin as Quasi mode for transmit
-  66   1                      P16_Quasi_Mode;         //Setting UART pin as Quasi mode for transmit
-  67   1              
-  68   1                SCON_1 = 0x50;        //UART1 Mode1,REN_1=1,TI_1=1
-  69   1          T3CON = 0x08;       //T3PS2=0,T3PS1=0,T3PS0=0(Prescale=1), UART1 in MODE 1
-  70   1                      clr_BRCK;
-  71   1              
-  72   1      #ifdef FOSC_160000
-  73   1                      RH3    = HIBYTE(65536 - (1000000/u32Baudrate)-1);               /*16 MHz */
-  74   1                      RL3    = LOBYTE(65536 - (1000000/u32Baudrate)-1);                       /*16 MHz */
-  75   1      #endif
-  76   1      #ifdef FOSC_166000
+  55          /*******************************/
+  56          typedef unsigned char         UINT8;
+  57          typedef unsigned int          UINT16;
+  58          typedef unsigned long         UINT32;
+  59          
+  60          typedef unsigned char         uint8_t;
+  61          typedef unsigned int          uint16_t;
+  62          typedef unsigned long         uint32_t;
+  63          /*uart1*/
+  64          void InitialUART1_Timer3(UINT32 u32Baudrate) //use timer3 as Baudrate generator
+  65          {
+  66   1                      P02_Quasi_Mode;         //Setting UART pin as Quasi mode for transmit
+  67   1                      P16_Quasi_Mode;         //Setting UART pin as Quasi mode for transmit
+  68   1              
+  69   1                SCON_1 = 0x50;        //UART1 Mode1,REN_1=1,TI_1=1
+  70   1          T3CON = 0x08;       //T3PS2=0,T3PS1=0,T3PS0=0(Prescale=1), UART1 in MODE 1
+  71   1                      clr_BRCK;
+  72   1              
+  73   1      #ifdef FOSC_160000
+  74   1                      RH3    = HIBYTE(65536 - (1000000/u32Baudrate)-1);               /*16 MHz */
+  75   1                      RL3    = LOBYTE(65536 - (1000000/u32Baudrate)-1);                       /*16 MHz */
+  76   1      #endif
+  77   1      #ifdef FOSC_166000
                               RH3    = HIBYTE(65536 - (1037500/u32Baudrate));                         /*16.6 MHz */
                               RL3    = LOBYTE(65536 - (1037500/u32Baudrate));                         /*16.6 MHz */
               #endif
-  80   1          set_TR3;         //Trigger Timer3
-  81   1      }
-  82          UINT8 Receive_Data_From_UART1(void)
-  83          {
-  84   1          UINT8 c;
-  85   1          
-  86   1          while (!RI_1);
-  87   1          c = SBUF_1;
-  88   1          RI_1 = 0;
-  89   1          return (c);
-  90   1      }
-  91          
-  92          void Send_Data_To_UART1 (UINT8 c)
-  93          {
-  94   1          TI_1 = 0;
-  95   1          SBUF_1 = c;
-  96   1          while(TI_1==0);
-  97   1      }
-  98          char putchar (char c)
-  99          {
- 100   1                      while (!TI_1);  /* wait until transmitter ready */
- 101   1                      TI_1 = 0;
- 102   1                      SBUF_1 = c;      /* output character */
- 103   1                      return (c);
- 104   1      }
- 105          #endif
- 106          /*********************************************************************************************************
+  81   1          set_TR3;         //Trigger Timer3
+  82   1      }
+  83          UINT8 Receive_Data_From_UART1(void)
+  84          {
+  85   1          UINT8 c;
+  86   1          
+  87   1          while (!RI_1);
+  88   1          c = SBUF_1;
+  89   1          RI_1 = 0;
+  90   1          return (c);
+  91   1      }
+  92          
+  93          void Send_Data_To_UART1 (UINT8 c)
+  94          {
+  95   1          TI_1 = 0;
+  96   1          SBUF_1 = c;
+  97   1          while(TI_1==0);
+  98   1      }
+  99          char putchar (char c)
+ 100          {
+ 101   1                      while (!TI_1);  /* wait until transmitter ready */
+ 102   1                      TI_1 = 0;
+ 103   1                      SBUF_1 = c;      /* output character */
+ 104   1                      return (c);
+ 105   1      }
+ 106          #endif
+ 107          /*********************************************************************************************************
              -***
- 107          *    TIMER 0 interrupt subroutine
- 108          **********************************************************************************************************
+ 108          *    TIMER 0 interrupt subroutine
+ 109          **********************************************************************************************************
              -**/
- 109          void Timer0_ISR (void) interrupt 1          //interrupt address is 0x000B
- 110          {
- 111   1          TH0 = TH0_INIT;
- 112   1          TL0 = TL0_INIT;
- 113   1              is_5ms_Flag = 1;
- 114   1              dpdtime++;
-C51 COMPILER V9.54   MAIN                                                                  06/02/2019 14:09:36 PAGE 3   
+ 110          void Timer0_ISR (void) interrupt 1          //interrupt address is 0x000B
+ 111          {
+ 112   1          TH0 = TH0_INIT;
+ 113   1          TL0 = TL0_INIT;
+ 114   1              is_5ms_Flag = 1;
+C51 COMPILER V9.54   MAIN                                                                  06/26/2019 22:26:06 PAGE 3   
 
- 115   1              startADC_cnt ++;
- 116   1              led_display_time++;
- 117   1      }
- 118          
- 119          void Timer0_Init(void)
- 120          {
- 121   1              TMOD = 0XFF;
- 122   1              TIMER0_MODE1_ENABLE;                        //Timer 0  mode configuration
- 123   1          
- 124   1              clr_T0M;
- 125   1          
- 126   1              TH0 = TH0_INIT;
- 127   1              TL0 = TL0_INIT;
- 128   1          
- 129   1              set_ET0;                                    //enable Timer0 interrupt
- 130   1              set_EA;                                     //enable interrupts
- 131   1              
- 132   1              set_TR0;                                    //Timer0 run
- 133   1      }
- 134          
- 135          unsigned int getadcvalue(void)
- 136          {
- 137   1              unsigned char i;
- 138   1              unsigned int adcvalue_temp;
- 139   1              adcvalue_temp = 0;
- 140   1              for(i=0;i<ADC_CNT;i++)
- 141   1              {
- 142   2                      adcvalue_temp += adc[i];
- 143   2              }
- 144   1              adcvalue_temp >>=3;
- 145   1              return adcvalue_temp;
- 146   1      }
- 147          
- 148          unsigned int charging_bat_feedback(unsigned int cur_adc,unsigned char pwm)
- 149          {
- 150   1              unsigned int temp;
- 151   1              unsigned int temp_pwm;
- 152   1              if (pwm == 1)
- 153   1              {
- 154   2                      temp_pwm = 30;
- 155   2              }
- 156   1              else if (pwm == 2)
- 157   1              {
- 158   2                      temp_pwm = 20;
- 159   2              }
- 160   1              else if (pwm == 3)
- 161   1              {
- 162   2                      temp_pwm = 10;
- 163   2              }
- 164   1              else
- 165   1              {
- 166   2                      temp_pwm = 0;
- 167   2              }
- 168   1              
- 169   1              if (batlevel == 1)
- 170   1              {
- 171   2                      temp = 180 - temp_pwm;
- 172   2              }
- 173   1              else if (batlevel == 2)
- 174   1              {
- 175   2                      temp = 180 - temp_pwm;
- 176   2              }
-C51 COMPILER V9.54   MAIN                                                                  06/02/2019 14:09:36 PAGE 4   
+ 115   1              dpdtime++;
+ 116   1              startADC_cnt ++;
+ 117   1              led_display_time++;
+ 118   1      }
+ 119          
+ 120          void Timer0_Init(void)
+ 121          {
+ 122   1              TMOD = 0XFF;
+ 123   1              TIMER0_MODE1_ENABLE;                        //Timer 0  mode configuration
+ 124   1          
+ 125   1              clr_T0M;
+ 126   1          
+ 127   1              TH0 = TH0_INIT;
+ 128   1              TL0 = TL0_INIT;
+ 129   1          
+ 130   1              set_ET0;                                    //enable Timer0 interrupt
+ 131   1              set_EA;                                     //enable interrupts
+ 132   1              
+ 133   1              set_TR0;                                    //Timer0 run
+ 134   1      }
+ 135          
+ 136          unsigned int getadcvalue(void)
+ 137          {
+ 138   1              unsigned char i;
+ 139   1              unsigned int adcvalue_temp;
+ 140   1              adcvalue_temp = 0;
+ 141   1              for(i=0;i<ADC_CNT;i++)
+ 142   1              {
+ 143   2                      adcvalue_temp += adc[i];
+ 144   2              }
+ 145   1              adcvalue_temp >>=3;
+ 146   1              return adcvalue_temp;
+ 147   1      }
+ 148          
+ 149          unsigned int charging_bat_feedback(unsigned int cur_adc,unsigned char pwm)
+ 150          {
+ 151   1              unsigned int temp;
+ 152   1              unsigned int temp_pwm;
+ 153   1              if (pwm == 1)
+ 154   1              {
+ 155   2                      temp_pwm = 30;
+ 156   2              }
+ 157   1              else if (pwm == 2)
+ 158   1              {
+ 159   2                      temp_pwm = 20;
+ 160   2              }
+ 161   1              else if (pwm == 3)
+ 162   1              {
+ 163   2                      temp_pwm = 10;
+ 164   2              }
+ 165   1              else
+ 166   1              {
+ 167   2                      temp_pwm = 0;
+ 168   2              }
+ 169   1              
+ 170   1              if (batlevel == 1)
+ 171   1              {
+ 172   2                      temp = 180 - temp_pwm;
+ 173   2              }
+ 174   1              else if (batlevel == 2)
+ 175   1              {
+ 176   2                      temp = 180 - temp_pwm;
+C51 COMPILER V9.54   MAIN                                                                  06/26/2019 22:26:06 PAGE 4   
 
- 177   1              else if (batlevel == 3)
- 178   1              {
- 179   2                      temp = 180 - temp_pwm;
- 180   2              }
- 181   1              else if (batlevel == 4)
- 182   1              {
- 183   2                      temp = 180 - temp_pwm;
- 184   2              }
- 185   1              else if (batlevel == 5)
- 186   1              {
- 187   2                      if (cur_adc > 3400)
- 188   2                      {
- 189   3                              temp = 80 - temp_pwm;
- 190   3                      }
- 191   2                      else if (cur_adc > 3300)
- 192   2                      {
- 193   3                              temp = 90 - temp_pwm;
- 194   3                      }
- 195   2                      else
- 196   2                      {
- 197   3                              temp = 160 - temp_pwm;
- 198   3                      }
- 199   2              }
- 200   1              else if (batlevel == 6)
- 201   1              {
- 202   2                      if (cur_adc > 3400)
- 203   2                      {
- 204   3                              temp = 40 - temp_pwm;
- 205   3                      }
- 206   2                      else if (cur_adc > 3300)
- 207   2                      {
- 208   3                              temp = 60 - temp_pwm;
- 209   3                      }
- 210   2                      else
- 211   2                      {
- 212   3                              temp = 130 - temp_pwm;
- 213   3                      }
- 214   2              }
- 215   1              return temp;
- 216   1      }
- 217          
- 218          unsigned char getbatlevel(unsigned char adc_delay)
- 219          {
- 220   1              unsigned char templevel;
- 221   1              unsigned char cur_pwm_level;
- 222   1              unsigned int adcvaluetemp;
- 223   1              if (startADC_cnt > adc_delay)
- 224   1              {
- 225   2                      startADC_cnt = 0;
- 226   2                      CKDIV = 0x04; 
- 227   2                      clr_ADCF;
- 228   2                      set_ADCS;                                                                       // ADC start trig signal
- 229   2                      while(ADCF == 0);
- 230   2                      CKDIV = 0x00; 
- 231   2                      adcvaluetemp = ADCRH;
- 232   2                      adcvaluetemp <<= 4;
- 233   2                      adcvaluetemp |= ADCRL&0x0F;
- 234   2                      adc[adccnt] = adcvaluetemp;
- 235   2                      adccnt++;
- 236   2                      if (adccnt >= ADC_CNT)
- 237   2                      {
- 238   3                              adccnt = 0;
-C51 COMPILER V9.54   MAIN                                                                  06/02/2019 14:09:36 PAGE 5   
+ 177   2              }
+ 178   1              else if (batlevel == 3)
+ 179   1              {
+ 180   2                      temp = 180 - temp_pwm;
+ 181   2              }
+ 182   1              else if (batlevel == 4)
+ 183   1              {
+ 184   2                      temp = 180 - temp_pwm;
+ 185   2              }
+ 186   1              else if (batlevel == 5)
+ 187   1              {
+ 188   2                      if (cur_adc > 3400)
+ 189   2                      {
+ 190   3                              temp = 80 - temp_pwm;
+ 191   3                      }
+ 192   2                      else if (cur_adc > 3300)
+ 193   2                      {
+ 194   3                              temp = 90 - temp_pwm;
+ 195   3                      }
+ 196   2                      else
+ 197   2                      {
+ 198   3                              temp = 160 - temp_pwm;
+ 199   3                      }
+ 200   2              }
+ 201   1              else if (batlevel == 6)
+ 202   1              {
+ 203   2                      if (cur_adc > 3400)
+ 204   2                      {
+ 205   3                              temp = 40 - temp_pwm;
+ 206   3                      }
+ 207   2                      else if (cur_adc > 3300)
+ 208   2                      {
+ 209   3                              temp = 60 - temp_pwm;
+ 210   3                      }
+ 211   2                      else
+ 212   2                      {
+ 213   3                              temp = 130 - temp_pwm;
+ 214   3                      }
+ 215   2              }
+ 216   1              return temp;
+ 217   1      }
+ 218          
+ 219          unsigned char getbatlevel(unsigned char adc_delay)
+ 220          {
+ 221   1              unsigned char templevel;
+ 222   1              unsigned char cur_pwm_level;
+ 223   1              unsigned int adcvaluetemp;
+ 224   1              if (startADC_cnt > adc_delay)
+ 225   1              {
+ 226   2                      startADC_cnt = 0;
+ 227   2                      CKDIV = 0x04; 
+ 228   2                      clr_ADCF;
+ 229   2                      set_ADCS;                                                                       // ADC start trig signal
+ 230   2                      while(ADCF == 0);
+ 231   2                      CKDIV = 0x00; 
+ 232   2                      adcvaluetemp = ADCRH;
+ 233   2                      adcvaluetemp <<= 4;
+ 234   2                      adcvaluetemp |= ADCRL&0x0F;
+ 235   2                      adc[adccnt] = adcvaluetemp;
+ 236   2                      adccnt++;
+ 237   2                      if (adccnt >= ADC_CNT)
+ 238   2                      {
+C51 COMPILER V9.54   MAIN                                                                  06/26/2019 22:26:06 PAGE 5   
 
- 239   3                              if(adc_dis_cnt > 0)
- 240   3                              {
- 241   4                                      return 0;
- 242   4                              }
- 243   3                              adcvaluetemp = getadcvalue();
- 244   3                              #if UART_TEST
- 245   3                              printf("adcvaluetemp=%d\n",adcvaluetemp);
- 246   3                              #endif
- 247   3                              
- 248   3                              if (Motor_Level == 1)
- 249   3                              {
- 250   4                                      cur_pwm_level = cur_pwm();
- 251   4                                      if (cur_pwm_level == 1)
- 252   4                                              adcvaluetemp = adcvaluetemp + 0x08;
- 253   4                                      else if (cur_pwm_level == 2)
- 254   4                                              adcvaluetemp = adcvaluetemp + 0x10;
- 255   4                                      else
- 256   4                                              adcvaluetemp = adcvaluetemp + 0x18;
- 257   4                              }
- 258   3                              else if (Motor_Level == 2)
- 259   3                              {
- 260   4                                      adcvaluetemp = adcvaluetemp + 0x10;
- 261   4                              }
- 262   3                              else if (Motor_Level == 4)
- 263   3                              {
- 264   4                                      adcvaluetemp = adcvaluetemp + 0x08;
- 265   4                              }
- 266   3                              if (ischarging)
- 267   3                              {
- 268   4      //                              if (isWaitTurnOffCharging == 0)
- 269   4      //                                      adcvaluetemp = adcvaluetemp - charging_bat_feedback(adcvaluetemp,Motor_Level);
- 270   4      //                              else
- 271   4      //                              {
- 272   4      //                                      
- 273   4      //                              }
- 274   4                              }
- 275   3                              if (isfirstenterdpd == 0)
- 276   3                              {
- 277   4                                      if (adcvaluetemp < 3000)
- 278   4                                              adcvalue = 3000;
- 279   4                                      else if (adcvaluetemp > 3400)
- 280   4                                              adcvalue = 3300;
- 281   4                                      else 
- 282   4                                              adcvalue = adcvaluetemp;
- 283   4                              }
- 284   3                              if (isstartsystem == 1)
- 285   3                              {
- 286   4                                      if (adcvalue == 0)
- 287   4                                              adcvalue = adcvaluetemp;
- 288   4                                      if (adcvaluetemp > (adcvalue + 8))
- 289   4                                      {
- 290   5                                              adcchangecnt++;
- 291   5                                              if (adcchangecnt > 8)
- 292   5                                              {
- 293   6                                                      adcchangecnt = 0;
- 294   6                                                      adcvalue+=5;
- 295   6                                              }
- 296   5                                      }
- 297   4                                      else if (adcvaluetemp < (adcvalue-8))
- 298   4                                      {
- 299   5                                              adcchangecnt = 0;
- 300   5                                              adcvalue-=5;
-C51 COMPILER V9.54   MAIN                                                                  06/02/2019 14:09:36 PAGE 6   
+ 239   3                              adccnt = 0;
+ 240   3                              if(adc_dis_cnt > 0)
+ 241   3                              {
+ 242   4                                      return 0;
+ 243   4                              }
+ 244   3                              adcvaluetemp = getadcvalue();
+ 245   3                              #if UART_TEST
+ 246   3                              printf("adcvaluetemp=%d\n",adcvaluetemp);
+ 247   3                              #endif
+ 248   3                              
+ 249   3                              if (Motor_Level == 1)
+ 250   3                              {
+ 251   4                                      cur_pwm_level = cur_pwm();
+ 252   4                                      if (cur_pwm_level == 1)
+ 253   4                                              adcvaluetemp = adcvaluetemp + 0x08;
+ 254   4                                      else if (cur_pwm_level == 2)
+ 255   4                                              adcvaluetemp = adcvaluetemp + 0x10;
+ 256   4                                      else
+ 257   4                                              adcvaluetemp = adcvaluetemp + 0x18;
+ 258   4                              }
+ 259   3                              else if (Motor_Level == 2)
+ 260   3                              {
+ 261   4                                      adcvaluetemp = adcvaluetemp + 0x10;
+ 262   4                              }
+ 263   3                              else if (Motor_Level == 4)
+ 264   3                              {
+ 265   4                                      adcvaluetemp = adcvaluetemp + 0x08;
+ 266   4                              }
+ 267   3                              if (ischarging)
+ 268   3                              {
+ 269   4      //                              if (isWaitTurnOffCharging == 0)
+ 270   4      //                                      adcvaluetemp = adcvaluetemp - charging_bat_feedback(adcvaluetemp,Motor_Level);
+ 271   4      //                              else
+ 272   4      //                              {
+ 273   4      //                                      
+ 274   4      //                              }
+ 275   4                              }
+ 276   3                              if (isfirstenterdpd == 0)
+ 277   3                              {
+ 278   4                                      if (adcvaluetemp < 3000)
+ 279   4                                              adcvalue = 3000;
+ 280   4                                      else if (adcvaluetemp > 3400)
+ 281   4                                              adcvalue = 3300;
+ 282   4                                      else 
+ 283   4                                              adcvalue = adcvaluetemp;
+ 284   4                              }
+ 285   3                              if (isstartsystem == 1)
+ 286   3                              {
+ 287   4                                      if (adcvalue == 0)
+ 288   4                                              adcvalue = adcvaluetemp;
+ 289   4                                      if (adcvaluetemp > (adcvalue + 8))
+ 290   4                                      {
+ 291   5                                              adcchangecnt++;
+ 292   5                                              if (adcchangecnt > 8)
+ 293   5                                              {
+ 294   6                                                      adcchangecnt = 0;
+ 295   6                                                      adcvalue+=5;
+ 296   6                                              }
+ 297   5                                      }
+ 298   4                                      else if (adcvaluetemp < (adcvalue-8))
+ 299   4                                      {
+ 300   5                                              adcchangecnt = 0;
+C51 COMPILER V9.54   MAIN                                                                  06/26/2019 22:26:06 PAGE 6   
 
- 301   5                                      }
- 302   4                                      else
- 303   4                                      {
- 304   5                                              adcchangecnt = 0;
- 305   5                                      }
- 306   4                              }               
- 307   3                              
- 308   3                              #if UART_TEST
- 309   3                              printf("adcvalue=%d\n",adcvalue);
- 310   3                              bat_val = ((float)adcvalue) *3.34 /4096.0 * 3.0;
- 311   3                              printf("bat=%0.4f\n",bat_val);
- 312   3                              #endif
- 313   3                              if (adcvalue > 0xCD0)           //100% 8.2
- 314   3                              {
- 315   4                                      templevel = 6;
- 316   4                                      if(ischarging == 1)
- 317   4                                      {
- 318   5                                              isWaitTurnOffCharging = 1;
- 319   5                                      }
- 320   4                              }
- 321   3                              else if (adcvalue > 0xCA0)      //>75%  7.9v            
- 322   3                              {
- 323   4                                      templevel = 5;
- 324   4                              }
- 325   3                              else if (adcvalue > 0xC40)      //>50%  7.7v
- 326   3                              {
- 327   4                                      templevel = 4;
- 328   4                              }
- 329   3                              else if (adcvalue > 0xBE0)      //>25%  7.5
- 330   3                              {
- 331   4                                      templevel = 3;
- 332   4                              }
- 333   3                              else if (adcvalue > 0xBA0)      //10%   7.2v
- 334   3                              {
- 335   4                                      templevel = 2;
- 336   4                              }
- 337   3                              else
- 338   3                              {
- 339   4                                      templevel = 1;
- 340   4                              }
- 341   3                              if (isWaitTurnOffCharging == 0)
- 342   3                              {
- 343   4                                      if (batlevel != templevel)
- 344   4                                              adc_pre_cnt++;
- 345   4                                      else
- 346   4                                              adc_pre_cnt = 0;
- 347   4                                      #if UART_TEST                           
- 348   4                                      testtemp = batlevel;
- 349   4                                      printf("power level=%d\n",testtemp);
- 350   4                                      testtemp = templevel;
- 351   4                                      printf("templevel=%d\n",testtemp);
- 352   4                                      testtemp = adc_pre_cnt;
- 353   4                                      printf("adc_pre_cnt=%d\n",testtemp);
- 354   4                                      #endif
- 355   4                                      if (adc_pre_cnt > 5)
- 356   4                                      {
- 357   5                                              adc_pre_cnt = 0;
- 358   5                                              if (ischarging)
- 359   5                                              {
- 360   6                                                      if (templevel > batlevel)
- 361   6                                                      {
- 362   7                                                              batlevel = templevel;
-C51 COMPILER V9.54   MAIN                                                                  06/02/2019 14:09:36 PAGE 7   
+ 301   5                                              adcvalue-=5;
+ 302   5                                      }
+ 303   4                                      else
+ 304   4                                      {
+ 305   5                                              adcchangecnt = 0;
+ 306   5                                      }
+ 307   4                              }               
+ 308   3                              
+ 309   3                              #if UART_TEST
+ 310   3                              printf("adcvalue=%d\n",adcvalue);
+ 311   3                              bat_val = ((float)adcvalue) *3.34 /4096.0 * 3.0;
+ 312   3                              printf("bat=%0.4f\n",bat_val);
+ 313   3                              #endif
+ 314   3                              if (adcvalue > 0xCF0)           //100% 8.2
+ 315   3                              {
+ 316   4                                      templevel = 6;
+ 317   4                                      if(ischarging == 1)
+ 318   4                                      {
+ 319   5                                              isWaitTurnOffCharging = 1;
+ 320   5                                      }
+ 321   4                              }
+ 322   3                              else if (adcvalue > 0xC60)      //>75%  7.9v    0xCA0   
+ 323   3                              {
+ 324   4                                      templevel = 5;
+ 325   4                              }
+ 326   3                              else if (adcvalue > 0xC00)      //>50%  7.7v    0xC40
+ 327   3                              {
+ 328   4                                      templevel = 4;
+ 329   4                              }
+ 330   3                              else if (adcvalue > 0xBB0)      //>25%  7.5             0xBE0
+ 331   3                              {
+ 332   4                                      templevel = 3;
+ 333   4                              }
+ 334   3                              else if (adcvalue > 0xB70)      //10%   7.2v    0xBA0
+ 335   3                              {
+ 336   4                                      templevel = 2;
+ 337   4                              }
+ 338   3                              else
+ 339   3                              {
+ 340   4                                      templevel = 1;
+ 341   4                              }
+ 342   3                              if (isWaitTurnOffCharging == 0)
+ 343   3                              {
+ 344   4                                      if (batlevel != templevel)
+ 345   4                                              adc_pre_cnt++;
+ 346   4                                      else
+ 347   4                                              adc_pre_cnt = 0;
+ 348   4                                      #if UART_TEST                           
+ 349   4                                      testtemp = batlevel;
+ 350   4                                      printf("power level=%d\n",testtemp);
+ 351   4                                      testtemp = templevel;
+ 352   4                                      printf("templevel=%d\n",testtemp);
+ 353   4                                      testtemp = adc_pre_cnt;
+ 354   4                                      printf("adc_pre_cnt=%d\n",testtemp);
+ 355   4                                      #endif
+ 356   4                                      if (adc_pre_cnt > 5)
+ 357   4                                      {
+ 358   5                                              adc_pre_cnt = 0;
+ 359   5                                              if (ischarging)
+ 360   5                                              {
+ 361   6                                                      if (templevel > batlevel)
+ 362   6                                                      {
+C51 COMPILER V9.54   MAIN                                                                  06/26/2019 22:26:06 PAGE 7   
 
- 363   7                                                      }
- 364   6                                              }
- 365   5                                              else if(Motor_Level != 0)
- 366   5                                              {
- 367   6                                                      if (templevel < batlevel)
- 368   6                                                      {
- 369   7                                                              batlevel = templevel;
- 370   7                                                      }
- 371   6                                              }
- 372   5                                              else
- 373   5                                              {
- 374   6                                                      batlevel = templevel;
- 375   6                                              }
- 376   5                                      }
- 377   4                              }
- 378   3                              else
- 379   3                              {
- 380   4                                      batlevel = 6;
- 381   4                              }
- 382   3                              return 1;
- 383   3                      }
- 384   2              }       
- 385   1              return 0;
- 386   1      }
- 387          
- 388          void P05_wakeup_init(void){
- 389   1              P05_Input_Mode;
- 390   1              
- 391   1              Enable_INT_Port0;
- 392   1              Enable_BIT5_FallEdge_Trig;
- 393   1              
- 394   1              set_EPI;
- 395   1              
- 396   1              set_EA;
- 397   1      }
- 398          
- 399          
- 400          #if WDT_ENABLE
- 401          void Enable_WDT_Reset_Config(void)
- 402          {
- 403   1              #if 1
- 404   1              set_IAPEN;
- 405   1          IAPAL = 0x04;
- 406   1          IAPAH = 0x00;
- 407   1          IAPFD = 0x0F;
- 408   1          IAPCN = 0xE1;
- 409   1          set_CFUEN;
- 410   1          set_IAPGO;                                  //trigger IAP
- 411   1              while((CHPCON&SET_BIT6)==SET_BIT6);          //check IAPFF (CHPCON.6)
- 412   1          clr_CFUEN;
- 413   1          clr_IAPEN;
- 414   1              #else
+ 363   7                                                              batlevel = templevel;
+ 364   7                                                      }
+ 365   6                                              }
+ 366   5                                              else if(Motor_Level != 0)
+ 367   5                                              {
+ 368   6                                                      if (templevel < batlevel)
+ 369   6                                                      {
+ 370   7                                                              batlevel = templevel;
+ 371   7                                                      }
+ 372   6                                              }
+ 373   5                                              else
+ 374   5                                              {
+ 375   6                                                      batlevel = templevel;
+ 376   6                                              }
+ 377   5                                      }
+ 378   4                              }
+ 379   3                              else
+ 380   3                              {
+ 381   4                                      batlevel = 6;
+ 382   4                              }
+ 383   3                              return 1;
+ 384   3                      }
+ 385   2              }       
+ 386   1              return 0;
+ 387   1      }
+ 388          
+ 389          #if WDT_ENABLE
+ 390          void Enable_WDT_Reset_Config(void)
+ 391          {
+ 392   1              #if 1
+ 393   1              set_IAPEN;
+ 394   1          IAPAL = 0x04;
+ 395   1          IAPAH = 0x00;
+ 396   1          IAPFD = 0x0F;
+ 397   1          IAPCN = 0xE1;
+ 398   1          set_CFUEN;
+ 399   1          set_IAPGO;                                  //trigger IAP
+ 400   1              while((CHPCON&SET_BIT6)==SET_BIT6);          //check IAPFF (CHPCON.6)
+ 401   1          clr_CFUEN;
+ 402   1          clr_IAPEN;
+ 403   1              #else
                       TA=0xAA;TA=0x55;WDCON=0x07;                                             //Setting WDT prescale 
                       set_WDCLR;                                                                                                              //Clear WDT timer
                       while((WDCON|~SET_BIT6)==0xFF);                         //confirm WDT clear is ok before into power down mode
                       EA = 1;
                       set_WDTR;
                       #endif
- 421   1      }
- 422          
- 423          void Disable_WDT_Reset_Config(void)
- 424          {
-C51 COMPILER V9.54   MAIN                                                                  06/02/2019 14:09:36 PAGE 8   
+ 410   1      }
+ 411          
+ 412          void Disable_WDT_Reset_Config(void)
+ 413          {
+ 414   1              UINT8 cf0,cf1,cf2,cf3,cf4;
+ 415   1      #define     CFG_READ            0xC0
+ 416   1      #define     CFG_ERASE           0xE2
+ 417   1      #define     CFG_BYTE_PROGRAM    0xE1    
+ 418   1                set_IAPEN;
+ 419   1          IAPAL = 0x00;
+ 420   1          IAPAH = 0x00;
+ 421   1          IAPCN = CFG_READ;
+ 422   1          set_IAPGO;                                  //Storage CONFIG0 data
+ 423   1                      cf0 = IAPFD;
+ 424   1                      IAPAL = 0x01;
+C51 COMPILER V9.54   MAIN                                                                  06/26/2019 22:26:06 PAGE 8   
 
- 425   1              UINT8 cf0,cf1,cf2,cf3,cf4;
- 426   1      #define     CFG_READ            0xC0
- 427   1      #define     CFG_ERASE           0xE2
- 428   1      #define     CFG_BYTE_PROGRAM    0xE1    
- 429   1                set_IAPEN;
- 430   1          IAPAL = 0x00;
- 431   1          IAPAH = 0x00;
- 432   1          IAPCN = CFG_READ;
- 433   1          set_IAPGO;                                  //Storage CONFIG0 data
- 434   1                      cf0 = IAPFD;
- 435   1                      IAPAL = 0x01;
- 436   1                      set_IAPGO;                                  //Storage CONFIG1 data
- 437   1                      cf1 = IAPFD;
- 438   1                      IAPAL = 0x02;
- 439   1                set_IAPGO;                                  //Storage CONFIG2 data
- 440   1                      cf2 = IAPFD;
- 441   1                      IAPAL = 0x03;
- 442   1                set_IAPGO;                                  //Storage CONFIG3 data
- 443   1                      cf3 = IAPFD;
- 444   1                      IAPAL = 0x04;
- 445   1                set_IAPGO;                                  //Storage CONFIG4 data
- 446   1                      cf4 = IAPFD;
- 447   1                      cf4 |= 0xF0;                                                                                                                            //Moidfy Storage CONFIG4 data disable WDT reset
- 448   1                      
- 449   1                      set_CFUEN;      
- 450   1                      IAPCN = CFG_ERASE;                                                                                                      //Erase CONFIG all
- 451   1                      IAPAH = 0x00;
- 452   1                      IAPAL = 0x00;
- 453   1                      IAPFD = 0xFF;
- 454   1                      set_IAPGO;
- 455   1                      
- 456   1                      IAPCN = CFG_BYTE_PROGRAM;                                                                               //Write CONFIG
- 457   1                      IAPFD = cf0;
- 458   1                      set_IAPGO;
- 459   1                      IAPAL = 0x01;
- 460   1                      IAPFD = cf1;
- 461   1                      set_IAPGO;
- 462   1                      IAPAL = 0x02;
- 463   1                      IAPFD = cf2;
- 464   1                      set_IAPGO;
- 465   1                      IAPAL = 0x03;
- 466   1                      IAPFD = cf3;
- 467   1                      set_IAPGO;
- 468   1                      IAPAL = 0x04;
- 469   1                      IAPFD = cf4;
- 470   1                      set_IAPGO;
- 471   1      
- 472   1          clr_CFUEN;
- 473   1          clr_IAPEN;
- 474   1      }
- 475          #endif
- 476          void Enter_DPD(void)
- 477          {
- 478   1              #if WDT_ENABLE
- 479   1              //clear wdt
- 480   1              Disable_WDT_Reset_Config();
- 481   1              #endif
- 482   1              dpdtime = 0;
- 483   1      
- 484   1              Set_All_GPIO_Quasi_Mode;
- 485   1              clr_ADCEN;
- 486   1      
-C51 COMPILER V9.54   MAIN                                                                  06/02/2019 14:09:36 PAGE 9   
+ 425   1                      set_IAPGO;                                  //Storage CONFIG1 data
+ 426   1                      cf1 = IAPFD;
+ 427   1                      IAPAL = 0x02;
+ 428   1                set_IAPGO;                                  //Storage CONFIG2 data
+ 429   1                      cf2 = IAPFD;
+ 430   1                      IAPAL = 0x03;
+ 431   1                set_IAPGO;                                  //Storage CONFIG3 data
+ 432   1                      cf3 = IAPFD;
+ 433   1                      IAPAL = 0x04;
+ 434   1                set_IAPGO;                                  //Storage CONFIG4 data
+ 435   1                      cf4 = IAPFD;
+ 436   1                      cf4 |= 0xF0;                                                                                                                            //Moidfy Storage CONFIG4 data disable WDT reset
+ 437   1                      
+ 438   1                      set_CFUEN;      
+ 439   1                      IAPCN = CFG_ERASE;                                                                                                      //Erase CONFIG all
+ 440   1                      IAPAH = 0x00;
+ 441   1                      IAPAL = 0x00;
+ 442   1                      IAPFD = 0xFF;
+ 443   1                      set_IAPGO;
+ 444   1                      
+ 445   1                      IAPCN = CFG_BYTE_PROGRAM;                                                                               //Write CONFIG
+ 446   1                      IAPFD = cf0;
+ 447   1                      set_IAPGO;
+ 448   1                      IAPAL = 0x01;
+ 449   1                      IAPFD = cf1;
+ 450   1                      set_IAPGO;
+ 451   1                      IAPAL = 0x02;
+ 452   1                      IAPFD = cf2;
+ 453   1                      set_IAPGO;
+ 454   1                      IAPAL = 0x03;
+ 455   1                      IAPFD = cf3;
+ 456   1                      set_IAPGO;
+ 457   1                      IAPAL = 0x04;
+ 458   1                      IAPFD = cf4;
+ 459   1                      set_IAPGO;
+ 460   1      
+ 461   1          clr_CFUEN;
+ 462   1          clr_IAPEN;
+ 463   1      }
+ 464          #endif
+ 465          void Enter_DPD(void)
+ 466          {
+ 467   1      
+ 468   1              dpdtime = 0;
+ 469   1      
+ 470   1              Set_All_GPIO_Quasi_Mode;
+ 471   1              clr_ADCEN;
+ 472   1      
+ 473   1              TurnOffMotor();
+ 474   1              LED_WHITE_Setting(0);
+ 475   1              LED_RGB_Setting(0);
+ 476   1              DeInit_LED();
+ 477   1              
+ 478   1              P05_Input_Mode; 
+ 479   1              while(P05 == 0);
+ 480   1              printf("P05\n");
+ 481   1      //      set_P1SR_5;
+ 482   1      //      Enable_INT_Port0;
+ 483   1      //      Enable_BIT5_FallEdge_Trig;
+ 484   1              PICON = 0x40;   //port0
+ 485   1              PINEN  = 0x20;
+ 486   1              PIPEN = 0x00;   //IO 4  
+C51 COMPILER V9.54   MAIN                                                                  06/26/2019 22:26:06 PAGE 9   
 
- 487   1              TurnOffMotor();
- 488   1              LED_WHITE_Setting(0);
- 489   1              LED_RGB_Setting(0);
- 490   1              DeInit_LED();
- 491   1      
- 492   1              P05_wakeup_init();
- 493   1      
- 494   1              P17_Input_Mode;
- 495   1              set_P1S_7;
- 496   1              set_EX1;
- 497   1              
- 498   1              set_PD;
- 499   1      
- 500   1              PICON  = 0;
- 501   1                                      
- 502   1              clr_EX0;
- 503   1              clr_EX1;
- 504   1              clr_EPI;
- 505   1              isneedinitsys = 1;      
- 506   1      }
- 507          
- 508          
- 509          void SysInit(void)
- 510          {       
- 511   1              #if UART_TEST
- 512   1              InitialUART1_Timer3(115200);
- 513   1              TI_1 = 1;
- 514   1              #endif
- 515   1              Init_LED();
- 516   1              Timer0_Init();  
- 517   1              startADC_cnt = 0;
- 518   1              adccnt = 0;
- 519   1              KeyInit();      
- 520   1              InitPWM();
- 521   1              system_stage = Stage_A;
- 522   1              isneedinitstage = 1;
- 523   1              batlevelledtimeout = 0; 
- 524   1              batlevel_led_value = 0;
- 525   1              ischarging = 0;
- 526   1              adc_pre_cnt = 0;
- 527   1              adcvalue = 0;
- 528   1              Enable_ADC_AIN2;
- 529   1              
- 530   1              if (isstartsystem != 1)
- 531   1              {
- 532   2                      dpdtime = 0;
- 533   2                      while(dpdtime<300)
- 534   2                      {
- 535   3                              if (P05 == 0)
- 536   3                                      ischarging = 1;
- 537   3                              getbatlevel(0);
- 538   3                      }
- 539   2                      isstartsystem = 1;
- 540   2              }
- 541   1              dpdtime = 0;
- 542   1              led_display_time = 0;
- 543   1              startADC_cnt = 0;
- 544   1              if (isfirstenterdpd == 1)
- 545   1                      adc_dis_cnt = 200;
- 546   1              isWaitTurnOffCharging = 0;
- 547   1              
- 548   1              #if UART_TEST
-C51 COMPILER V9.54   MAIN                                                                  06/02/2019 14:09:36 PAGE 10  
+ 487   1              
+ 488   1              set_EPI;
+ 489   1              
+ 490   1              set_EA;
+ 491   1              
+ 492   1              P17_Input_Mode;
+ 493   1              printf("P07\n");
+ 494   1              set_P1S_7;
+ 495   1              set_EX1;
+ 496   1      
+ 497   1              #if WDT_ENABLE
+ 498   1              //clear wdt
+ 499   1              Disable_WDT_Reset_Config();
+ 500   1              #endif
+ 501   1              
+ 502   1              set_PD;
+ 503   1      
+ 504   1              PICON  = 0;
+ 505   1                                      
+ 506   1              clr_EX0;
+ 507   1              clr_EX1;
+ 508   1              clr_EPI;
+ 509   1              isneedinitsys = 1;      
+ 510   1      }
+ 511          
+ 512          
+ 513          void SysInit(void)
+ 514          {       
+ 515   1              #if UART_TEST
+ 516   1              InitialUART1_Timer3(115200);
+ 517   1              TI_1 = 1;
+ 518   1              #endif
+ 519   1              PICON  = 0;
+ 520   1                                      
+ 521   1              clr_EX0;
+ 522   1              clr_EX1;
+ 523   1              clr_EPI;
+ 524   1              
+ 525   1              Init_LED();
+ 526   1              Timer0_Init();  
+ 527   1              startADC_cnt = 0;
+ 528   1              adccnt = 0;
+ 529   1              KeyInit();      
+ 530   1              InitPWM();
+ 531   1              system_stage = Stage_A;
+ 532   1              isneedinitstage = 1;
+ 533   1              batlevelledtimeout = 0; 
+ 534   1              batlevel_led_value = 0;
+ 535   1              ischarging = 0;
+ 536   1              adc_pre_cnt = 0;
+ 537   1              adcvalue = 0;
+ 538   1              Enable_ADC_AIN2;
+ 539   1              
+ 540   1              if (isstartsystem != 1)
+ 541   1              {
+ 542   2                      dpdtime = 0;
+ 543   2                      while(dpdtime<300)
+ 544   2                      {
+ 545   3                              if (P05 == 0)
+ 546   3                                      ischarging = 1;
+ 547   3                              getbatlevel(0);
+ 548   3                      }
+C51 COMPILER V9.54   MAIN                                                                  06/26/2019 22:26:06 PAGE 10  
 
- 549   1              printf("sysinit over\n");
- 550   1              testtemp = batlevel;
- 551   1              printf("power level=%d\n",testtemp);
- 552   1              if (WDCON & 0x08)
- 553   1              {
- 554   2                      printf("wdt reset\n");
- 555   2                      clr_WDTRF;
- 556   2              }
- 557   1              #endif
- 558   1              #if WDT_ENABLE
- 559   1              Enable_WDT_Reset_Config();
- 560   1              #endif
- 561   1      }
- 562          
- 563          
- 564          void main(void)
- 565          {
- 566   1              unsigned char keystatus;
- 567   1              Set_All_GPIO_Quasi_Mode;
- 568   1              isneedinitsys = 1;
- 569   1              isstartsystem = 0;
- 570   1              isfirstenterdpd = 0;
- 571   1              while(1)
- 572   1              {
- 573   2                      if (isneedinitsys)
- 574   2                      {
- 575   3                              SysInit();
- 576   3                              isneedinitsys = 0;
- 577   3                      }
- 578   2                      if (is_5ms_Flag)
- 579   2                      {
- 580   3                              if (batlevelledtimeout)
- 581   3                                      batlevelledtimeout--;
- 582   3                              keystatus = KeyScan();          //keystatus->0:null；1：按键；2：安全开关；4：充电；8：长按
- 583   3                              if (system_stage == Stage_A)    //没用充电，安全开关没闭合
- 584   3                              {
- 585   4                                      if (isneedinitstage == 1)
- 586   4                                      {
- 587   5                                              #if UART_TEST
- 588   5                                              printf("init stage A\n");
- 589   5                                              #endif
- 590   5                                              isneedinitstage = 0;
- 591   5                                              //init stage A
- 592   5                                              TurnOffMotor();
- 593   5                                              LED_Setting(0);
- 594   5                                              LED_RGB_Setting(0);
- 595   5                                              dpdtime = 0;
- 596   5                                              ischarging = 0;
- 597   5                                              adccnt = 0;
- 598   5                                              
- 599   5                                              if (isfirstenterdpd == 1)
- 600   5                                              adc_dis_cnt = 200;
- 601   5                                      }
- 602   4                                      if (keystatus & 0x01)//key
- 603   4                                      {
- 604   5                                              //display power as LED
- 605   5                                              batlevelledtimeout = 600;
- 606   5                                              LED_Setting(system_stage);
- 607   5                                              dpdtime = 0;
- 608   5                                      }
- 609   4                                      if (keystatus & 0x02)
- 610   4                                      {
-C51 COMPILER V9.54   MAIN                                                                  06/02/2019 14:09:36 PAGE 11  
+ 549   2                      isstartsystem = 1;
+ 550   2              }
+ 551   1              dpdtime = 0;
+ 552   1              led_display_time = 0;
+ 553   1              startADC_cnt = 0;
+ 554   1              if (isfirstenterdpd == 1)
+ 555   1                      adc_dis_cnt = 200;
+ 556   1              isWaitTurnOffCharging = 0;
+ 557   1              
+ 558   1              #if UART_TEST
+ 559   1              printf("sysinit over\n");
+ 560   1              testtemp = batlevel;
+ 561   1              printf("power level=%d\n",testtemp);
+ 562   1              if (WDCON & 0x08)
+ 563   1              {
+ 564   2                      printf("wdt reset\n");
+ 565   2                      clr_WDTRF;
+ 566   2              }
+ 567   1              #endif
+ 568   1              #if WDT_ENABLE
+ 569   1              Enable_WDT_Reset_Config();
+ 570   1              #endif
+ 571   1              
+ 572   1              isenableLED = 0;
+ 573   1      }
+ 574          
+ 575          
+ 576          void main(void)
+ 577          {
+ 578   1              unsigned char keystatus;
+ 579   1              Set_All_GPIO_Quasi_Mode;
+ 580   1              isneedinitsys = 1;
+ 581   1              isstartsystem = 0;
+ 582   1              isfirstenterdpd = 0;
+ 583   1              while(1)
+ 584   1              {
+ 585   2                      if (isneedinitsys)
+ 586   2                      {
+ 587   3                              SysInit();
+ 588   3                              isneedinitsys = 0;
+ 589   3                      }
+ 590   2                      if (is_5ms_Flag)
+ 591   2                      {
+ 592   3                              if (batlevelledtimeout)
+ 593   3                                      batlevelledtimeout--;
+ 594   3                              keystatus = KeyScan();          //keystatus->0:null；1：按键；2：安全开关；4：充电；8：长按
+ 595   3                              if (system_stage == Stage_A)    //没用充电，安全开关没闭合
+ 596   3                              {
+ 597   4                                      if (isneedinitstage == 1)
+ 598   4                                      {
+ 599   5                                              #if UART_TEST
+ 600   5                                              printf("init stage A\n");
+ 601   5                                              #endif
+ 602   5                                              isneedinitstage = 0;
+ 603   5                                              //init stage A
+ 604   5                                              TurnOffMotor();
+ 605   5                                              LED_Setting(0);
+ 606   5                                              isenableLED = 0;
+ 607   5                                              LED_RGB_Setting(0);
+ 608   5                                              dpdtime = 0;
+ 609   5                                              ischarging = 0;
+ 610   5                                              adccnt = 0;
+C51 COMPILER V9.54   MAIN                                                                  06/26/2019 22:26:06 PAGE 11  
 
- 611   5                                              system_stage = Stage_B;
- 612   5                                              isneedinitstage = 1;
- 613   5                                      }
- 614   4                                      if (keystatus & 0x04)
- 615   4                                      {
- 616   5                                              system_stage = Stage_C;
- 617   5                                              isneedinitstage = 1;
- 618   5                                      }                       
- 619   4                              }
- 620   3                              else if (system_stage == Stage_B)       //闭合安全开关
- 621   3                              {
- 622   4                                      if (isneedinitstage == 1)
- 623   4                                      {
- 624   5                                              #if UART_TEST
- 625   5                                              printf("init stage B\n");
- 626   5                                              #endif
- 627   5                                              isneedinitstage = 0;
- 628   5                                              //init stage B
- 629   5                                              dpdtime = 0;
- 630   5                                              ischarging = 0;
- 631   5                                              //check motor level                             
- 632   5                                              LED_RGB_Setting(Motor_Level);
- 633   5                                              if (Motor_Level == 0)
- 634   5                                                      LED_Setting(0);
- 635   5                                              else
- 636   5                                                      LED_Setting(system_stage);
- 637   5                                              led_display_time = 600;
- 638   5                                              adccnt = 0;
- 639   5                                              if (isfirstenterdpd == 1)
- 640   5                                              adc_dis_cnt = 200;
- 641   5                                      }
- 642   4                                      if (keystatus & 0x01)//key
- 643   4                                      {
- 644   5                                              //change pwm
- 645   5                                              Change_Motor_PWM();
- 646   5                                              #if UART_TEST
- 647   5                                              testtemp = Motor_Level;
- 648   5                                              printf("motor level=%d\n",testtemp);
- 649   5                                              #endif
- 650   5                                              LED_RGB_Setting(Motor_Level);
- 651   5                                              LED_Setting(system_stage);
- 652   5                                              adccnt = 0;
- 653   5                                              if (isfirstenterdpd == 1)
- 654   5                                                      adc_dis_cnt = 200;
- 655   5                                              dpdtime = 0;                                    
- 656   5                                      }
- 657   4                                      if (keystatus & 0x02)//safety
- 658   4                                      {
- 659   5                                      }
- 660   4                                      else
- 661   4                                      {
- 662   5                                              system_stage = Stage_A;
- 663   5                                              isneedinitstage = 1;
- 664   5                                              //turn off pwm
- 665   5                                              TurnOffMotor();
- 666   5                                              LED_RGB_Setting(0);
- 667   5                                              LED_Setting(0);
- 668   5                                      }
- 669   4                                      
- 670   4                                      if (keystatus & 0x04)//charging
- 671   4                                      {
- 672   5                                              system_stage = Stage_D;
-C51 COMPILER V9.54   MAIN                                                                  06/02/2019 14:09:36 PAGE 12  
+ 611   5                                              
+ 612   5                                              if (isfirstenterdpd == 1)
+ 613   5                                              adc_dis_cnt = 200;
+ 614   5                                      }
+ 615   4                                      if (keystatus & 0x01)//key
+ 616   4                                      {
+ 617   5                                              //display power as LED
+ 618   5                                              batlevelledtimeout = 600;
+ 619   5                                              LED_Setting(system_stage);
+ 620   5                                              isenableLED = 1;
+ 621   5                                              dpdtime = 0;
+ 622   5                                      }
+ 623   4                                      if (keystatus & 0x02)
+ 624   4                                      {
+ 625   5                                              system_stage = Stage_B;
+ 626   5                                              isneedinitstage = 1;
+ 627   5                                      }
+ 628   4                                      if (keystatus & 0x04)
+ 629   4                                      {
+ 630   5                                              system_stage = Stage_C;
+ 631   5                                              isneedinitstage = 1;
+ 632   5                                      }                       
+ 633   4                              }
+ 634   3                              else if (system_stage == Stage_B)       //闭合安全开关
+ 635   3                              {
+ 636   4                                      if (isneedinitstage == 1)
+ 637   4                                      {
+ 638   5                                              #if UART_TEST
+ 639   5                                              printf("init stage B\n");
+ 640   5                                              #endif
+ 641   5                                              isneedinitstage = 0;
+ 642   5                                              //init stage B
+ 643   5                                              dpdtime = 0;
+ 644   5                                              ischarging = 0;
+ 645   5                                              //check motor level                             
+ 646   5                                              LED_RGB_Setting(Motor_Level);
+ 647   5                                              if (Motor_Level == 0)
+ 648   5                                              {
+ 649   6                                                      LED_Setting(0);
+ 650   6                                                      isenableLED = 0;
+ 651   6                                              }
+ 652   5                                              else
+ 653   5                                              {
+ 654   6                                                      LED_Setting(system_stage);
+ 655   6                                                      isenableLED = 1;
+ 656   6                                              }
+ 657   5                                              led_display_time = 600;
+ 658   5                                              adccnt = 0;
+ 659   5                                              if (isfirstenterdpd == 1)
+ 660   5                                              adc_dis_cnt = 200;
+ 661   5                                      }
+ 662   4                                      if (keystatus & 0x01)//key
+ 663   4                                      {
+ 664   5                                              //change pwm
+ 665   5                                              Change_Motor_PWM();
+ 666   5                                              #if UART_TEST
+ 667   5                                              testtemp = Motor_Level;
+ 668   5                                              printf("motor level=%d\n",testtemp);
+ 669   5                                              #endif
+ 670   5                                              LED_RGB_Setting(Motor_Level);
+ 671   5                                              if (Motor_Level == 0)
+ 672   5                                              {
+C51 COMPILER V9.54   MAIN                                                                  06/26/2019 22:26:06 PAGE 12  
 
- 673   5                                              isneedinitstage = 1;
- 674   5                                      }
- 675   4                                      
- 676   4                                      if (keystatus & 0x08)
- 677   4                                      {
- 678   5                                              //turn off pwm
- 679   5                                              TurnOffMotor();
- 680   5                                              LED_RGB_Setting(0);
+ 673   6                                                      LED_Setting(0);
+ 674   6                                                      isenableLED = 0;
+ 675   6                                              }
+ 676   5                                              else
+ 677   5                                              {
+ 678   6                                                      LED_Setting(system_stage);
+ 679   6                                                      isenableLED = 1;
+ 680   6                                              }
  681   5                                              adccnt = 0;
  682   5                                              if (isfirstenterdpd == 1)
  683   5                                                      adc_dis_cnt = 200;
- 684   5                                              dpdtime = 0;
+ 684   5                                              dpdtime = 0;                                    
  685   5                                      }
- 686   4                              }
- 687   3                              else if (system_stage == Stage_C)       //充电中
- 688   3                              {
- 689   4                                      if (isneedinitstage == 1)
+ 686   4                                      if (keystatus & 0x02)//safety
+ 687   4                                      {
+ 688   5                                      }
+ 689   4                                      else
  690   4                                      {
- 691   5                                              #if UART_TEST
- 692   5                                              printf("init stage C\n");
- 693   5                                              #endif
- 694   5                                              isneedinitstage = 0;
- 695   5                                              //init stage C  
- 696   5                                              dpdtime = 0;
- 697   5                                              ischarging = 1;                                 
- 698   5                                              TurnOffMotor();
- 699   5                                              LED_RGB_Setting(0);
- 700   5                                              LED_Setting(system_stage);
- 701   5                                              led_display_time = 600;
- 702   5                                              adccnt = 0;
- 703   5                                              if (isfirstenterdpd == 1)
- 704   5                                              adc_dis_cnt = 200;
- 705   5                                      }
- 706   4                                      if (keystatus & 0x01)//key
+ 691   5                                              system_stage = Stage_A;
+ 692   5                                              isneedinitstage = 1;
+ 693   5                                              //turn off pwm
+ 694   5                                              TurnOffMotor();
+ 695   5                                              LED_RGB_Setting(0);
+ 696   5                                              LED_Setting(0);
+ 697   5                                              isenableLED = 0;
+ 698   5                                      }
+ 699   4                                      
+ 700   4                                      if (keystatus & 0x04)//charging
+ 701   4                                      {
+ 702   5                                              system_stage = Stage_D;
+ 703   5                                              isneedinitstage = 1;
+ 704   5                                      }
+ 705   4                                      
+ 706   4                                      if (keystatus & 0x08)
  707   4                                      {
- 708   5                                              
- 709   5                                      }
- 710   4                                      if (keystatus & 0x02)//safety
- 711   4                                      {
- 712   5                                              //enter stage_B
- 713   5                                              system_stage = Stage_D;
- 714   5                                              isneedinitstage = 1;
- 715   5                                      }
- 716   4                                      
- 717   4                                      if (keystatus & 0x04)//charging
- 718   4                                      {
- 719   5                                              dpdtime = 0;
- 720   5                                      }
- 721   4                                      else
+ 708   5                                              //turn off pwm
+ 709   5                                              TurnOffMotor();
+ 710   5                                              LED_RGB_Setting(0);
+ 711   5                                              LED_Setting(0);
+ 712   5                                              isenableLED = 0;
+ 713   5                                              adccnt = 0;
+ 714   5                                              if (isfirstenterdpd == 1)
+ 715   5                                                      adc_dis_cnt = 200;
+ 716   5                                              dpdtime = 0;
+ 717   5                                      }
+ 718   4                              }
+ 719   3                              else if (system_stage == Stage_C)       //充电中
+ 720   3                              {
+ 721   4                                      if (isneedinitstage == 1)
  722   4                                      {
- 723   5                                              system_stage = Stage_A;
- 724   5                                              ischarging = 0;
- 725   5                                              LED_Setting(0);
- 726   5                                              isneedinitstage = 1;
- 727   5                                      }
- 728   4                              }
- 729   3                              else if (system_stage == Stage_D)       //充电和闭合安全开关
- 730   3                              {
- 731   4                                      if (isneedinitstage == 1)
- 732   4                                      {
- 733   5                                              #if UART_TEST
- 734   5                                              printf("init stage D\n");
-C51 COMPILER V9.54   MAIN                                                                  06/02/2019 14:09:36 PAGE 13  
+ 723   5                                              #if UART_TEST
+ 724   5                                              printf("init stage C\n");
+ 725   5                                              #endif
+ 726   5                                              isneedinitstage = 0;
+ 727   5                                              //init stage C  
+ 728   5                                              dpdtime = 0;
+ 729   5                                              ischarging = 1;                                 
+ 730   5                                              TurnOffMotor();
+ 731   5                                              LED_RGB_Setting(0);
+ 732   5                                              LED_Setting(system_stage);
+ 733   5                                              isenableLED = 1;
+ 734   5                                              led_display_time = 600;
+C51 COMPILER V9.54   MAIN                                                                  06/26/2019 22:26:06 PAGE 13  
 
- 735   5                                              #endif
- 736   5                                              isneedinitstage = 0;
- 737   5                                              //init stage D
- 738   5                                              dpdtime = 0;
- 739   5                                              ischarging = 1;
- 740   5                                              //check motor level                             
- 741   5                                              LED_RGB_Setting(Motor_Level);
- 742   5                                              LED_Setting(system_stage);
- 743   5                                              adccnt = 0;
- 744   5                                              if (isfirstenterdpd == 1)
- 745   5                                              adc_dis_cnt = 200;
- 746   5                                      }
- 747   4                                      if (keystatus & 0x01)//key
- 748   4                                      {
- 749   5                                              //change pwm
- 750   5                                              Change_Motor_PWM();
- 751   5                                              #if UART_TEST
- 752   5                                              testtemp = Motor_Level;
- 753   5                                              printf("motor level=%d\n",testtemp);
- 754   5                                              #endif
- 755   5                                              LED_RGB_Setting(Motor_Level);
- 756   5                                              adccnt = 0;
- 757   5                                              if (isfirstenterdpd == 1)
- 758   5                                                      adc_dis_cnt = 200;
- 759   5                                              dpdtime = 0;
- 760   5                                      }
- 761   4                                      if (keystatus & 0x02)//safety
- 762   4                                      {
- 763   5                                      }
- 764   4                                      else
- 765   4                                      {
- 766   5                                              system_stage = Stage_C;
- 767   5                                              isneedinitstage = 1;
- 768   5                                              TurnOffMotor();
- 769   5                                              LED_RGB_Setting(0);
- 770   5                                      }
- 771   4                                      
- 772   4                                      if (keystatus & 0x04)//charging
- 773   4                                      {
- 774   5                                              dpdtime = 0;
- 775   5                                      }
- 776   4                                      else
- 777   4                                      {
- 778   5                                              system_stage = Stage_B;
- 779   5                                              ischarging = 0;
- 780   5                                              LED_RGB_Setting(Motor_Level);
- 781   5                                              LED_Setting(system_stage);                              
- 782   5                                              isneedinitstage = 1;
- 783   5                                      }
- 784   4                                      
- 785   4                                      if (keystatus & 0x08)
- 786   4                                      {
- 787   5                                              //turn off pwm
- 788   5                                              TurnOffMotor();
- 789   5                                              LED_RGB_Setting(0);
- 790   5                                              adccnt = 0;
- 791   5                                              if (isfirstenterdpd == 1)
- 792   5                                                      adc_dis_cnt = 200;
- 793   5                                              dpdtime = 0;
- 794   5                                      }
- 795   4                              }
- 796   3                              
-C51 COMPILER V9.54   MAIN                                                                  06/02/2019 14:09:36 PAGE 14  
+ 735   5                                              adccnt = 0;
+ 736   5                                              if (isfirstenterdpd == 1)
+ 737   5                                              adc_dis_cnt = 200;
+ 738   5                                      }
+ 739   4                                      if (keystatus & 0x01)//key
+ 740   4                                      {
+ 741   5                                              
+ 742   5                                      }
+ 743   4                                      if (keystatus & 0x02)//safety
+ 744   4                                      {
+ 745   5                                              //enter stage_B
+ 746   5                                              system_stage = Stage_D;
+ 747   5                                              isneedinitstage = 1;
+ 748   5                                      }
+ 749   4                                      
+ 750   4                                      if (keystatus & 0x04)//charging
+ 751   4                                      {
+ 752   5                                              dpdtime = 0;
+ 753   5                                      }
+ 754   4                                      else
+ 755   4                                      {
+ 756   5                                              system_stage = Stage_A;
+ 757   5                                              ischarging = 0;
+ 758   5                                              LED_Setting(0);
+ 759   5                                              isenableLED = 0;
+ 760   5                                              isneedinitstage = 1;
+ 761   5                                      }
+ 762   4                              }
+ 763   3                              else if (system_stage == Stage_D)       //充电和闭合安全开关
+ 764   3                              {
+ 765   4                                      if (isneedinitstage == 1)
+ 766   4                                      {
+ 767   5                                              #if UART_TEST
+ 768   5                                              printf("init stage D\n");
+ 769   5                                              #endif
+ 770   5                                              isneedinitstage = 0;
+ 771   5                                              //init stage D
+ 772   5                                              dpdtime = 0;
+ 773   5                                              ischarging = 1;
+ 774   5                                              //check motor level                             
+ 775   5                                              LED_RGB_Setting(Motor_Level);
+ 776   5                                              LED_Setting(system_stage);
+ 777   5                                              isenableLED = 1;
+ 778   5                                              adccnt = 0;
+ 779   5                                              if (isfirstenterdpd == 1)
+ 780   5                                              adc_dis_cnt = 200;
+ 781   5                                      }
+ 782   4                                      if (keystatus & 0x01)//key
+ 783   4                                      {
+ 784   5                                              //change pwm
+ 785   5                                              Change_Motor_PWM();
+ 786   5                                              #if UART_TEST
+ 787   5                                              testtemp = Motor_Level;
+ 788   5                                              printf("motor level=%d\n",testtemp);
+ 789   5                                              #endif
+ 790   5                                              LED_RGB_Setting(Motor_Level);
+ 791   5                                              adccnt = 0;
+ 792   5                                              if (isfirstenterdpd == 1)
+ 793   5                                                      adc_dis_cnt = 200;
+ 794   5                                              dpdtime = 0;
+ 795   5                                      }
+ 796   4                                      if (keystatus & 0x02)//safety
+C51 COMPILER V9.54   MAIN                                                                  06/26/2019 22:26:06 PAGE 14  
 
- 797   3                              //ADC process                   
- 798   3                              getbatlevel(5);
- 799   3                              if (adc_dis_cnt > 0)
- 800   3                                      adc_dis_cnt--;
- 801   3                              
- 802   3                              if (isWaitTurnOffCharging == 1)
- 803   3                              {
- 804   4                                      if (keystatus & 0x04)
- 805   4                                      {
- 806   5                                              batlevel = 6;
+ 797   4                                      {
+ 798   5                                      }
+ 799   4                                      else
+ 800   4                                      {
+ 801   5                                              system_stage = Stage_C;
+ 802   5                                              isneedinitstage = 1;
+ 803   5                                              TurnOffMotor();
+ 804   5                                              LED_RGB_Setting(0);
+ 805   5                                              LED_Setting(0);
+ 806   5                                              isenableLED = 0;
  807   5                                      }
- 808   4                                      else
- 809   4                                      {
- 810   5                                              isWaitTurnOffCharging = 0;
- 811   5                                      }
- 812   4                              }
- 813   3                              //pwm rate
- 814   3                              if (check_motor_done())
- 815   3                              {
- 816   4                                      #if UART_TEST
- 817   4                                      printf("motor-locked,%d\n",__LINE__);
- 818   4                                      #endif
- 819   4                                      //turn off pwm
- 820   4                                      TurnOffMotor();
- 821   4                                      LED_RGB_Setting(0);
- 822   4                                      isneedinitstage = 1;
- 823   4                                      adccnt = 0;
- 824   4                                      if (isfirstenterdpd == 1)
- 825   4                                      adc_dis_cnt = 200;
- 826   4                              }
- 827   3                              if(Motor_Level)
- 828   3                              {
- 829   4                                      dpdtime = 0;
- 830   4                              }
- 831   3                              //LED_Process           
- 832   3                              LED_Process(system_stage);
- 833   3                              
- 834   3                              //dpd
- 835   3                              if (dpdtime >= 2000)
- 836   3                              {
- 837   4                                      isfirstenterdpd = 1;
- 838   4                                      #if UART_TEST
- 839   4                                      printf("enter dpd\n");
- 840   4                                      #endif
- 841   4                                      Enter_DPD();
- 842   4                              }
- 843   3                              #if UART_TEST
- 844   3      //                      if (dpdtime > 1000)
- 845   3      //                      {
- 846   3      //                              printf("test wdt reset\n");
- 847   3      //                              while(1);
- 848   3      //                      }
- 849   3                              #endif
- 850   3                              #if WDT_ENABLE
- 851   3                              //clr wdt
- 852   3                              set_WDCLR;
- 853   3                              #endif
- 854   3                      }
- 855   2              }
- 856   1      }
- 857          
- 858          void EXT_INT1(void) interrupt 2
-C51 COMPILER V9.54   MAIN                                                                  06/02/2019 14:09:36 PAGE 15  
+ 808   4                                      
+ 809   4                                      if (keystatus & 0x04)//charging
+ 810   4                                      {
+ 811   5                                              dpdtime = 0;
+ 812   5                                      }
+ 813   4                                      else
+ 814   4                                      {
+ 815   5                                              system_stage = Stage_B;
+ 816   5                                              ischarging = 0;
+ 817   5                                              LED_RGB_Setting(Motor_Level);
+ 818   5                                              LED_Setting(system_stage);      
+ 819   5                                              isenableLED = 1;
+ 820   5                                              isneedinitstage = 1;
+ 821   5                                      }
+ 822   4                                      
+ 823   4                                      if (keystatus & 0x08)
+ 824   4                                      {
+ 825   5                                              //turn off pwm
+ 826   5                                              TurnOffMotor();
+ 827   5                                              LED_RGB_Setting(0);
+ 828   5                                              LED_Setting(system_stage);      
+ 829   5                                              isenableLED = 1;
+ 830   5                                              adccnt = 0;
+ 831   5                                              if (isfirstenterdpd == 1)
+ 832   5                                                      adc_dis_cnt = 200;
+ 833   5                                              dpdtime = 0;
+ 834   5                                      }
+ 835   4                              }
+ 836   3                              
+ 837   3                              //ADC process
+ 838   3                              if (ischarging == 1)
+ 839   3                                      getbatlevel(20);
+ 840   3                              else
+ 841   3                                      getbatlevel(5);
+ 842   3                              if (adc_dis_cnt > 0)
+ 843   3                                      adc_dis_cnt--;
+ 844   3                              
+ 845   3                              if (isWaitTurnOffCharging == 1)
+ 846   3                              {
+ 847   4                                      if (keystatus & 0x04)
+ 848   4                                      {
+ 849   5                                              batlevel = 6;
+ 850   5                                      }
+ 851   4                                      else
+ 852   4                                      {
+ 853   5                                              isWaitTurnOffCharging = 0;
+ 854   5                                      }
+ 855   4                              }
+ 856   3                              //pwm rate
+ 857   3                              if (check_motor_done())
+ 858   3                              {
+C51 COMPILER V9.54   MAIN                                                                  06/26/2019 22:26:06 PAGE 15  
 
- 859          {
- 860   1              
- 861   1      }
- 862          
- 863          void PinInterrupt_ISR (void) interrupt 7
- 864          {
- 865   1              if(PIF == 0x10) //pin 0
- 866   1                      MOTOR_FG_PinInterrupt_ISR();
- 867   1              PIF = 0x00;
- 868   1      }
+ 859   4                                      #if UART_TEST
+ 860   4                                      printf("motor-locked,%d\n",__LINE__);
+ 861   4                                      #endif
+ 862   4                                      //turn off pwm
+ 863   4                                      TurnOffMotor();
+ 864   4                                      LED_RGB_Setting(0);
+ 865   4                                      isneedinitstage = 1;
+ 866   4                                      adccnt = 0;
+ 867   4                                      if (isfirstenterdpd == 1)
+ 868   4                                      adc_dis_cnt = 200;
+ 869   4                              }
+ 870   3                              if(Motor_Level)
+ 871   3                              {
+ 872   4                                      dpdtime = 0;
+ 873   4                              }
+ 874   3                              //LED_Process           
+ 875   3                              if (isenableLED)
+ 876   3                              LED_Process(system_stage);
+ 877   3                              
+ 878   3                              //dpd
+ 879   3                              if (dpdtime >= 2000)
+ 880   3                              {
+ 881   4                                      isfirstenterdpd = 1;
+ 882   4                                      #if UART_TEST
+ 883   4                                      printf("enter dpd\n");
+ 884   4                                      #endif
+ 885   4                                      isfirstenterdpd = 1;
+ 886   4                                      Enter_DPD();
+ 887   4                              }
+ 888   3      //                      P13 = 1;
+ 889   3                              #if UART_TEST
+ 890   3      //                      if (dpdtime > 1000)
+ 891   3      //                      {
+ 892   3      //                              printf("test wdt reset\n");
+ 893   3      //                              while(1);
+ 894   3      //                      }
+ 895   3                              #endif
+ 896   3                              #if WDT_ENABLE
+ 897   3                              //clr wdt
+ 898   3                              set_WDCLR;
+ 899   3                              #endif
+ 900   3                      }
+ 901   2              }
+ 902   1      }
+ 903          
+ 904          void EXT_INT1(void) interrupt 2
+ 905          {
+ 906   1              
+ 907   1      }
+ 908          
+ 909          void PinInterrupt_ISR (void) interrupt 7
+ 910          {
+ 911   1              if(PIF == 0x10) //pin 0
+ 912   1                      MOTOR_FG_PinInterrupt_ISR();
+ 913   1              PIF = 0x00;
+ 914   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   2495    ----
-   CONSTANT SIZE    =    212    ----
+   CODE SIZE        =   2591    ----
+   CONSTANT SIZE    =    222    ----
    XDATA SIZE       =   ----    ----
+C51 COMPILER V9.54   MAIN                                                                  06/26/2019 22:26:06 PAGE 16  
+
    PDATA SIZE       =   ----    ----
    DATA SIZE        =     37       8
    IDATA SIZE       =   ----    ----
-   BIT SIZE         =      7    ----
+   BIT SIZE         =      8    ----
 END OF MODULE INFORMATION.
 
 

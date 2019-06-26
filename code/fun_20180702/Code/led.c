@@ -108,6 +108,7 @@ unsigned char batlevel_to_led_value(unsigned char stage)
 		{
 			val = 0x03;
 		}
+		/*
 		else if (batlevel == 2)
 		{
 			val = 0x01;
@@ -115,11 +116,15 @@ unsigned char batlevel_to_led_value(unsigned char stage)
 		else
 		{
 			val = 0x00;
+		}*/
+		else
+		{
+			val = 0x01;
 		}
 	}
 	else if (stage == 4)//stage C
 	{
-		if (batlevel == 6)	//100%
+		if (batlevel >= 6)	//100%
 			val = 0x0F;
 		else if (batlevel == 5)	//>75%
 		{
@@ -161,7 +166,7 @@ unsigned char batlevel_to_led_value(unsigned char stage)
 	}
 	else if (stage == 8)//stage D
 	{
-		if (batlevel == 6)
+		if (batlevel >= 6)
 		{
 			val = 0x0F;
 		}

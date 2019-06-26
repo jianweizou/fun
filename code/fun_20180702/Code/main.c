@@ -39,6 +39,7 @@ bit ischarging;
 bit isstartsystem;
 bit isWaitTurnOffCharging;
 bit isfirstenterdpd;
+bit isenableLED;
 unsigned char startADC_cnt;
 unsigned char batlevel_led_value;
 unsigned char adc_pre_cnt;
@@ -310,7 +311,7 @@ unsigned char getbatlevel(unsigned char adc_delay)
 			bat_val = ((float)adcvalue) *3.34 /4096.0 * 3.0;
 			printf("bat=%0.4f\n",bat_val);
 			#endif
-			if (adcvalue > 0xCD0)		//100% 8.2
+			if (adcvalue > 0xCF0)		//100% 8.2
 			{
 				templevel = 6;
 				if(ischarging == 1)
@@ -318,19 +319,19 @@ unsigned char getbatlevel(unsigned char adc_delay)
 					isWaitTurnOffCharging = 1;
 				}
 			}
-			else if (adcvalue > 0xCA0)	//>75%	7.9v		
+			else if (adcvalue > 0xC60)	//>75%	7.9v	0xCA0	
 			{
 				templevel = 5;
 			}
-			else if (adcvalue > 0xC40)	//>50%	7.7v
+			else if (adcvalue > 0xC00)	//>50%	7.7v	0xC40
 			{
 				templevel = 4;
 			}
-			else if (adcvalue > 0xBE0)	//>25%	7.5
+			else if (adcvalue > 0xBB0)	//>25%	7.5		0xBE0
 			{
 				templevel = 3;
 			}
-			else if (adcvalue > 0xBA0)	//10%	7.2v
+			else if (adcvalue > 0xB70)	//10%	7.2v	0xBA0
 			{
 				templevel = 2;
 			}
@@ -384,18 +385,6 @@ unsigned char getbatlevel(unsigned char adc_delay)
 	}	
 	return 0;
 }
-
-void P05_wakeup_init(void){
-	P05_Input_Mode;
-	
-	Enable_INT_Port0;
-	Enable_BIT5_FallEdge_Trig;
-	
-	set_EPI;
-	
-	set_EA;
-}
-
 
 #if WDT_ENABLE
 void Enable_WDT_Reset_Config(void)
@@ -475,10 +464,7 @@ void Disable_WDT_Reset_Config(void)
 #endif
 void Enter_DPD(void)
 {
-	#if WDT_ENABLE
-	//clear wdt
-	Disable_WDT_Reset_Config();
-	#endif
+
 	dpdtime = 0;
 
 	Set_All_GPIO_Quasi_Mode;
@@ -488,12 +474,30 @@ void Enter_DPD(void)
 	LED_WHITE_Setting(0);
 	LED_RGB_Setting(0);
 	DeInit_LED();
-
-	P05_wakeup_init();
-
+	
+	P05_Input_Mode;	
+	while(P05 == 0);
+	printf("P05\n");
+//	set_P1SR_5;
+//	Enable_INT_Port0;
+//	Enable_BIT5_FallEdge_Trig;
+	PICON = 0x40;	//port0
+	PINEN  = 0x20;
+	PIPEN = 0x00;	//IO 4	
+	
+	set_EPI;
+	
+	set_EA;
+	
 	P17_Input_Mode;
+	printf("P07\n");
 	set_P1S_7;
 	set_EX1;
+
+	#if WDT_ENABLE
+	//clear wdt
+	Disable_WDT_Reset_Config();
+	#endif
 	
 	set_PD;
 
@@ -512,6 +516,12 @@ void SysInit(void)
 	InitialUART1_Timer3(115200);
 	TI_1 = 1;
 	#endif
+	PICON  = 0;
+				
+	clr_EX0;
+	clr_EX1;
+	clr_EPI;
+	
 	Init_LED();
 	Timer0_Init();	
 	startADC_cnt = 0;
@@ -558,6 +568,8 @@ void SysInit(void)
 	#if WDT_ENABLE
 	Enable_WDT_Reset_Config();
 	#endif
+	
+	isenableLED = 0;
 }
 
 
@@ -591,6 +603,7 @@ void main(void)
 					//init stage A
 					TurnOffMotor();
 					LED_Setting(0);
+					isenableLED = 0;
 					LED_RGB_Setting(0);
 					dpdtime = 0;
 					ischarging = 0;
@@ -604,6 +617,7 @@ void main(void)
 					//display power as LED
 					batlevelledtimeout = 600;
 					LED_Setting(system_stage);
+					isenableLED = 1;
 					dpdtime = 0;
 				}
 				if (keystatus & 0x02)
@@ -631,9 +645,15 @@ void main(void)
 					//check motor level				
 					LED_RGB_Setting(Motor_Level);
 					if (Motor_Level == 0)
+					{
 						LED_Setting(0);
+						isenableLED = 0;
+					}
 					else
+					{
 						LED_Setting(system_stage);
+						isenableLED = 1;
+					}
 					led_display_time = 600;
 					adccnt = 0;
 					if (isfirstenterdpd == 1)
@@ -648,7 +668,16 @@ void main(void)
 					printf("motor level=%d\n",testtemp);
 					#endif
 					LED_RGB_Setting(Motor_Level);
-					LED_Setting(system_stage);
+					if (Motor_Level == 0)
+					{
+						LED_Setting(0);
+						isenableLED = 0;
+					}
+					else
+					{
+						LED_Setting(system_stage);
+						isenableLED = 1;
+					}
 					adccnt = 0;
 					if (isfirstenterdpd == 1)
 						adc_dis_cnt = 200;
@@ -665,6 +694,7 @@ void main(void)
 					TurnOffMotor();
 					LED_RGB_Setting(0);
 					LED_Setting(0);
+					isenableLED = 0;
 				}
 				
 				if (keystatus & 0x04)//charging
@@ -678,6 +708,8 @@ void main(void)
 					//turn off pwm
 					TurnOffMotor();
 					LED_RGB_Setting(0);
+					LED_Setting(0);
+					isenableLED = 0;
 					adccnt = 0;
 					if (isfirstenterdpd == 1)
 						adc_dis_cnt = 200;
@@ -698,6 +730,7 @@ void main(void)
 					TurnOffMotor();
 					LED_RGB_Setting(0);
 					LED_Setting(system_stage);
+					isenableLED = 1;
 					led_display_time = 600;
 					adccnt = 0;
 					if (isfirstenterdpd == 1)
@@ -723,6 +756,7 @@ void main(void)
 					system_stage = Stage_A;
 					ischarging = 0;
 					LED_Setting(0);
+					isenableLED = 0;
 					isneedinitstage = 1;
 				}
 			}
@@ -740,6 +774,7 @@ void main(void)
 					//check motor level				
 					LED_RGB_Setting(Motor_Level);
 					LED_Setting(system_stage);
+					isenableLED = 1;
 					adccnt = 0;
 					if (isfirstenterdpd == 1)
 					adc_dis_cnt = 200;
@@ -767,6 +802,8 @@ void main(void)
 					isneedinitstage = 1;
 					TurnOffMotor();
 					LED_RGB_Setting(0);
+					LED_Setting(0);
+					isenableLED = 0;
 				}
 				
 				if (keystatus & 0x04)//charging
@@ -778,7 +815,8 @@ void main(void)
 					system_stage = Stage_B;
 					ischarging = 0;
 					LED_RGB_Setting(Motor_Level);
-					LED_Setting(system_stage);				
+					LED_Setting(system_stage);	
+					isenableLED = 1;
 					isneedinitstage = 1;
 				}
 				
@@ -787,6 +825,8 @@ void main(void)
 					//turn off pwm
 					TurnOffMotor();
 					LED_RGB_Setting(0);
+					LED_Setting(system_stage);	
+					isenableLED = 1;
 					adccnt = 0;
 					if (isfirstenterdpd == 1)
 						adc_dis_cnt = 200;
@@ -794,8 +834,11 @@ void main(void)
 				}
 			}
 			
-			//ADC process			
-			getbatlevel(5);
+			//ADC process
+			if (ischarging == 1)
+				getbatlevel(20);
+			else
+				getbatlevel(5);
 			if (adc_dis_cnt > 0)
 				adc_dis_cnt--;
 			
@@ -829,6 +872,7 @@ void main(void)
 				dpdtime = 0;
 			}
 			//LED_Process		
+			if (isenableLED)
 			LED_Process(system_stage);
 			
 			//dpd
@@ -838,8 +882,10 @@ void main(void)
 				#if UART_TEST
 				printf("enter dpd\n");
 				#endif
+				isfirstenterdpd = 1;
 				Enter_DPD();
 			}
+//			P13 = 1;
 			#if UART_TEST
 //			if (dpdtime > 1000)
 //			{
