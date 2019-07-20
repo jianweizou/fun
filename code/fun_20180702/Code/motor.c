@@ -36,8 +36,8 @@ void InitPWM(void)
 	isMotorRun = 0;
 	Motor_Run_cnt = 0;
 	Motor_done_cnt = 0;
-	P06_PushPull_Mode;
-	P06 = 0;			//CW
+//	P06_PushPull_Mode;
+//	P06 = 0;			//CW
 	P04_PushPull_Mode;	//motor power
 	P04 = 0;
 	isMaxPWM = 0;
@@ -56,22 +56,22 @@ void TurnOffMotor(void)
 		set_LOAD;
 		clr_CLRPWM;
 		//dispower
-		P12 = 0;	
+		P12 = 1;	
 		isStartMotor = 0;
 		isMotorRun = 0;
 		Motor_done_cnt = 0;
 		Motor_Run_cnt = 0;
 		P04 = 0;
-		P06 = 0;
+//		P06 = 0;
 		P12_PushPull_Mode;
-		P12 = 0;
+		P12 = 1;
 		isMaxPWM = 0;
 }
 unsigned Change_Motor_PWM(void)
 {
 	if (Motor_Level == 0)
 	{
-		P06 = 1;
+//		P06 = 1;
 		set_P1SR_4;
 		P14_Input_Mode;
 //		PICON = 0x05;	//port1

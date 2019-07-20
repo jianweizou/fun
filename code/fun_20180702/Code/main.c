@@ -6,6 +6,7 @@
 #include "key.h"
 #include "motor.h"
 #include "led.h"
+#include "Delay.h"
 
 #define TH0_INIT        (65536-6667)/256 //5.0ms@XTAL=12MHz, Period = (10.85/2) ms@XTAL=22.1184MHz
 #define TL0_INIT        (65536-6667)%256
@@ -13,17 +14,8 @@
 #define TL1_INIT        0x00
 
 bit BIT_TMP;
-int testtemp;
-unsigned char is_5ms_Flag;
-unsigned int dpdtime;
 #define ADC_CNT	8
-unsigned char adccnt;
-unsigned int adc[ADC_CNT];
-unsigned char batlevel;
-unsigned int batlevelledtimeout;
-unsigned int adcvalue;
-unsigned char adc_dis_cnt;
-unsigned char adcchangecnt=0;
+
 extern unsigned char Motor_Level;
 extern unsigned int led_display_time;
 /********************************/
@@ -32,7 +24,6 @@ extern unsigned int led_display_time;
 #define Stage_C		4
 #define Stage_D		8
 
-unsigned char system_stage;
 bit isneedinitstage;
 bit isneedinitsys;
 bit ischarging;
@@ -40,11 +31,25 @@ bit isstartsystem;
 bit isWaitTurnOffCharging;
 bit isfirstenterdpd;
 bit isenableLED;
-unsigned char startADC_cnt;
+
+unsigned char is_5ms_Flag;
+unsigned char system_stage;
+
 unsigned char batlevel_led_value;
 unsigned char adc_pre_cnt;
+unsigned char adccnt;
+unsigned char batlevel;
+unsigned char adc_dis_cnt;
+unsigned char adcchangecnt=0;
 
-
+unsigned int startADC_cnt;
+unsigned int first_run_times;
+unsigned int adc_wait_cnt;
+unsigned int dpdtime;
+unsigned int batlevelledtimeout;
+unsigned int adcvalue;
+unsigned int adc[ADC_CNT];
+int testtemp;
 
 #define UART_TEST	1
 #define WDT_ENABLE	1
@@ -103,6 +108,22 @@ char putchar (char c)
 		SBUF_1 = c;      /* output character */
 		return (c);
 }
+
+void Timer1_Delay100us(unsigned long cnt)
+{
+    clr_T1M;																		//T1M=0, Timer1 Clock = Fsys/12
+    TMOD |= 0x10;																//Timer1 is 16-bit mode
+    set_TR1;																		//Start Timer1
+    while (cnt != 0)
+    {
+        TL1 = LOBYTE(TIMER_DIV12_VALUE_100us);		//Find  define in "Function_define.h" "TIMER VALUE"
+        TH1 = HIBYTE(TIMER_DIV12_VALUE_100us);
+        while (TF1 != 1);												//Check Timer1 Time-Out Flag
+        clr_TF1;
+        cnt --;
+    }
+    clr_TR1;                               			//Stop Timer1
+}
 #endif
 /************************************************************************************************************
 *    TIMER 0 interrupt subroutine
@@ -115,8 +136,10 @@ void Timer0_ISR (void) interrupt 1          //interrupt address is 0x000B
 	dpdtime++;
 	startADC_cnt ++;
 	led_display_time++;
+	adc_wait_cnt++;
+	if (first_run_times < 2000) 
+		first_run_times++;
 }
-
 void Timer0_Init(void)
 {
 	TMOD = 0XFF;
@@ -133,14 +156,14 @@ void Timer0_Init(void)
 	set_TR0;                                    //Timer0 run
 }
 
-unsigned int getadcvalue(void)
+unsigned int getadcvalue(unsigned int * buf)
 {
 	unsigned char i;
 	unsigned int adcvalue_temp;
 	adcvalue_temp = 0;
 	for(i=0;i<ADC_CNT;i++)
 	{
-		adcvalue_temp += adc[i];
+		adcvalue_temp += buf[i];
 	}
 	adcvalue_temp >>=3;
 	return adcvalue_temp;
@@ -150,69 +173,37 @@ unsigned int charging_bat_feedback(unsigned int cur_adc,unsigned char pwm)
 {
 	unsigned int temp;
 	unsigned int temp_pwm;
-	if (pwm == 1)
-	{
-		temp_pwm = 30;
-	}
-	else if (pwm == 2)
-	{
-		temp_pwm = 20;
-	}
-	else if (pwm == 3)
-	{
-		temp_pwm = 10;
-	}
-	else
-	{
-		temp_pwm = 0;
-	}
 	
-	if (batlevel == 1)
+//	if (pwm == 0)
 	{
-		temp = 180 - temp_pwm;
-	}
-	else if (batlevel == 2)
-	{
-		temp = 180 - temp_pwm;
-	}
-	else if (batlevel == 3)
-	{
-		temp = 180 - temp_pwm;
-	}
-	else if (batlevel == 4)
-	{
-		temp = 180 - temp_pwm;
-	}
-	else if (batlevel == 5)
-	{
-		if (cur_adc > 3400)
+		if (batlevel < 3)
 		{
-			temp = 80 - temp_pwm;
+			temp = 180;
 		}
-		else if (cur_adc > 3300)
+		else if (batlevel <5)
 		{
-			temp = 90 - temp_pwm;
+			temp = 120;
 		}
-		else
+		else 
 		{
-			temp = 160 - temp_pwm;
+			temp = 60;
 		}
 	}
-	else if (batlevel == 6)
-	{
-		if (cur_adc > 3400)
-		{
-			temp = 40 - temp_pwm;
-		}
-		else if (cur_adc > 3300)
-		{
-			temp = 60 - temp_pwm;
-		}
-		else
-		{
-			temp = 130 - temp_pwm;
-		}
-	}
+//	else
+//	{
+//		if (pwm == 1)
+//		{
+//			
+//		}
+//		else if (pwm == 2)
+//		{
+//		}
+//		else if (pwm == 4)
+//		{
+//		}
+//		
+//	}
+	
 	return temp;
 }
 
@@ -223,7 +214,6 @@ unsigned char getbatlevel(unsigned char adc_delay)
 	unsigned int adcvaluetemp;
 	if (startADC_cnt > adc_delay)
 	{
-		startADC_cnt = 0;
 		CKDIV = 0x04; 
 		clr_ADCF;
 		set_ADCS;									// ADC start trig signal
@@ -234,6 +224,8 @@ unsigned char getbatlevel(unsigned char adc_delay)
 		adcvaluetemp |= ADCRL&0x0F;
 		adc[adccnt] = adcvaluetemp;
 		adccnt++;
+		startADC_cnt = 0;
+		adc_wait_cnt=0;
 		if (adccnt >= ADC_CNT)
 		{
 			adccnt = 0;
@@ -241,77 +233,96 @@ unsigned char getbatlevel(unsigned char adc_delay)
 			{
 				return 0;
 			}
-			adcvaluetemp = getadcvalue();
-			#if UART_TEST
-			printf("adcvaluetemp=%d\n",adcvaluetemp);
-			#endif
+			adcvaluetemp = getadcvalue(adc);
 			
-			if (Motor_Level == 1)
-			{
-				cur_pwm_level = cur_pwm();
-				if (cur_pwm_level == 1)
-					adcvaluetemp = adcvaluetemp + 0x08;
-				else if (cur_pwm_level == 2)
-					adcvaluetemp = adcvaluetemp + 0x10;
-				else
-					adcvaluetemp = adcvaluetemp + 0x18;
-			}
-			else if (Motor_Level == 2)
-			{
-				adcvaluetemp = adcvaluetemp + 0x10;
-			}
-			else if (Motor_Level == 4)
-			{
-				adcvaluetemp = adcvaluetemp + 0x08;
-			}
 			if (ischarging)
 			{
-//				if (isWaitTurnOffCharging == 0)
-//					adcvaluetemp = adcvaluetemp - charging_bat_feedback(adcvaluetemp,Motor_Level);
-//				else
-//				{
-//					
-//				}
+				if (Motor_Level == 0)
+				{										
+					if (adcvaluetemp < 3000)
+						adcvaluetemp = adcvaluetemp-50;
+					else if (adcvaluetemp < 3200)
+						adcvaluetemp = adcvaluetemp-20;
+				}
 			}
-			if (isfirstenterdpd == 0)
+			else if (Motor_Level)
 			{
-				if (adcvaluetemp < 3000)
-					adcvalue = 3000;
-				else if (adcvaluetemp > 3400)
-					adcvalue = 3300;
-				else 
-					adcvalue = adcvaluetemp;
+				if (Motor_Level == 1)
+				{
+					cur_pwm_level = cur_pwm();
+					if (cur_pwm_level == 1)
+						adcvaluetemp = adcvaluetemp + 60;
+					else if (cur_pwm_level == 2)
+						adcvaluetemp = adcvaluetemp + 80;
+					else
+						adcvaluetemp = adcvaluetemp + 120;
+				}
+				else if (Motor_Level == 2)
+				{
+					adcvaluetemp = adcvaluetemp + 80;
+				}
+				else if (Motor_Level == 4)
+				{
+					adcvaluetemp = adcvaluetemp + 60;
+				}
 			}
+			
+			#if UART_TEST
+			printf("ap=%d\n",adcvaluetemp);//adcvaluetemp
+			#endif
 			if (isstartsystem == 1)
 			{
-				if (adcvalue == 0)
-					adcvalue = adcvaluetemp;
-				if (adcvaluetemp > (adcvalue + 8))
+				if (ischarging)
 				{
-					adcchangecnt++;
-					if (adcchangecnt > 8)
+					if (adcvaluetemp > (adcvalue + 8))
+					{
+						adcchangecnt++;
+						if (adcchangecnt > 3)
+						{
+							adcchangecnt = 0;
+							adcvalue+=(adcvaluetemp - adcvalue)>>1;
+						}
+					}
+					else if (adcvaluetemp < (adcvalue-8))
 					{
 						adcchangecnt = 0;
-						adcvalue+=5;
+						adcvalue-=5;
 					}
-				}
-				else if (adcvaluetemp < (adcvalue-8))
-				{
-					adcchangecnt = 0;
-					adcvalue-=5;
+					else
+					{
+						adcchangecnt = 0;
+					}
 				}
 				else
 				{
-					adcchangecnt = 0;
+					if (adcvaluetemp > (adcvalue + 8))
+					{
+						adcchangecnt++;
+						if (adcchangecnt > 5)
+						{
+							adcchangecnt = 0;
+							adcvalue+=5;
+						}
+					}
+					else if (adcvaluetemp < (adcvalue-8))
+					{
+						adcchangecnt = 0;
+						adcvalue-=5;
+					}
+					else
+					{
+						adcchangecnt = 0;
+					}
 				}
-			}		
-			
+				if (adcvalue == 0)
+					adcvalue = adcvaluetemp;				
+			}
 			#if UART_TEST
-			printf("adcvalue=%d\n",adcvalue);
-			bat_val = ((float)adcvalue) *3.34 /4096.0 * 3.0;
-			printf("bat=%0.4f\n",bat_val);
+			printf("ae=%d\n",adcvalue);//adcvalue
+//			bat_val = ((float)adcvalue) *3.34 /4096.0 * 3.0;
+//			printf("bat=%0.4f\n",bat_val);
 			#endif
-			if (adcvalue > 0xCF0)		//100% 8.2
+			if (adcvalue > 3300)		//100% 8.2
 			{
 				templevel = 6;
 				if(ischarging == 1)
@@ -319,19 +330,19 @@ unsigned char getbatlevel(unsigned char adc_delay)
 					isWaitTurnOffCharging = 1;
 				}
 			}
-			else if (adcvalue > 0xC60)	//>75%	7.9v	0xCA0	
+			else if (adcvalue > 3180)	//>75%	7.9v	0xCA0	
 			{
 				templevel = 5;
 			}
-			else if (adcvalue > 0xC00)	//>50%	7.7v	0xC40
+			else if (adcvalue > 3050)	//>50%	7.7v	0xC40
 			{
 				templevel = 4;
 			}
-			else if (adcvalue > 0xBB0)	//>25%	7.5		0xBE0
+			else if (adcvalue > 2980)	//>25%	7.5		0xBE0
 			{
 				templevel = 3;
 			}
-			else if (adcvalue > 0xB70)	//10%	7.2v	0xBA0
+			else if (adcvalue > 2830)	//10%	7.2v	0xBA0
 			{
 				templevel = 2;
 			}
@@ -347,11 +358,11 @@ unsigned char getbatlevel(unsigned char adc_delay)
 					adc_pre_cnt = 0;
 				#if UART_TEST				
 				testtemp = batlevel;
-				printf("power level=%d\n",testtemp);
+				printf("pl=%d\n",testtemp);//power level
 				testtemp = templevel;
-				printf("templevel=%d\n",testtemp);
+				printf("tl=%d\n",testtemp);//templevel
 				testtemp = adc_pre_cnt;
-				printf("adc_pre_cnt=%d\n",testtemp);
+				printf("at=%d\n",testtemp);//adc_pre_cnt
 				#endif
 				if (adc_pre_cnt > 5)
 				{
@@ -411,7 +422,7 @@ void Enable_WDT_Reset_Config(void)
 
 void Disable_WDT_Reset_Config(void)
 {
-	UINT8 cf0,cf1,cf2,cf3,cf4;
+	unsigned char cf0,cf1,cf2,cf3,cf4;
 #define     CFG_READ            0xC0
 #define     CFG_ERASE           0xE2
 #define     CFG_BYTE_PROGRAM    0xE1	
@@ -464,7 +475,7 @@ void Disable_WDT_Reset_Config(void)
 #endif
 void Enter_DPD(void)
 {
-
+	P06 = 1;	//enable chargine
 	dpdtime = 0;
 
 	Set_All_GPIO_Quasi_Mode;
@@ -477,7 +488,9 @@ void Enter_DPD(void)
 	
 	P05_Input_Mode;	
 	while(P05 == 0);
+	#if UART_TEST
 	printf("P05\n");
+	#endif
 //	set_P1SR_5;
 //	Enable_INT_Port0;
 //	Enable_BIT5_FallEdge_Trig;
@@ -490,7 +503,9 @@ void Enter_DPD(void)
 	set_EA;
 	
 	P17_Input_Mode;
+	#if UART_TEST
 	printf("P07\n");
+	#endif
 	set_P1S_7;
 	set_EX1;
 
@@ -536,18 +551,28 @@ void SysInit(void)
 	adc_pre_cnt = 0;
 	adcvalue = 0;
 	Enable_ADC_AIN2;
-	
+	P06_PushPull_Mode;
+	dpdtime = 0;	
 	if (isstartsystem != 1)
-	{
-		dpdtime = 0;
+	{		
+		P06 = 0;	//disable charging
+		ischarging = 0;
 		while(dpdtime<300)
 		{
-			if (P05 == 0)
-				ischarging = 1;
 			getbatlevel(0);
 		}
 		isstartsystem = 1;
 	}
+//	else
+//	{
+//		while(dpdtime<60)
+//		{
+//			if (P05 == 0)
+//				ischarging = 1;
+//			getbatlevel(0);
+//		}
+//	}
+	P06 = 1;	//enable chargine
 	dpdtime = 0;
 	led_display_time = 0;
 	startADC_cnt = 0;
@@ -580,6 +605,7 @@ void main(void)
 	isneedinitsys = 1;
 	isstartsystem = 0;
 	isfirstenterdpd = 0;
+	first_run_times= 0;
 	while(1)
 	{
 		if (isneedinitsys)
@@ -662,26 +688,29 @@ void main(void)
 				if (keystatus & 0x01)//key
 				{
 					//change pwm
-					Change_Motor_PWM();
-					#if UART_TEST
-					testtemp = Motor_Level;
-					printf("motor level=%d\n",testtemp);
-					#endif
-					LED_RGB_Setting(Motor_Level);
-					if (Motor_Level == 0)
+//					if (adcvalue > 2400)
 					{
-						LED_Setting(0);
-						isenableLED = 0;
-					}
-					else
-					{
-						LED_Setting(system_stage);
-						isenableLED = 1;
-					}
-					adccnt = 0;
-					if (isfirstenterdpd == 1)
-						adc_dis_cnt = 200;
-					dpdtime = 0;					
+						Change_Motor_PWM();
+						#if UART_TEST
+						testtemp = Motor_Level;
+						printf("motor level=%d\n",testtemp);
+						#endif
+						LED_RGB_Setting(Motor_Level);
+						if (Motor_Level == 0)
+						{
+							LED_Setting(0);
+							isenableLED = 0;
+						}
+						else
+						{
+							LED_Setting(system_stage);
+							isenableLED = 1;
+						}
+						adccnt = 0;
+						if (isfirstenterdpd == 1)
+							adc_dis_cnt = 200;
+						dpdtime = 0;	
+					}					
 				}
 				if (keystatus & 0x02)//safety
 				{
@@ -776,22 +805,26 @@ void main(void)
 					LED_Setting(system_stage);
 					isenableLED = 1;
 					adccnt = 0;
+					
 					if (isfirstenterdpd == 1)
 					adc_dis_cnt = 200;
 				}
 				if (keystatus & 0x01)//key
 				{
 					//change pwm
-					Change_Motor_PWM();
-					#if UART_TEST
-					testtemp = Motor_Level;
-					printf("motor level=%d\n",testtemp);
-					#endif
-					LED_RGB_Setting(Motor_Level);
-					adccnt = 0;
-					if (isfirstenterdpd == 1)
-						adc_dis_cnt = 200;
-					dpdtime = 0;
+//					if (adcvalue > 2400)
+					{
+						Change_Motor_PWM();
+						#if UART_TEST
+						testtemp = Motor_Level;
+						printf("motor level=%d\n",testtemp);
+						#endif
+						LED_RGB_Setting(Motor_Level);
+						adccnt = 0;
+						if (isfirstenterdpd == 1)
+							adc_dis_cnt = 200;
+						dpdtime = 0;
+					}
 				}
 				if (keystatus & 0x02)//safety
 				{
@@ -835,10 +868,40 @@ void main(void)
 			}
 			
 			//ADC process
-			if (ischarging == 1)
-				getbatlevel(20);
+//			if ((ischarging == 1)||(get_motor_level()!=0))
+//				getbatlevel(200);
+//			else
+//				getbatlevel(2);
+			if (first_run_times < 1000)
+			{
+				P06 = 0;
+			}
+			//ADC Porcess
+			if ((ischarging == 1) && (first_run_times > 1000))
+			{
+				first_run_times = 1001;
+				if (adc_wait_cnt == 1000)
+				{
+					//disable charging
+					adc_wait_cnt = 1001;
+					P06 = 0;	//disable chargine
+				}
+				else if (adc_wait_cnt >= 1050)
+				{
+					getbatlevel(0);
+					P06 = 1;	//enable chargine
+					adc_wait_cnt = 0;
+				}
+			}
+			else if (get_motor_level()!=0)
+			{
+				getbatlevel(80);
+			}
 			else
-				getbatlevel(5);
+			{
+				getbatlevel(4);
+			}
+			
 			if (adc_dis_cnt > 0)
 				adc_dis_cnt--;
 			
@@ -878,6 +941,7 @@ void main(void)
 			//dpd
 			if (dpdtime >= 2000)
 			{
+				first_run_times = 0;
 				isfirstenterdpd = 1;
 				#if UART_TEST
 				printf("enter dpd\n");
