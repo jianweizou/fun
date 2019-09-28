@@ -1,0 +1,13 @@
+Output: NC Drill Files
+Type  : NC Drill
+From  : Project [风扇_V1.9.PrjPCB]
+   Generated File[风扇_V1.TXT]
+   Generated File[风扇_V1.9.DRL]
+   Generated File[风扇_V1.9.LDP]
+   Generated File[风扇_V1.9.DRR]
+
+
+Files Generated   : 4
+Documents Printed : 0
+
+Finished Output Generation At 19:48:20 On 2019/7/31

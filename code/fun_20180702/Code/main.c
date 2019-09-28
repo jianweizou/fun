@@ -31,7 +31,7 @@ bit isstartsystem;
 bit isWaitTurnOffCharging;
 bit isfirstenterdpd;
 bit isenableLED;
-
+sbit powerfull = P2^0;
 unsigned char is_5ms_Flag;
 unsigned char system_stage;
 
@@ -274,6 +274,11 @@ unsigned char getbatlevel(unsigned char adc_delay)
 			{
 				if (ischarging)
 				{
+//					if (powerfull == 0)
+//					{
+//						isWaitTurnOffCharging = 1;
+//						templevel = 6;
+//					}
 					if (adcvaluetemp > (adcvalue + 8))
 					{
 						adcchangecnt++;
